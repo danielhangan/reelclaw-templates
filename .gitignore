@@ -1,0 +1,15 @@
+# generated per reel
+templates/*/compositions/*.html
+templates/*/host-*.html
+templates/*/renders/
+templates/*/snapshots*/
+
+# downloaded/staged media (fonts are kept)
+templates/*/assets/*
+!templates/*/assets/fonts/
+
+# system / tooling
+node_modules/
+.DS_Store
+*.log
+.hyperframes/
