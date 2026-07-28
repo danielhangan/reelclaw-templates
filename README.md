@@ -1,6 +1,6 @@
 # reelclaw-templates
 
-HyperFrames video templates for TikTok / Instagram Reels growth content. Reusable [HyperFrames](https://hyperframes.heygen.com) video templates for TikTok / Instagram Reels growth content. Each template is a self-contained HyperFrames project with a generator script: give it media + text, get a render-ready 1080×1920 MP4.
+Reusable [HyperFrames](https://hyperframes.heygen.com) video templates for TikTok / Instagram Reels growth content. Each template is a self-contained HyperFrames project with a generator script: give it media + text, get a render-ready 1080×1920 MP4.
 
 All templates follow the shared platform rules in [RULES.md](RULES.md) — TikTok Sans typography, classic white/black-outline captions, cross-platform safe zones, auto text sizing, and deterministic rendering.
 
