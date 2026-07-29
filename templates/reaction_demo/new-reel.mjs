@@ -152,6 +152,31 @@ function probeDuration(rel) {
   ]).toString().trim();
   return parseFloat(out);
 }
+
+function hasAudioStream(rel) {
+  const out = execFileSync("ffprobe", [
+    "-v", "error", "-select_streams", "a",
+    "-show_entries", "stream=codec_type", "-of", "csv=p=0",
+    join(ROOT, rel),
+  ]).toString().trim();
+  return out.length > 0;
+}
+
+// only emit <audio> for sources that actually carry an audio stream —
+// ffmpeg's audio-prep stage fails the whole render otherwise
+function audioVolumeFor(rel, requested, label) {
+  if (requested <= 0) return 0;
+  if (hasAudioStream(rel)) return requested;
+  console.warn(`⚠ ${label} has no audio stream — ignoring its volume setting`);
+  return 0;
+}
+const reactVol = audioVolumeFor(reaction, reactionVolume, "reaction clip");
+const demoVol = audioVolumeFor(demo, demoVolume, "demo clip");
+if (music && !hasAudioStream(music)) {
+  console.error("music file has no audio stream");
+  process.exit(1);
+}
+
 const reactDur = probeDuration(reaction);
 if (trim + reactionSecs > reactDur + 0.01) {
   console.error(`--trim ${trim} + ${reactionSecs}s exceeds reaction length (${reactDur.toFixed(1)}s)`);
@@ -292,7 +317,7 @@ const composition = `<!doctype html>
             : ""
         }
 ${
-          reactionVolume > 0
+          reactVol > 0
             ? `        <audio
           id="${name}-react-audio"
           src="${reaction}"
@@ -300,19 +325,19 @@ ${
           data-duration="${reactionSecs}"
           data-media-start="${trim}"
           data-track-index="10"
-          data-volume="${reactionVolume}"
+          data-volume="${reactVol}"
         ></audio>
 `
             : ""
         }${
-          demoVolume > 0
+          demoVol > 0
             ? `        <audio
           id="${name}-demo-audio"
           src="${demo}"
           data-start="${reactionSecs}"
           data-duration="${demoDur}"
           data-track-index="11"
-          data-volume="${demoVolume}"
+          data-volume="${demoVol}"
         ></audio>`
             : ""
         }${
@@ -411,7 +436,7 @@ const host = `<!doctype html>
 </html>
 `;
 
-if (!music && reactionVolume === 0 && demoVolume === 0) {
+if (!music && reactVol === 0 && demoVol === 0) {
   console.warn("⚠ no --music and clip volumes are 0 — output will be silent (pass --reaction-volume / --demo-volume to keep clip audio)");
 }
 
