@@ -2,37 +2,39 @@
 /**
  * new-reel.mjs — "no yapping" split-screen tutorial reel.
  *
- * Format (2 videos):
- *   1. INTRO — creator video 100% fullscreen with the hook caption
+ * Format (3 videos):
+ *   1. INTRO — a 9:16 clip fullscreen with the hook caption
  *      (e.g. putting the mouth tape on). Default 6s.
- *   2. SPLIT — 50/50 split screen: creator continues in the top half,
- *      the demo screen recording plays in the bottom half, step captions
- *      change at the seam. No voiceover — the silence is the format.
+ *   2. SPLIT — 50/50 split screen for the rest of the reel:
+ *      TYPING video (creator working) in the top half,
+ *      DEMO screen recording in the bottom half,
+ *      step captions changing at the seam. No voiceover.
  *
  * Usage:
  *   node new-reel.mjs \
- *     --creator footage/me-mouthtape.mp4 \
- *     --demo clips/full-screen-recording.mov \
+ *     --intro footage/mouth-tape.mp4 \
+ *     --typing footage/typing.mp4 \
+ *     --demo clips/screen-recording.mov \
  *     --hook "making $10k but no yapping" \
  *     --step "go to claude" \
  *     --step "paste ur script :: 4" \
  *     --step "easyyy 10 bands" \
  *     --render
  *
- * - --intro-secs (default 6): how long the creator stays fullscreen.
+ * - --intro-secs (default 6): fullscreen intro length. The intro and typing
+ *   clips loop automatically if shorter than their segment.
  * - The demo plays full length by default (--demo-secs caps it, --demo-trim
  *   skips into it). Total = intro + demo segment.
  * - Steps are captions over the split segment: repeat --step "caption [:: secs]"
  *   (default --step-secs 3), or --steps steps.json with [{"caption","secs"?}].
- *   Captions run sequentially from the split point; the last one is clamped
- *   to the end of the reel.
- * - Creator footage loops automatically if shorter than the total.
- *   --creator-trim <s> skips into it.
+ *   Captions run sequentially from the split point; the last one holds to the
+ *   end of the reel (the payoff line).
  * - --demo-fit cover|contain (default cover): cover fills the bottom half,
  *   contain shows the whole recording on white.
  * - Audio is silent by default. --music <file|url> adds a track
- *   (--music-volume, --music-start); --creator-volume / --demo-volume opt
- *   clip audio back in. Sources without an audio stream are skipped safely.
+ *   (--music-volume, --music-start); --intro-volume / --typing-volume /
+ *   --demo-volume opt clip audio back in. Sources without an audio stream
+ *   are skipped safely.
  * - Captions: TikTok Sans, white with black outline, static, auto-shrink.
  * - --render / --draft render renders/<name>.mp4 after generating.
  */
@@ -56,16 +58,18 @@ function argAll(name) {
 }
 const flag = (name) => process.argv.includes(`--${name}`);
 
-const creatorIn = arg("creator");
+const introIn = arg("intro");
+const typingIn = arg("typing");
 const demoIn = arg("demo");
 const hook = arg("hook");
-if (!creatorIn || !demoIn || !hook) {
-  console.error('Required: --creator <file|url> --demo <file|url> --hook "text"');
+if (!introIn || !typingIn || !demoIn || !hook) {
+  console.error('Required: --intro <file|url> --typing <file|url> --demo <file|url> --hook "text"');
   process.exit(1);
 }
 
 const introSecs = parseFloat(arg("intro-secs", "6"));
-const creatorTrim = parseFloat(arg("creator-trim", "0"));
+const introTrim = parseFloat(arg("intro-trim", "0"));
+const typingTrim = parseFloat(arg("typing-trim", "0"));
 const demoTrim = parseFloat(arg("demo-trim", "0"));
 const demoSecsArg = arg("demo-secs");
 const demoFit = arg("demo-fit", "cover");
@@ -74,7 +78,8 @@ if (!["cover", "contain"].includes(demoFit)) {
   process.exit(1);
 }
 const stepSecsDefault = parseFloat(arg("step-secs", "3"));
-const creatorVolume = parseFloat(arg("creator-volume", "0"));
+const introVolume = parseFloat(arg("intro-volume", "0"));
+const typingVolume = parseFloat(arg("typing-volume", "0"));
 const demoVolume = parseFloat(arg("demo-volume", "0"));
 const musicIn = arg("music");
 const musicVolume = parseFloat(arg("music-volume", "1"));
@@ -185,27 +190,29 @@ function audioVolumeFor(rel, requested, label) {
 }
 
 // stage inputs
-const creator = stage(creatorIn, "creator");
+const intro = stage(introIn, "intro");
+const typing = stage(typingIn, "typing");
 const demo = stage(demoIn, "demo");
 const music = musicIn ? stage(musicIn, "music", "audio") : null;
 
 // timing
 const r1 = (n) => Math.round(n * 10) / 10;
-const creatorDur = probeDuration(creator);
-const loopLen = Math.floor((creatorDur - creatorTrim - 0.05) * 10) / 10;
-if (loopLen <= 0.5) {
-  console.error(`--creator-trim ${creatorTrim} leaves under 0.5s of creator footage (${creatorDur.toFixed(1)}s clip)`);
-  process.exit(1);
+function loopLenOf(rel, trim, label) {
+  const len = Math.floor((probeDuration(rel) - trim - 0.05) * 10) / 10;
+  if (len <= 0.5) {
+    console.error(`${label}: trim ${trim}s leaves under 0.5s of footage`);
+    process.exit(1);
+  }
+  return len;
 }
-const demoAvail = Math.floor((probeDuration(demo) - demoTrim - 0.05) * 10) / 10;
-if (demoAvail <= 0.5) {
-  console.error(`--demo-trim ${demoTrim} leaves under 0.5s of demo footage`);
-  process.exit(1);
-}
+const introLoop = loopLenOf(intro, introTrim, "intro clip");
+const typingLoop = loopLenOf(typing, typingTrim, "typing clip");
+const demoAvail = loopLenOf(demo, demoTrim, "demo clip");
 const demoSecs = demoSecsArg ? Math.min(parseFloat(demoSecsArg), demoAvail) : demoAvail;
 const total = r1(introSecs + demoSecs);
 
-const creatorVol = audioVolumeFor(creator, creatorVolume, "creator clip");
+const introVol = audioVolumeFor(intro, introVolume, "intro clip");
+const typingVol = audioVolumeFor(typing, typingVolume, "typing clip");
 const demoVol = audioVolumeFor(demo, demoVolume, "demo clip");
 if (music && !hasAudioStream(music)) {
   console.error("music file has no audio stream");
@@ -221,30 +228,28 @@ if (music) {
   musicDur = Math.min(total, Math.floor((trackDur - musicStart) * 10) / 10);
   if (musicDur < total) console.warn(`⚠ music covers only ${musicDur}s of the ${total}s reel (ends early)`);
 }
-if (!music && creatorVol === 0 && demoVol === 0) {
+if (!music && introVol === 0 && typingVol === 0 && demoVol === 0) {
   console.warn("⚠ no --music and clip volumes are 0 — output will be silent (the format's default; add --music if unwanted)");
 }
 
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-// creator video: fullscreen for the intro, top half afterwards. Media time is
-// continuous across the switch (and loops if the clip is shorter than the reel).
-// Geometry never animates — separate elements per phase/loop segment.
-function creatorSegments(cls, track, from, until) {
+// emit sequential looping <video> segments for one source between [from, until)
+function loopSegments(src, cls, track, from, until, trim, loopLen) {
   let html = "";
   let t = from;
   let i = 0;
   while (t < until - 0.01) {
-    const mediaPos = creatorTrim + ((t - 0) % loopLen);
-    const d = r1(Math.min(loopLen - (mediaPos - creatorTrim), until - t));
+    const elapsed = (t - from) % loopLen;
+    const d = r1(Math.min(loopLen - elapsed, until - t));
     html += `
         <video
           id="${name}-${cls}-${i}"
           class="${cls}"
-          src="${creator}"
+          src="${src}"
           data-start="${r1(t)}"
           data-duration="${d}"
-          data-media-start="${r1(mediaPos)}"
+          data-media-start="${r1(trim + elapsed)}"
           data-track-index="${track}"
           muted
           playsinline
@@ -254,8 +259,8 @@ function creatorSegments(cls, track, from, until) {
   }
   return html;
 }
-const creatorIntro = creatorSegments("creator-full", 0, 0, introSecs);
-const creatorSplit = creatorSegments("creator-top", 4, introSecs, total);
+const introMarkup = loopSegments(intro, "intro-full", 0, 0, introSecs, introTrim, introLoop);
+const typingMarkup = loopSegments(typing, "typing-top", 4, introSecs, total, typingTrim, typingLoop);
 
 // step captions over the split segment, sequential from the split point
 let stepMarkup = "";
@@ -301,15 +306,15 @@ const composition = `<!doctype html>
           overflow: hidden;
           background: #000;
         }
-        .creator-full {
+        .intro-full {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
-        /* 50/50 split: creator top half, demo bottom half */
-        .creator-top {
+        /* 50/50 split: typing top half, demo bottom half */
+        .typing-top {
           position: absolute;
           left: 0;
           top: 0;
@@ -377,7 +382,7 @@ const composition = `<!doctype html>
         data-width="1080"
         data-height="1920"
         data-duration="${total}"
-      >${creatorIntro}${creatorSplit}
+      >${introMarkup}${typingMarkup}
         <div id="${name}-demo-panel" class="clip demo-panel" data-start="${introSecs}" data-duration="${r1(demoSecs)}" data-track-index="1"></div>
         <video
           id="${name}-demo"
@@ -395,16 +400,29 @@ const composition = `<!doctype html>
             <span class="hook">${esc(hook)}</span>
           </div>
         </div>${stepMarkup}${
-          creatorVol > 0
+          introVol > 0
             ? `
         <audio
-          id="${name}-creator-audio"
-          src="${creator}"
+          id="${name}-intro-audio"
+          src="${intro}"
           data-start="0"
-          data-duration="${r1(Math.min(loopLen, total))}"
-          data-media-start="${creatorTrim}"
+          data-duration="${r1(Math.min(introLoop, introSecs))}"
+          data-media-start="${introTrim}"
           data-track-index="10"
-          data-volume="${creatorVol}"
+          data-volume="${introVol}"
+        ></audio>`
+            : ""
+        }${
+          typingVol > 0
+            ? `
+        <audio
+          id="${name}-typing-audio"
+          src="${typing}"
+          data-start="${introSecs}"
+          data-duration="${r1(Math.min(typingLoop, demoSecs))}"
+          data-media-start="${typingTrim}"
+          data-track-index="11"
+          data-volume="${typingVol}"
         ></audio>`
             : ""
         }${
@@ -416,7 +434,7 @@ const composition = `<!doctype html>
           data-start="${introSecs}"
           data-duration="${r1(demoSecs)}"
           data-media-start="${demoTrim}"
-          data-track-index="11"
+          data-track-index="12"
           data-volume="${demoVol}"
         ></audio>`
             : ""
@@ -429,7 +447,7 @@ const composition = `<!doctype html>
           data-start="0"
           data-duration="${musicDur}"
           data-media-start="${musicStart}"
-          data-track-index="12"
+          data-track-index="13"
           data-volume="${musicVolume}"
         ></audio>`
             : ""
