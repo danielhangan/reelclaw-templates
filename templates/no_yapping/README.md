@@ -27,7 +27,12 @@ node new-reel.mjs \
   --render
 ```
 
-Steps are captions timed over the split segment: `"caption [:: secs]"` (default 3s each), running in order from the split point — the **last caption holds to the end** (that's your payoff line). For long lists use `--steps steps.json` with `[{"caption","secs"?}, ...]`.
+Steps are the on-screen captions. Two ways to time each one:
+
+- **Sequential** — `"caption [:: secs]"` (default 3s): runs after the previous caption, starting from the split point. The **last sequential caption holds to the end** (that's your payoff line).
+- **Absolute window** — `"caption :: start-end"` in seconds from the start of the reel, e.g. `--step "buy now :: 10-15"` shows exactly from second 10 to 15. Following sequential captions continue from its end.
+
+For long lists use `--steps steps.json` with `[{"caption","secs"?} | {"caption","at":10,"until":15}, ...]`. Overlapping absolute windows draw on top of each other — keep them disjoint.
 
 ## Flags
 
@@ -37,7 +42,7 @@ Steps are captions timed over the split segment: `"caption [:: secs]"` (default 
 | `--typing <file\|url>` | required | Typing footage for the top half; loops if shorter than the split |
 | `--demo <file\|url>` | required | Screen recording for the bottom half; plays full length |
 | `--hook "text"` | required | Caption over the fullscreen intro |
-| `--step "caption [:: secs]"` | — | Repeatable, ordered; captions over the split segment |
+| `--step "caption [:: secs \| :: start-end]"` | — | Repeatable, ordered; sequential duration or absolute window |
 | `--steps <file.json>` | — | Steps as JSON instead of flags |
 | `--intro-secs` | `6` | Fullscreen intro length before the split |
 | `--step-secs` | `3` | Default per-caption length |

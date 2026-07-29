@@ -25,10 +25,12 @@
  *   clips loop automatically if shorter than their segment.
  * - The demo plays full length by default (--demo-secs caps it, --demo-trim
  *   skips into it). Total = intro + demo segment.
- * - Steps are captions over the split segment: repeat --step "caption [:: secs]"
- *   (default --step-secs 3), or --steps steps.json with [{"caption","secs"?}].
- *   Captions run sequentially from the split point; the last one holds to the
- *   end of the reel (the payoff line).
+ * - Steps are captions over the video: repeat --step "caption [:: secs]"
+ *   (sequential, default --step-secs 3) or --step "caption :: start-end"
+ *   (absolute window, e.g. "buy now :: 10-15"), or --steps steps.json with
+ *   [{"caption","secs"?} | {"caption","at","until"}]. Sequential captions run
+ *   from the split point (or from the previous caption's end); the last
+ *   sequential one holds to the end of the reel (the payoff line).
  * - --demo-fit cover|contain (default cover): cover fills the bottom half,
  *   contain shows the whole recording on white.
  * - Audio is silent by default. --music <file|url> adds a track
@@ -95,7 +97,13 @@ if (stepsFile) {
 } else {
   steps = argAll("step").map((raw) => {
     const parts = raw.split("::").map((s) => s.trim());
-    return { caption: parts[0], secs: parts[1] ? parseFloat(parts[1]) : undefined };
+    const time = parts[1];
+    const range = time && /^\d+(\.\d+)?\s*-\s*\d+(\.\d+)?$/.test(time)
+      ? time.split("-").map((n) => parseFloat(n))
+      : null;
+    return range
+      ? { caption: parts[0], at: range[0], until: range[1] }
+      : { caption: parts[0], secs: time ? parseFloat(time) : undefined };
   });
 }
 
@@ -276,21 +284,39 @@ let stepMarkup = "";
 let cursor = introSecs;
 const placed = [];
 steps.forEach((s, i) => {
-  if (cursor >= total - 0.05) {
-    console.warn(`⚠ step ${i + 1} ("${s.caption}") starts past the end of the reel — dropped`);
-    return;
+  let start, dur;
+  if (s.at != null) {
+    // absolute window: "caption :: 10-15" or {"at":10,"until":15}
+    if (s.until == null || s.until <= s.at) {
+      console.error(`step ${i + 1} ("${s.caption}"): bad range — need start-end with end > start`);
+      process.exit(1);
+    }
+    start = s.at;
+    dur = Math.min(s.until, total) - start;
+    if (start >= total - 0.05) {
+      console.warn(`⚠ step ${i + 1} ("${s.caption}") starts past the end of the reel (${total}s) — dropped`);
+      return;
+    }
+    cursor = s.until;
+  } else {
+    // sequential: continues after the previous caption
+    if (cursor >= total - 0.05) {
+      console.warn(`⚠ step ${i + 1} ("${s.caption}") starts past the end of the reel — dropped`);
+      return;
+    }
+    start = cursor;
+    dur = Math.min(s.secs ?? stepSecsDefault, total - cursor);
+    const isLast = i === steps.length - 1;
+    if (isLast) dur = r1(total - cursor); // last sequential caption holds to the end
+    cursor += dur;
   }
-  const isLast = i === steps.length - 1;
-  let dur = Math.min(s.secs ?? stepSecsDefault, total - cursor);
-  if (isLast) dur = r1(total - cursor); // last caption holds to the end
   stepMarkup += `
-        <div id="${name}-cap-${i}" class="clip step-cap" data-start="${r1(cursor)}" data-duration="${r1(dur)}" data-track-index="6">
+        <div id="${name}-cap-${i}" class="clip step-cap" data-start="${r1(start)}" data-duration="${r1(dur)}" data-track-index="${7 + i}">
           <div id="${name}-cap-${i}-wrap" class="cap-wrap">
             <span class="hook">${esc(s.caption)}</span>
           </div>
         </div>`;
-  placed.push({ i, caption: s.caption, start: r1(cursor), dur: r1(dur) });
-  cursor += dur;
+  placed.push({ i, caption: s.caption, start: r1(start), dur: r1(dur) });
 });
 
 const composition = `<!doctype html>
@@ -417,7 +443,7 @@ const composition = `<!doctype html>
           data-start="0"
           data-duration="${r1(Math.min(introLoop, introSecs))}"
           data-media-start="${introTrim}"
-          data-track-index="10"
+          data-track-index="40"
           data-volume="${introVol}"
         ></audio>`
             : ""
@@ -430,7 +456,7 @@ const composition = `<!doctype html>
           data-start="${introSecs}"
           data-duration="${r1(Math.min(typingLoop, demoSecs))}"
           data-media-start="${typingTrim}"
-          data-track-index="11"
+          data-track-index="41"
           data-volume="${typingVol}"
         ></audio>`
             : ""
@@ -443,7 +469,7 @@ const composition = `<!doctype html>
           data-start="${introSecs}"
           data-duration="${r1(demoSecs)}"
           data-media-start="${demoTrim}"
-          data-track-index="12"
+          data-track-index="42"
           data-volume="${demoVol}"
         ></audio>`
             : ""
@@ -456,7 +482,7 @@ const composition = `<!doctype html>
           data-start="0"
           data-duration="${musicDur}"
           data-media-start="${musicStart}"
-          data-track-index="13"
+          data-track-index="43"
           data-volume="${musicVolume}"
         ></audio>`
             : ""
