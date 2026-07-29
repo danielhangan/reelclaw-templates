@@ -132,11 +132,20 @@ function resolveMedia(input, label, kind = "video") {
 function stage(path, label, kind = "video") {
   const resolved = resolveMedia(path, label, kind);
   if (resolved.startsWith("assets/") || resolved.startsWith(join(ROOT, "assets"))) return resolved.replace(`${ROOT}/`, "");
-  const target = join("assets", basename(resolved));
-  if (!existsSync(join(ROOT, target))) {
-    mkdirSync(join(ROOT, "assets"), { recursive: true });
-    execFileSync("cp", [resolved, join(ROOT, target)]);
+  let target = join("assets", basename(resolved));
+  let abs = join(ROOT, target);
+  if (existsSync(abs)) {
+    const identical = spawnSync("cmp", ["-s", resolved, abs]).status === 0;
+    if (identical) return target;
+    // same filename, different content (e.g. two "0729 (1).mp4" from different
+    // folders) — stage under a per-reel, per-role name instead of reusing the
+    // stale copy, which silently swapped one video for another
+    console.warn(`⚠ ${label}: assets/${basename(resolved)} already exists with different content — staging as ${name}-${label}${extname(resolved)}`);
+    target = join("assets", `${name}-${label}${extname(resolved)}`);
+    abs = join(ROOT, target);
   }
+  mkdirSync(join(ROOT, "assets"), { recursive: true });
+  execFileSync("cp", ["-f", resolved, abs]);
   return target;
 }
 
