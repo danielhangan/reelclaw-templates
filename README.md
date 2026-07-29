@@ -4,6 +4,14 @@ Reusable [HyperFrames](https://hyperframes.heygen.com) video templates for TikTo
 
 All templates follow the shared platform rules in [RULES.md](RULES.md) — TikTok Sans typography, classic white/black-outline captions, cross-platform safe zones, auto text sizing, and deterministic rendering.
 
+## See it in action
+
+One command in, one reel out — the `reaction_demo` generator building and rendering a reel end-to-end:
+
+[![reaction_demo template demo — click for full quality](examples/reaction_demo_preview.gif)](examples/reaction_demo.mp4)
+
+*Click the preview to watch the full-quality video.*
+
 ## Templates
 
 | Template | Format | Inputs |
