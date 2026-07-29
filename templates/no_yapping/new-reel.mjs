@@ -1,31 +1,39 @@
 #!/usr/bin/env node
 /**
- * new-reel.mjs — "no yapping" step-tutorial reel.
+ * new-reel.mjs — "no yapping" split-screen tutorial reel.
  *
- * Format: creator footage fullscreen with a hook caption, then N silent steps —
- * each step slides a full-width screen-recording panel over the bottom ~57% of
- * the frame with a short imperative caption at the seam. No voiceover.
+ * Format (2 videos):
+ *   1. INTRO — creator video 100% fullscreen with the hook caption
+ *      (e.g. putting the mouth tape on). Default 6s.
+ *   2. SPLIT — 50/50 split screen: creator continues in the top half,
+ *      the demo screen recording plays in the bottom half, step captions
+ *      change at the seam. No voiceover — the silence is the format.
  *
  * Usage:
  *   node new-reel.mjs \
- *     --creator <file-or-url> \
+ *     --creator footage/me-mouthtape.mp4 \
+ *     --demo clips/full-screen-recording.mov \
  *     --hook "making $10k but no yapping" \
- *     --step "go to claude :: clips/claude.mov" \
- *     --step "paste ur script :: clips/paste.mov :: 4" \
- *     --step "easyyy 10 bands :: clips/revenue.mov" \
+ *     --step "go to claude" \
+ *     --step "paste ur script :: 4" \
+ *     --step "easyyy 10 bands" \
  *     --render
  *
- * Steps: repeat --step "caption :: clip [:: secs [:: trim]]", or pass
- * --steps steps.json with [{"caption","clip","secs"?,"trim"?}, ...].
- *
- * - --hook-secs (default 3): hook segment length before the first step.
- * - --step-secs (default 3): default per-step length (clip is trimmed to fit).
+ * - --intro-secs (default 6): how long the creator stays fullscreen.
+ * - The demo plays full length by default (--demo-secs caps it, --demo-trim
+ *   skips into it). Total = intro + demo segment.
+ * - Steps are captions over the split segment: repeat --step "caption [:: secs]"
+ *   (default --step-secs 3), or --steps steps.json with [{"caption","secs"?}].
+ *   Captions run sequentially from the split point; the last one is clamped
+ *   to the end of the reel.
  * - Creator footage loops automatically if shorter than the total.
- *   --creator-trim <s> skips into the creator clip.
- * - Audio is silent by default (that's the format). --music <file|url> adds a
- *   track (--music-volume, --music-start); --creator-volume / --step-volume
- *   opt clip audio back in. Sources without an audio stream are skipped safely.
- * - Captions: TikTok Sans, white with black outline, static, auto-shrink to fit.
+ *   --creator-trim <s> skips into it.
+ * - --demo-fit cover|contain (default cover): cover fills the bottom half,
+ *   contain shows the whole recording on white.
+ * - Audio is silent by default. --music <file|url> adds a track
+ *   (--music-volume, --music-start); --creator-volume / --demo-volume opt
+ *   clip audio back in. Sources without an audio stream are skipped safely.
+ * - Captions: TikTok Sans, white with black outline, static, auto-shrink.
  * - --render / --draft render renders/<name>.mp4 after generating.
  */
 import { execFileSync, spawnSync } from "node:child_process";
@@ -49,14 +57,32 @@ function argAll(name) {
 const flag = (name) => process.argv.includes(`--${name}`);
 
 const creatorIn = arg("creator");
+const demoIn = arg("demo");
 const hook = arg("hook");
-if (!creatorIn || !hook) {
-  console.error('Required: --creator <file|url> --hook "text" plus at least one --step');
+if (!creatorIn || !demoIn || !hook) {
+  console.error('Required: --creator <file|url> --demo <file|url> --hook "text"');
   process.exit(1);
 }
 
-// collect steps from repeated --step "caption :: clip [:: secs [:: trim]]" or --steps json
+const introSecs = parseFloat(arg("intro-secs", "6"));
+const creatorTrim = parseFloat(arg("creator-trim", "0"));
+const demoTrim = parseFloat(arg("demo-trim", "0"));
+const demoSecsArg = arg("demo-secs");
+const demoFit = arg("demo-fit", "cover");
+if (!["cover", "contain"].includes(demoFit)) {
+  console.error("--demo-fit must be cover or contain");
+  process.exit(1);
+}
 const stepSecsDefault = parseFloat(arg("step-secs", "3"));
+const creatorVolume = parseFloat(arg("creator-volume", "0"));
+const demoVolume = parseFloat(arg("demo-volume", "0"));
+const musicIn = arg("music");
+const musicVolume = parseFloat(arg("music-volume", "1"));
+const musicStart = parseFloat(arg("music-start", "0"));
+const hookSize = parseFloat(arg("hook-size", "62"));
+const stepSize = parseFloat(arg("step-size", "54"));
+
+// captions over the split segment
 let steps = [];
 const stepsFile = arg("steps");
 if (stepsFile) {
@@ -64,32 +90,9 @@ if (stepsFile) {
 } else {
   steps = argAll("step").map((raw) => {
     const parts = raw.split("::").map((s) => s.trim());
-    if (parts.length < 2) {
-      console.error(`--step needs "caption :: clip [:: secs [:: trim]]" — got: ${raw}`);
-      process.exit(1);
-    }
-    return {
-      caption: parts[0],
-      clip: parts[1],
-      secs: parts[2] ? parseFloat(parts[2]) : undefined,
-      trim: parts[3] ? parseFloat(parts[3]) : undefined,
-    };
+    return { caption: parts[0], secs: parts[1] ? parseFloat(parts[1]) : undefined };
   });
 }
-if (!steps.length) {
-  console.error("At least one --step (or --steps file.json) is required");
-  process.exit(1);
-}
-
-const hookSecs = parseFloat(arg("hook-secs", "3"));
-const creatorTrim = parseFloat(arg("creator-trim", "0"));
-const creatorVolume = parseFloat(arg("creator-volume", "0"));
-const stepVolume = parseFloat(arg("step-volume", "0"));
-const musicIn = arg("music");
-const musicVolume = parseFloat(arg("music-volume", "1"));
-const musicStart = parseFloat(arg("music-start", "0"));
-const hookSize = parseFloat(arg("hook-size", "62"));
-const stepSize = parseFloat(arg("step-size", "54"));
 
 // next free yap-N unless --name given
 function nextName() {
@@ -181,32 +184,29 @@ function audioVolumeFor(rel, requested, label) {
   return 0;
 }
 
-// stage everything
+// stage inputs
 const creator = stage(creatorIn, "creator");
-steps = steps.map((s, i) => ({ ...s, clip: stage(s.clip, `step${i + 1}`) }));
+const demo = stage(demoIn, "demo");
 const music = musicIn ? stage(musicIn, "music", "audio") : null;
 
-// resolve timing
+// timing
+const r1 = (n) => Math.round(n * 10) / 10;
 const creatorDur = probeDuration(creator);
 const loopLen = Math.floor((creatorDur - creatorTrim - 0.05) * 10) / 10;
 if (loopLen <= 0.5) {
   console.error(`--creator-trim ${creatorTrim} leaves under 0.5s of creator footage (${creatorDur.toFixed(1)}s clip)`);
   process.exit(1);
 }
-steps = steps.map((s, i) => {
-  const clipDur = probeDuration(s.clip);
-  const trim = s.trim ?? 0;
-  const avail = Math.floor((clipDur - trim - 0.05) * 10) / 10;
-  if (avail <= 0.3) {
-    console.error(`step ${i + 1}: trim ${trim}s leaves no usable footage (${clipDur.toFixed(1)}s clip)`);
-    process.exit(1);
-  }
-  const secs = Math.min(s.secs ?? stepSecsDefault, avail);
-  return { ...s, trim, secs };
-});
-const total = Math.round((hookSecs + steps.reduce((a, s) => a + s.secs, 0)) * 10) / 10;
+const demoAvail = Math.floor((probeDuration(demo) - demoTrim - 0.05) * 10) / 10;
+if (demoAvail <= 0.5) {
+  console.error(`--demo-trim ${demoTrim} leaves under 0.5s of demo footage`);
+  process.exit(1);
+}
+const demoSecs = demoSecsArg ? Math.min(parseFloat(demoSecsArg), demoAvail) : demoAvail;
+const total = r1(introSecs + demoSecs);
 
 const creatorVol = audioVolumeFor(creator, creatorVolume, "creator clip");
+const demoVol = audioVolumeFor(demo, demoVolume, "demo clip");
 if (music && !hasAudioStream(music)) {
   console.error("music file has no audio stream");
   process.exit(1);
@@ -221,75 +221,62 @@ if (music) {
   musicDur = Math.min(total, Math.floor((trackDur - musicStart) * 10) / 10);
   if (musicDur < total) console.warn(`⚠ music covers only ${musicDur}s of the ${total}s reel (ends early)`);
 }
-if (!music && creatorVol === 0 && stepVolume === 0) {
+if (!music && creatorVol === 0 && demoVol === 0) {
   console.warn("⚠ no --music and clip volumes are 0 — output will be silent (the format's default; add --music if unwanted)");
 }
 
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const r1 = (n) => Math.round(n * 10) / 10;
 
-// creator loops across the whole reel: sequential segments on track 0
-let creatorSegments = "";
-let t = 0;
-let seg = 0;
-while (t < total) {
-  const d = r1(Math.min(loopLen, total - t));
-  creatorSegments += `
+// creator video: fullscreen for the intro, top half afterwards. Media time is
+// continuous across the switch (and loops if the clip is shorter than the reel).
+// Geometry never animates — separate elements per phase/loop segment.
+function creatorSegments(cls, track, from, until) {
+  let html = "";
+  let t = from;
+  let i = 0;
+  while (t < until - 0.01) {
+    const mediaPos = creatorTrim + ((t - 0) % loopLen);
+    const d = r1(Math.min(loopLen - (mediaPos - creatorTrim), until - t));
+    html += `
         <video
-          id="${name}-creator-${seg}"
-          class="fill"
+          id="${name}-${cls}-${i}"
+          class="${cls}"
           src="${creator}"
           data-start="${r1(t)}"
           data-duration="${d}"
-          data-media-start="${creatorTrim}"
-          data-track-index="0"
+          data-media-start="${r1(mediaPos)}"
+          data-track-index="${track}"
           muted
           playsinline
         ></video>`;
-  t += d;
-  seg++;
+    t += d;
+    i++;
+  }
+  return html;
 }
+const creatorIntro = creatorSegments("creator-full", 0, 0, introSecs);
+const creatorSplit = creatorSegments("creator-top", 4, introSecs, total);
 
-// step panels (white bg, track 2), step videos (track 1), captions (track 3)
-// panel geometry: full width, y 830 → 1920 (bottom ~57% of the frame)
+// step captions over the split segment, sequential from the split point
 let stepMarkup = "";
-let stepAudio = "";
-let cursor = hookSecs;
+let cursor = introSecs;
+const placed = [];
 steps.forEach((s, i) => {
-  const start = r1(cursor);
-  const dur = r1(s.secs);
+  if (cursor >= total - 0.05) {
+    console.warn(`⚠ step ${i + 1} ("${s.caption}") starts past the end of the reel — dropped`);
+    return;
+  }
+  const isLast = i === steps.length - 1;
+  let dur = Math.min(s.secs ?? stepSecsDefault, total - cursor);
+  if (isLast) dur = r1(total - cursor); // last caption holds to the end
   stepMarkup += `
-        <div id="${name}-panel-${i}" class="clip panel" data-start="${start}" data-duration="${dur}" data-track-index="2"></div>
-        <video
-          id="${name}-stepvid-${i}"
-          class="step-vid"
-          src="${s.clip}"
-          data-start="${start}"
-          data-duration="${dur}"
-          data-media-start="${s.trim}"
-          data-track-index="1"
-          muted
-          playsinline
-        ></video>
-        <div id="${name}-cap-${i}" class="clip step-cap" data-start="${start}" data-duration="${dur}" data-track-index="3">
+        <div id="${name}-cap-${i}" class="clip step-cap" data-start="${r1(cursor)}" data-duration="${r1(dur)}" data-track-index="6">
           <div id="${name}-cap-${i}-wrap" class="cap-wrap">
             <span class="hook">${esc(s.caption)}</span>
           </div>
         </div>`;
-  const vol = audioVolumeFor(s.clip, stepVolume, `step ${i + 1} clip`);
-  if (vol > 0) {
-    stepAudio += `
-        <audio
-          id="${name}-stepaud-${i}"
-          src="${s.clip}"
-          data-start="${start}"
-          data-duration="${dur}"
-          data-media-start="${s.trim}"
-          data-track-index="${12 + i}"
-          data-volume="${vol}"
-        ></audio>`;
-  }
-  cursor += s.secs;
+  placed.push({ i, caption: s.caption, start: r1(cursor), dur: r1(dur) });
+  cursor += dur;
 });
 
 const composition = `<!doctype html>
@@ -314,32 +301,40 @@ const composition = `<!doctype html>
           overflow: hidden;
           background: #000;
         }
-        .fill {
+        .creator-full {
           position: absolute;
           inset: 0;
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
-        /* bottom sheet the screen recording plays in */
-        .panel {
+        /* 50/50 split: creator top half, demo bottom half */
+        .creator-top {
           position: absolute;
           left: 0;
-          right: 0;
-          top: 830px;
-          bottom: 0;
+          top: 0;
+          width: 1080px;
+          height: 960px;
+          object-fit: cover;
+        }
+        .demo-panel {
+          position: absolute;
+          left: 0;
+          top: 960px;
+          width: 1080px;
+          height: 960px;
           background: #fff;
         }
-        .step-vid {
+        .demo-bottom {
           position: absolute;
           left: 0;
-          top: 830px;
+          top: 960px;
           width: 1080px;
-          height: 1090px;
-          object-fit: contain;
-          object-position: top center;
+          height: 960px;
+          object-fit: ${demoFit};
+          object-position: center;
         }
-        /* hook caption: upper block of the creator segment */
+        /* hook caption: upper block of the fullscreen intro */
         .hook-cap {
           position: absolute;
           left: 180px;
@@ -347,12 +342,12 @@ const composition = `<!doctype html>
           top: 380px;
           text-align: center;
         }
-        /* step caption: sits at the seam between face and panel */
+        /* step captions: straddle the 50/50 seam */
         .step-cap {
           position: absolute;
           left: 120px;
           right: 120px;
-          bottom: 1080px;
+          top: 895px;
           text-align: center;
         }
         .cap-wrap {
@@ -382,8 +377,20 @@ const composition = `<!doctype html>
         data-width="1080"
         data-height="1920"
         data-duration="${total}"
-      >${creatorSegments}
-        <div id="${name}-hookcap" class="clip hook-cap" data-start="0" data-duration="${hookSecs}" data-track-index="3">
+      >${creatorIntro}${creatorSplit}
+        <div id="${name}-demo-panel" class="clip demo-panel" data-start="${introSecs}" data-duration="${r1(demoSecs)}" data-track-index="1"></div>
+        <video
+          id="${name}-demo"
+          class="demo-bottom"
+          src="${demo}"
+          data-start="${introSecs}"
+          data-duration="${r1(demoSecs)}"
+          data-media-start="${demoTrim}"
+          data-track-index="2"
+          muted
+          playsinline
+        ></video>
+        <div id="${name}-hookcap" class="clip hook-cap" data-start="0" data-duration="${introSecs}" data-track-index="6">
           <div id="${name}-hookcap-wrap" class="cap-wrap">
             <span class="hook">${esc(hook)}</span>
           </div>
@@ -400,7 +407,20 @@ const composition = `<!doctype html>
           data-volume="${creatorVol}"
         ></audio>`
             : ""
-        }${stepAudio}${
+        }${
+          demoVol > 0
+            ? `
+        <audio
+          id="${name}-demo-audio"
+          src="${demo}"
+          data-start="${introSecs}"
+          data-duration="${r1(demoSecs)}"
+          data-media-start="${demoTrim}"
+          data-track-index="11"
+          data-volume="${demoVol}"
+        ></audio>`
+            : ""
+        }${
           music
             ? `
         <audio
@@ -409,7 +429,7 @@ const composition = `<!doctype html>
           data-start="0"
           data-duration="${musicDur}"
           data-media-start="${musicStart}"
-          data-track-index="11"
+          data-track-index="12"
           data-volume="${musicVolume}"
         ></audio>`
             : ""
@@ -419,8 +439,8 @@ const composition = `<!doctype html>
       <script>
         window.__timelines = window.__timelines || {};
         (function () {
-          // auto text sizing: hook fits above the panel seam, step captions
-          // stay on one or two lines; floor 26px
+          // auto text sizing: hook fits the intro block, step captions stay
+          // to one or two lines around the seam; floor 26px
           function fit(wrapId, base, maxH) {
             const wrap = document.getElementById(wrapId);
             if (!wrap) return;
@@ -434,7 +454,7 @@ const composition = `<!doctype html>
           }
           function fitAll() {
             fit("${name}-hookcap-wrap", ${hookSize}, 400);
-${steps.map((_, i) => `            fit("${name}-cap-${i}-wrap", ${stepSize}, 240);`).join("\n")}
+${placed.map((p) => `            fit("${name}-cap-${p.i}-wrap", ${stepSize}, 240);`).join("\n")}
           }
           fitAll();
           if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitAll);
@@ -497,8 +517,8 @@ const host = `<!doctype html>
 
 writeFileSync(join(ROOT, "compositions", `${name}.html`), composition);
 writeFileSync(join(ROOT, `host-${name}.html`), host);
-console.log(`✔ compositions/${name}.html  (${hookSecs}s hook + ${steps.length} steps = ${total}s)`);
-steps.forEach((s, i) => console.log(`   step ${i + 1}: "${s.caption}" · ${s.secs}s @${s.trim}s`));
+console.log(`✔ compositions/${name}.html  (${introSecs}s intro + ${r1(demoSecs)}s split = ${total}s)`);
+placed.forEach((p) => console.log(`   caption ${p.i + 1}: "${p.caption}" · ${p.start}s → ${r1(p.start + p.dur)}s`));
 console.log(`✔ host-${name}.html`);
 
 if (flag("render")) {
