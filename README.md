@@ -1,16 +1,20 @@
 # reelclaw-templates
 
+> ### 🎬 Need creator footage for these templates?
+>
+> Every template here starts with real UGC — reaction hooks, typing shots, creator intros. **[DanSUGC](https://dansugc.com)** has UGC reaction videos from real creators, from **$5/video**, ready to drop straight into any template below. **→ [dansugc.com](https://dansugc.com)**
+
 Reusable [HyperFrames](https://hyperframes.heygen.com) video templates for TikTok / Instagram Reels growth content. Each template is a self-contained HyperFrames project with a generator script: give it media + text, get a render-ready 1080×1920 MP4.
 
 All templates follow the shared platform rules in [RULES.md](RULES.md) — TikTok Sans typography, classic white/black-outline captions, cross-platform safe zones, auto text sizing, and deterministic rendering.
 
 ## See it in action
 
-One command in, one reel out — the `reaction_demo` generator building and rendering a reel end-to-end:
+One command in, one reel out. Click a preview to watch the full-quality video.
 
-[![reaction_demo template demo — click for full quality](examples/reaction_demo_preview.gif)](examples/reaction_demo.mp4)
-
-*Click the preview to watch the full-quality video.*
+| [`reaction_demo`](templates/reaction_demo/) — generator + render, end to end | [`no_yapping`](templates/no_yapping/) — example output reel |
+| :---: | :---: |
+| [![reaction_demo demo](examples/reaction_demo_preview.gif)](examples/reaction_demo.mp4) | [![no_yapping demo](examples/no_yapping_preview.gif)](examples/no_yapping.mp4) |
 
 ## Templates
 
