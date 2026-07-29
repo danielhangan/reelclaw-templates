@@ -17,6 +17,7 @@ One command in, one reel out — the `reaction_demo` generator building and rend
 | Template | Format | Inputs |
 | --- | --- | --- |
 | [`reaction_demo`](templates/reaction_demo/) | Creator reaction with hook caption → hard cut to app demo | reaction video, demo video, hook text, optional music + second hook |
+| [`no_yapping`](templates/no_yapping/) | "…but no yapping" silent step tutorial — creator footage + N captioned screen-recording steps | creator video, hook text, ordered steps (caption + clip each), optional music |
 
 ## Requirements
 
