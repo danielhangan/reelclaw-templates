@@ -12,9 +12,9 @@ All templates follow the shared platform rules in [RULES.md](RULES.md) — TikTo
 
 One command in, one reel out. Click a preview to watch the full-quality video.
 
-| [`reaction_demo`](templates/reaction_demo/) — generator + render, end to end | [`no_yapping`](templates/no_yapping/) — example output reel |
-| :---: | :---: |
-| [![reaction_demo demo](examples/reaction_demo_preview.gif)](examples/reaction_demo.mp4) | [![no_yapping demo](examples/no_yapping_preview.gif)](examples/no_yapping.mp4) |
+| [`reaction_demo`](templates/reaction_demo/) — generator + render, end to end | [`no_yapping`](templates/no_yapping/) — example output reel | [`greenscreen_reaction`](templates/greenscreen_reaction/) — example output reel |
+| :---: | :---: | :---: |
+| [![reaction_demo demo](examples/reaction_demo_preview.gif)](examples/reaction_demo.mp4) | [![no_yapping demo](examples/no_yapping_preview.gif)](examples/no_yapping.mp4) | [![greenscreen_reaction demo](examples/greenscreen_reaction_preview.gif)](examples/greenscreen_reaction.mp4) |
 
 ## Templates
 
@@ -22,6 +22,7 @@ One command in, one reel out. Click a preview to watch the full-quality video.
 | --- | --- | --- |
 | [`reaction_demo`](templates/reaction_demo/) | Creator reaction with hook caption → hard cut to app demo | reaction video, demo video, hook text, optional music + second hook |
 | [`no_yapping`](templates/no_yapping/) | "…but no yapping" silent split-screen tutorial — fullscreen intro, then 50/50 typing/demo split, captions at the seam | intro video, typing video, demo video, hook text, ordered step captions, optional music |
+| [`greenscreen_reaction`](templates/greenscreen_reaction/) | TikTok greenscreen reaction — one video fullscreen, creator cut out of their background over it (optionally dragged from centre into the corner), both soundtracks on | full video (usually a TikTok screen recording), reaction video, optional hook text + size / position |
 
 ## Requirements
 
