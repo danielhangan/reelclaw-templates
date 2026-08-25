@@ -33,8 +33,24 @@ One command in, one reel out. Click a preview to watch the full-quality video.
 
 ## Quickstart
 
+Install any single template into its own folder with one command — no clone needed:
+
 ```bash
-cd templates/reaction_demo
+npx reelclaw-templates@latest                 # interactive picker
+npx reelclaw-templates@latest reaction_demo   # or name one directly
+```
+
+That scaffolds `./reaction_demo` with everything it needs — including `RULES.md` and a `CLAUDE.md` that teaches Claude Code the requirements, the generator, and the viral-hook playbook — then checks your environment (Node, ffmpeg, yt-dlp) and prints next steps. From there, either drive it with Claude Code:
+
+```bash
+cd reaction_demo && claude
+# > "make me a reel with reaction.mp4 and demo.mov"
+```
+
+…or run the generator directly:
+
+```bash
+cd reaction_demo
 
 node new-reel.mjs \
   --reaction path/or/url/to/reaction.mp4 \
@@ -50,14 +66,18 @@ See each template's README for the full flag reference.
 ## Repo layout
 
 ```
+cli/                        the `reelclaw-templates` npm installer (npx reelclaw-templates)
 fonts/                      TikTok Sans (canonical copy + OFL license)
 templates/<name>/           one self-contained HyperFrames project per template
   new-reel.mjs              generator: inputs → composition → render
+  CLAUDE.md                 template guide for Claude Code: requirements, usage, viral playbook
   assets/fonts/             font embedded by generated compositions
   compositions/             generated per reel (gitignored)
   index.html                placeholder composition (real ones are generated)
 RULES.md                    shared platform + style rules for all templates
 ```
+
+The installer fetches templates from this repo's `main` branch at run time, so publishing a new template only requires pushing it here — no npm release needed.
 
 ## Adding a new template
 

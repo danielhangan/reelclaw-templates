@@ -1,0 +1,31 @@
+{
+  "name": "reelclaw-templates",
+  "version": "0.1.0",
+  "description": "One-command installer for reelclaw TikTok/Reels video templates (HyperFrames). npx reelclaw-templates <template>",
+  "type": "module",
+  "bin": {
+    "reelclaw-templates": "bin/index.mjs"
+  },
+  "files": [
+    "bin"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielhangan/reelclaw-templates.git",
+    "directory": "cli"
+  },
+  "homepage": "https://github.com/danielhangan/reelclaw-templates#readme",
+  "keywords": [
+    "tiktok",
+    "reels",
+    "video",
+    "template",
+    "hyperframes",
+    "ugc",
+    "claude-code"
+  ],
+  "license": "MIT"
+}
