@@ -13,3 +13,6 @@ node_modules/
 .DS_Store
 *.log
 .hyperframes/
+
+# internal marketing material — never publish
+product_videos/
