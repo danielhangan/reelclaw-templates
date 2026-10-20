@@ -1,94 +1,132 @@
 # reelclaw-templates
 
-> ### 🎬 Need creator footage for these templates?
->
-> Every template here starts with real UGC — reaction hooks, typing shots, creator intros. **[DanSUGC](https://dansugc.com)** has UGC reaction videos from real creators, from **$5/video**, ready to drop straight into any template below. **→ [dansugc.com](https://dansugc.com)**
+**Viral short-form video templates you make and edit with Claude Code or Codex.** Pick a format that already works on TikTok, Reels and Shorts, install it with one line, hand the agent your clips, and get a 1080×1920 MP4 you can post.
 
-Reusable [HyperFrames](https://hyperframes.heygen.com) video templates for TikTok / Instagram Reels growth content. Each template is a self-contained HyperFrames project with a generator script: give it media + text, get a render-ready 1080×1920 MP4.
+```bash
+npx reelclaw@latest add reaction-demo
+```
 
-All templates follow the shared platform rules in [RULES.md](RULES.md) — TikTok Sans typography, classic white/black-outline captions, cross-platform safe zones, auto text sizing, and deterministic rendering.
+Then open `claude` or `codex` in that folder and say *"make a reaction-demo reel with react.mp4 and demo.mov, hook: i was about to quit and this app talked me out of it"*.
+
+- **One line per template.** No clone and no boilerplate. New templates ship from this repo without an npm release.
+- **Agent-native.** Every template is also an [Agent Skill](https://agentskills.io): inputs to collect, the exact command and a playbook for the format. Claude Code and Codex both read it.
+- **Your footage.** Local files, links (TikTok, Instagram, YouTube, X) or direct URLs. Optionally, real-creator clips from [DanSUGC](#footage-with-or-without-dansugc).
+- **Editable output.** Each reel is a plain [HyperFrames](https://hyperframes.heygen.com) HTML composition with semantic ids. Ask the agent to move a caption, change a cut or retime a word, then re-render.
+- **Platform-safe by default.** TikTok Sans, captions auto-fitted inside the cross-platform safe zone, static text, muted clip audio unless the format needs it ([RULES.md](RULES.md)).
 
 ## See it in action
 
-One command in, one reel out. Click a preview to watch the full-quality video.
-
-| [`reaction_demo`](templates/reaction_demo/) — generator + render, end to end | [`no_yapping`](templates/no_yapping/) — example output reel | [`greenscreen_reaction`](templates/greenscreen_reaction/) — example output reel |
+| [`reaction-demo`](templates/reaction-demo/): one prompt, one reel | [`no-yapping`](templates/no-yapping/): example reel | [`greenscreen-reaction`](templates/greenscreen-reaction/): example reel |
 | :---: | :---: | :---: |
-| [![reaction_demo demo](examples/reaction_demo_preview.gif)](examples/reaction_demo.mp4) | [![no_yapping demo](examples/no_yapping_preview.gif)](examples/no_yapping.mp4) | [![greenscreen_reaction demo](examples/greenscreen_reaction_preview.gif)](examples/greenscreen_reaction.mp4) |
+| [![reaction-demo workflow](examples/reaction_demo_preview.gif)](examples/reaction_demo.mp4) | [![no-yapping reel](examples/no_yapping_preview.gif)](examples/no_yapping.mp4) | [![greenscreen-reaction reel](examples/greenscreen_reaction_preview.gif)](examples/greenscreen_reaction.mp4) |
+
+## Install
+
+| You want | Run |
+| --- | --- |
+| One template in the current folder | `npx reelclaw@latest add reaction-demo` |
+| A fresh folder, straight into the agent | `npx reelclaw@latest add reaction-demo --dir my-reels && cd my-reels && claude` (or `codex`) |
+| Pick from the catalog | `npx reelclaw@latest add` |
+| Every template | `npx reelclaw@latest add --all` |
+| Only the skill (any agent; it installs the engine the first time it runs) | `npx skills add danielhangan/reelclaw-templates --skill reaction-demo` |
+| All template skills as a Claude Code plugin | `claude plugin marketplace add danielhangan/reelclaw-templates && claude plugin install reelclaw-templates@reelclaw-templates` |
+| Straight from GitHub (no npm release needed) | `npx github:danielhangan/reelclaw-templates add reaction-demo` |
+
+`add` sets up a reel project: `templates/<id>/`, the `reelclaw` engine (`npm install`), and instructions for both agents (`CLAUDE.md` and `.claude/skills/` for Claude Code, `AGENTS.md` and `.agents/skills/` for Codex). It finishes with `reelclaw doctor`. Run it again later to add more templates. It updates the ones you have not edited and keeps the ones you have. Details: [docs/INSTALL.md](docs/INSTALL.md).
+
+**Requirements:** Node.js 22+ and ffmpeg (`brew install ffmpeg` · `sudo apt install ffmpeg` · `winget install ffmpeg`). yt-dlp is optional and only needed for page links. HyperFrames downloads headless Chrome on the first render.
 
 ## Templates
 
-| Template | Format | Inputs |
-| --- | --- | --- |
-| [`reaction_demo`](templates/reaction_demo/) | Creator reaction with hook caption → hard cut to app demo | reaction video, demo video, hook text, optional music + second hook |
-| [`no_yapping`](templates/no_yapping/) | "…but no yapping" silent split-screen tutorial — fullscreen intro, then 50/50 typing/demo split, captions at the seam | intro video, typing video, demo video, hook text, ordered step captions, optional music |
-| [`greenscreen_reaction`](templates/greenscreen_reaction/) | TikTok greenscreen reaction — one video fullscreen, creator cut out of their background over it (optionally dragged from centre into the corner), both soundtracks on | full video (usually a TikTok screen recording), reaction video, optional hook text + size / position |
+<!-- gallery:start (generated by `npm run registry` from registry.json — do not edit by hand) -->
+| Preview | Template | What it makes | Install |
+| :---: | --- | --- | --- |
+|  | **[Before / After](templates/before-after/)**<br>`before-after` · before-after | Before/after transformation reveal from two photos or clips: a full-screen swipe from before to after, or a labelled top/bottom split. For glow-ups, makeovers, results, edits and app redesigns.<br><sub>media: `--before`, `--after`, `--music`</sub> | `npx reelclaw@latest add before-after` |
+| <img src="templates/greenscreen-reaction/preview.gif" width="120" alt="greenscreen-reaction preview"> | **[Greenscreen reaction](templates/greenscreen-reaction/)**<br>`greenscreen-reaction` · greenscreen | TikTok greenscreen reaction: any video plays full screen while a creator, cut out of their background by a local AI model, talks over it from a corner. Both soundtracks on; optional drag-into-place opener.<br><sub>media: `--video`, `--reaction`</sub> | `npx reelclaw@latest add greenscreen-reaction` |
+|  | **[Numbered Listicle](templates/listicle/)**<br>`listicle` · listicle | "3 apps that feel illegal to know" countdown: a hook title card, then numbered items — each with its own clip or photo, title and optional note — and an optional CTA. Optional beat-synced cuts.<br><sub>media: `--item`, `--hook-clip`, `--music`</sub> | `npx reelclaw@latest add listicle` |
+| <img src="templates/no-yapping/preview.gif" width="120" alt="no-yapping preview"> | **[…but no yapping](templates/no-yapping/)**<br>`no-yapping` · tutorial | Silent split-screen tutorial: a fullscreen intro under an outcome hook ("making $10k but no yapping"), then typing footage over a screen recording with short step captions on the seam. Farms saves and shares.<br><sub>media: `--intro`, `--typing`, `--demo`, `--music`</sub> | `npx reelclaw@latest add no-yapping` |
+|  | **[Reaction → Demo](templates/reaction-demo/)**<br>`reaction-demo` · reaction | UGC reaction hook into an app demo: a creator reacts for ~3s under a hook caption, then a hard cut to the screen recording that answers it.<br><sub>media: `--reaction`, `--demo`, `--music`</sub> | `npx reelclaw@latest add reaction-demo` |
+|  | **[Talking head + word captions](templates/talking-head-captions/)**<br>`talking-head-captions` · talking-head | Creator talking to camera with bold word-by-word captions (spoken word highlighted), tightened pauses, punch-in zooms, optional hook title, b-roll cutaways and ducked music. The default edit for advice, storytime and UGC testimonials.<br><sub>media: `--clip`, `--broll`, `--music`</sub> | `npx reelclaw@latest add talking-head-captions` |
+|  | **[Wall of Text over B-roll](templates/wall-of-text/)**<br>`wall-of-text` · text-story | POV / storytime / confession: a long first-person text in TikTok's native white text box over looping b-roll, with an optional second card (the reveal). The go-to organic app-promo format.<br><sub>media: `--broll`, `--music`</sub> | `npx reelclaw@latest add wall-of-text` |
+<!-- gallery:end -->
 
-## Requirements
+Each template folder has a README with every flag, and a SKILL.md with the playbook. [`catalog/`](catalog/) holds the roadmap: about 200 researched viral formats, their taxonomy, and the engine features each one needs.
 
-- Node.js 18+
-- `ffmpeg` / `ffprobe` on PATH (media probing + frame extraction)
-- Headless Chrome is managed automatically by the HyperFrames CLI
-- Optional: `yt-dlp` for downloading page links (TikTok/IG/YouTube) as inputs
+## Make a reel by hand
 
-## Quickstart
-
-Install any single template into its own folder with one command — no clone needed:
-
-```bash
-npx reelclaw-templates@latest                 # interactive picker
-npx reelclaw-templates@latest reaction_demo   # or name one directly
-```
-
-That scaffolds `./reaction_demo` with everything it needs — including `RULES.md` and a `CLAUDE.md` that teaches Claude Code the requirements, the generator, and the viral-hook playbook — then checks your environment (Node, ffmpeg, yt-dlp) and prints next steps. From there, either drive it with Claude Code:
+The agent runs these for you, but they are plain commands:
 
 ```bash
-cd reaction_demo && claude
-# > "make me a reel with reaction.mp4 and demo.mov"
+npx reelclaw make reaction-demo --reaction react.mp4 --demo demo.mov \
+  --hook "i was about to quit and this app talked me out of it" --draft   # → renders/reaction-demo-1.mp4
+npx reelclaw make reaction-demo --props reels/reaction-demo-1.json --hook "new hook" --name b --draft
+npx reelclaw batch reaction-demo hooks.json --props reels/reaction-demo-1.json   # one reel per row
+npx reelclaw render b                                                      # final quality
+npx reelclaw make reaction-demo --help                                     # every flag
 ```
 
-…or run the generator directly:
+`reels/<name>.html` is the composition and `reels/<name>.json` holds the inputs that made it. After hand edits, run `npx reelclaw check <name>`, then `npx reelclaw render <name>`.
+
+## How it works
+
+```
+templates/<id>/template.mjs        defineTemplate({ inputs, build })   ← 40–150 lines per template
+        │  inputs: flags or --props JSON, validated (zod); media copied to assets/ and probed
+        ▼
+build({ inputs }) → timeline([...])  video · visual · caption · music · html … + components
+        │                            (blur fill, native text, word captions, cut-outs, beat sync, wipes)
+        ▼
+compile → reels/<name>.html          one deterministic HyperFrames composition, one paused GSAP timeline
+        ▼
+hyperframes@0.8.181 render → renders/<name>.mp4   (pinned renderer: a reel re-renders identically)
+```
+
+A template declares its inputs once. They drive the CLI flags, validation, the props schema, the README flags table, the registry entry and the agent skill. `build()` is pure: it says what is on screen and when, and the engine handles downloads, probing, safe zones, caption fitting, linting and rendering. Start with [`templates/reaction-demo/template.mjs`](templates/reaction-demo/template.mjs) (about 60 lines), then [docs/TEMPLATE_API.md](docs/TEMPLATE_API.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+## Contribute a template from a link
+
+Seen a format going viral? Turn it into a template:
 
 ```bash
-cd reaction_demo
-
-node new-reel.mjs \
-  --reaction path/or/url/to/reaction.mp4 \
-  --demo path/or/url/to/demo.mp4 \
-  --hook "i was about to hit it and this app talked me out of it" \
-  --render
-
-# → renders/reel-1.mp4 (1080x1920 @ 30fps)
+gh repo fork danielhangan/reelclaw-templates --clone && cd reelclaw-templates
+npm install && npm run fixtures
+claude   # or codex
+> make a template from https://www.tiktok.com/@creator/video/...
 ```
 
-See each template's README for the full flag reference.
+The repo's `new-template` skill runs `reelclaw analyze` on the video (shots, cut times, pacing, keyframes), describes the format and checks it with you. It then scaffolds `templates/<id>/`, renders it next to the reference to compare, validates, and opens a PR. Only the link is stored, never the video. The manual steps and the review criteria are in [CONTRIBUTING.md](CONTRIBUTING.md). No time to build it? [Request a template](https://github.com/danielhangan/reelclaw-templates/issues/new?template=template-request.yml).
+
+## Footage: with or without DanSUGC
+
+Templates run on **your own clips**. A 3-second phone selfie makes a fine reaction hook.
+
+If you want real-creator UGC (reaction hooks, typing shots, intros), **[DanSUGC](https://dansugc.com)** sells clips ready to drop into these templates. Connect its MCP server and the agent can search for clips that match your hook, show prices in credits, and buy only after you say yes:
+
+```bash
+claude mcp add --transport http dansugc https://dansugc.com/mcp    # Claude Code
+codex mcp add dansugc --url https://dansugc.com/mcp                # Codex
+```
+
+This is optional. Every template works without it.
 
 ## Repo layout
 
 ```
-cli/                        the `reelclaw-templates` npm installer (npx reelclaw-templates)
-fonts/                      TikTok Sans (canonical copy + OFL license)
-templates/<name>/           one self-contained HyperFrames project per template
-  new-reel.mjs              generator: inputs → composition → render
-  CLAUDE.md                 template guide for Claude Code: requirements, usage, viral playbook
-  assets/fonts/             font embedded by generated compositions
-  compositions/             generated per reel (gitignored)
-  index.html                placeholder composition (real ones are generated)
-RULES.md                    shared platform + style rules for all templates
+packages/reelclaw/    the `reelclaw` npm package: engine (src/core), CLI (src/cli), analyze/scaffold (src/analyze)
+templates/<id>/       template.mjs · SKILL.md · README.md · example.json · preview.gif
+registry.json         generated catalog that `reelclaw add` reads from GitHub (npm run registry)
+.claude-plugin/       generated marketplace manifest (Claude Code plugin + `npx skills`)
+.claude/ .agents/     the new-template skill for contributors (Claude Code / Codex)
+catalog/              format research: taxonomy, ~200 formats, primitives roadmap
+shared/fonts/         TikTok Sans (single canonical copy, OFL)
+cli/                  legacy `reelclaw-templates` package: forwards to `reelclaw add`
+scripts/ test/ .github/   fixtures, registry, smoke renders, integration tests, CI
 ```
 
-The installer fetches templates from this repo's `main` branch at run time, so publishing a new template only requires pushing it here — no npm release needed.
-
-## Adding a new template
-
-1. `npx hyperframes init templates/<template_name> --non-interactive --example=blank`
-2. Copy `fonts/` into `templates/<template_name>/assets/fonts/`
-3. Write a generator script that stamps out compositions from CLI inputs
-4. Follow [RULES.md](RULES.md) for typography, captions, safe zones, and audio defaults
-5. Add a README documenting the format and every flag
-6. Register it in the table above
+Development: `npm install && npm run fixtures`, then `npm run check` (typecheck, unit tests, validate every template). `npm run test:integration` makes every example and checks it is deterministic.
 
 ## Licenses
 
-- TikTok Sans is redistributed under the [SIL Open Font License 1.1](fonts/OFL.txt).
-- Video/audio inputs you feed the generators are your responsibility (rights + platform terms).
+- Code: MIT.
+- TikTok Sans is redistributed under the [SIL Open Font License 1.1](shared/fonts/OFL.txt).
+- You are responsible for the rights to the footage and music you put into a reel, and for each platform's terms.

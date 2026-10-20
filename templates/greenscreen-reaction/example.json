@@ -1,0 +1,15 @@
+{
+  "template": "greenscreen-reaction",
+  "inputs": {
+    "video": "fixtures/portrait-talking.mp4",
+    "reaction": "fixtures/person-on-green.mp4",
+    "hook": "please tag the app developer bc they lowkey saved my life",
+    "size": 45,
+    "flip": true,
+    "startPosition": "center",
+    "startSize": 60,
+    "moveAt": 1.5,
+    "overlayStart": 0.3,
+    "cutoutQuality": "fast"
+  }
+}

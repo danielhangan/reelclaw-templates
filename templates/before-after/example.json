@@ -1,0 +1,14 @@
+{
+  "template": "before-after",
+  "inputs": {
+    "before": "fixtures/photo.jpg",
+    "after": "fixtures/portrait-silent.mp4",
+    "hook": "6 months of fixing my posture",
+    "payoff": "worth every morning",
+    "beforeSecs": 1.5,
+    "afterSecs": 2.5,
+    "music": "fixtures/music.m4a",
+    "musicStart": 2,
+    "musicVolume": 0.8
+  }
+}

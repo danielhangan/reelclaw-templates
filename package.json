@@ -1,0 +1,55 @@
+{
+  "name": "reelclaw-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Viral short-form video templates (TikTok / Reels / Shorts) you edit with Claude Code or Codex. npx reelclaw@latest add <template>",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "bin": {
+    "reelclaw": "packages/reelclaw/bin/reelclaw.mjs"
+  },
+  "exports": {
+    ".": "./packages/reelclaw/src/index.mjs",
+    "./core": "./packages/reelclaw/src/core/index.mjs",
+    "./cli": "./packages/reelclaw/src/cli/main.mjs",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "packages/reelclaw/bin",
+    "packages/reelclaw/src",
+    "packages/reelclaw/package.json",
+    "shared",
+    "templates",
+    "RULES.md",
+    "!templates/*/preview.*"
+  ],
+  "dependencies": {
+    "gsap": "3.15.0",
+    "hyperframes": "0.8.181",
+    "zod": "^4.1.0"
+  },
+  "scripts": {
+    "test": "node --test \"packages/*/test/**/*.test.mjs\" \"test/unit/**/*.test.mjs\"",
+    "test:integration": "node --test --test-concurrency=1 \"test/integration/**/*.test.mjs\"",
+    "smoke": "node scripts/smoke-render.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "validate": "node packages/reelclaw/bin/reelclaw.mjs validate",
+    "registry": "node packages/reelclaw/bin/reelclaw.mjs registry",
+    "fixtures": "node scripts/make-fixtures.mjs",
+    "check": "npm run typecheck && npm test && npm run validate"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielhangan/reelclaw-templates.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.0"
+  }
+}
