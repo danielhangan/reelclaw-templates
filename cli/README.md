@@ -1,16 +1,19 @@
-# reelclaw-templates
+# reelclaw-templates (legacy name)
 
-One command to install a TikTok/Reels video template — a self-contained [HyperFrames](https://hyperframes.heygen.com) project with a generator script: give it media + text, get a render-ready 1080×1920 MP4.
+This package is now **[`reelclaw`](https://www.npmjs.com/package/reelclaw)**. It stays published so old links keep working, and forwards everything to `reelclaw add`:
 
 ```bash
-npx reelclaw-templates@latest                 # interactive picker
-npx reelclaw-templates@latest reaction_demo   # or name a template directly
+npx reelclaw-templates@latest                   # = npx reelclaw@latest add              (picker)
+npx reelclaw-templates@latest reaction-demo     # = npx reelclaw@latest add reaction-demo --dir reaction-demo
+npx reelclaw-templates@latest --list            # = npx reelclaw@latest add --list
 ```
 
-Each installed template ships a `CLAUDE.md` that teaches [Claude Code](https://claude.com/claude-code) the requirements, the generator flags, and the viral-hook playbook — so `cd <template> && claude` is all it takes.
+Use the new command directly:
 
-Templates are fetched from [danielhangan/reelclaw-templates](https://github.com/danielhangan/reelclaw-templates) at install time; see that repo for the template catalog, previews, and docs.
+```bash
+npx reelclaw@latest add reaction-demo
+```
 
-**Requirements:** Node 18+, `ffmpeg`/`ffprobe` on PATH, optional `yt-dlp` for page-link inputs. The installer checks all of these and tells you what's missing.
+It sets up a reel project for Claude Code and Codex (templates, `AGENTS.md`, `CLAUDE.md`, skills, the engine) in the current folder. Requires Node 22+ and ffmpeg.
 
-Need creator footage? [DanSUGC](https://dansugc.com) has UGC reaction videos from real creators, from $5/video.
+Templates, docs and install one-liners: https://github.com/danielhangan/reelclaw-templates (see `docs/INSTALL.md`).

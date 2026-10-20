@@ -1,0 +1,172 @@
+# CI for reelclaw-templates.
+#
+#   check      typecheck + unit tests on every supported Node
+#   templates  fixtures → `reelclaw validate` (manifests, SKILL.md, examples, make + lint)
+#              → integration tests (lint + deterministic HTML) → registry.json / marketplace.json freshness
+#   plan       which templates to smoke-render (scripts/changed-templates.mjs):
+#              PR/push = templates touched by the diff (all, sampled, when the engine changes);
+#              nightly / manual = everything
+#   smoke      draft-render the planned templates from their example.json, ffprobe-check
+#              1080x1920 / 30fps / h264 / duration / audio, upload MP4 + frame strips
+#
+# Everything here also runs locally: npm run check · npm run test:integration · npm run smoke -- <id>
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "23 3 * * *" # nightly: smoke-render every template
+  workflow_dispatch:
+    inputs:
+      templates:
+        description: "Templates to smoke-render (space separated). Empty = all."
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}-${{ github.event_name }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  HYPERFRAMES_NO_TELEMETRY: "1"
+  HYPERFRAMES_SKIP_SKILLS: "1"
+  # The Node line the engine supports first (engines: >=22); `check` also runs the newer ones.
+  NODE_VERSION: "22"
+
+jobs:
+  check:
+    name: check (node ${{ matrix.node }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ["22", "24"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+  templates:
+    name: templates (validate, lint, determinism, registry)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - name: Install ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq --no-install-recommends ffmpeg
+      - run: npm ci
+      # matting / beat models used by templates' prepare() steps
+      - name: Cache HyperFrames models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/hyperframes
+          key: hyperframes-templates-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: hyperframes-templates-${{ runner.os }}-
+      - name: Generate fixture media
+        run: npm run fixtures
+      - name: reelclaw validate
+        run: npm run validate
+      - name: Integration tests (make + hyperframes lint + deterministic HTML)
+        run: npm run test:integration
+      - name: registry.json, marketplace.json and the README gallery are up to date
+        run: npm run registry -- --check
+
+  plan:
+    name: plan smoke renders
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
+      count: ${{ steps.plan.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the diff needs the base commit
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - id: plan
+        env:
+          EVENT: ${{ github.event_name }}
+          PR_BASE: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          ONLY: ${{ github.event.inputs.templates }}
+        run: |
+          case "$EVENT" in
+            schedule) node scripts/changed-templates.mjs --all --github ;;
+            workflow_dispatch)
+              if [ -n "$ONLY" ]; then node scripts/changed-templates.mjs --only "$ONLY" --github
+              else node scripts/changed-templates.mjs --all --github; fi ;;
+            pull_request) node scripts/changed-templates.mjs --base "$PR_BASE" --max 24 --github ;;
+            *) node scripts/changed-templates.mjs --base "$PUSH_BEFORE" --max 24 --github ;;
+          esac
+
+  smoke:
+    name: smoke render (${{ matrix.shard.name }})
+    needs: [check, plan]
+    if: needs.plan.outputs.count != '0' && needs.plan.outputs.count != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        shard: ${{ fromJSON(needs.plan.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      # ffmpeg encodes; the libraries are what chrome-headless-shell needs on Debian/Ubuntu
+      # (HyperFrames' linuxDeps list, Ubuntu 24.04 t64 package names). It runs with --no-sandbox.
+      - name: Install ffmpeg + headless Chrome libraries
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq --no-install-recommends ffmpeg unzip fontconfig fonts-dejavu-core \
+            libnss3 libnspr4 libatk1.0-0t64 libatk-bridge2.0-0t64 libcups2t64 libdrm2 libxkbcommon0 \
+            libatspi2.0-0t64 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 libgbm1 \
+            libpango-1.0-0 libcairo2 libasound2t64
+      - run: npm ci
+      - name: Cache HyperFrames browser + models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/hyperframes
+          key: hyperframes-smoke-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: hyperframes-smoke-${{ runner.os }}-
+      - name: Prepare headless Chrome
+        run: |
+          npx --no-install hyperframes browser ensure
+          npx --no-install hyperframes doctor || true
+      - name: Generate fixture media
+        run: npm run fixtures
+      - name: Render, probe and extract frames
+        env:
+          TEMPLATES: ${{ matrix.shard.templates }}
+        # space-separated ids (kebab-case, validated by the planner); passed via env, never interpolated into the script
+        run: node scripts/smoke-render.mjs "$TEMPLATES" --out smoke --workers 2
+      - name: Upload renders + frames
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-${{ matrix.shard.name }}
+          path: smoke/
+          retention-days: 14
+          if-no-files-found: ignore

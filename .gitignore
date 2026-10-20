@@ -1,15 +1,21 @@
-# generated per reel
-templates/*/compositions/*.html
-templates/*/host-*.html
-templates/*/renders/
-templates/*/snapshots*/
+# reel-project folders created when running reelclaw from the repo root
+/assets/
+/reels/
+/renders/
+.reelclaw/
 
-# downloaded/staged media (fonts are kept)
-templates/*/assets/*
-!templates/*/assets/fonts/
+# synthetic test media (npm run fixtures)
+fixtures/
+
+# copied from shared/fonts at pack time (prepack)
+packages/reelclaw/fonts/
+
+# reference videos pulled by `reelclaw analyze` (never commit them: copyright)
+analysis/
 
 # system / tooling
 node_modules/
 .DS_Store
 *.log
+*.tgz
 .hyperframes/

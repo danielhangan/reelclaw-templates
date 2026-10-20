@@ -1,0 +1,12 @@
+{
+  "template": "talking-head-captions",
+  "inputs": {
+    "clip": "fixtures/portrait-talking.mp4",
+    "transcript": "templates/talking-head-captions/example-transcript.json",
+    "hook": "3 things nobody tells you about growing on tiktok",
+    "broll": ["fixtures/landscape-screen.mp4", "fixtures/photo.jpg"],
+    "brollAt": ["2.4-3.4", "4.5+0.9"],
+    "music": "fixtures/music.m4a",
+    "musicVolume": 0.15
+  }
+}

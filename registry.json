@@ -1,0 +1,1810 @@
+{
+  "version": 1,
+  "repo": "danielhangan/reelclaw-templates",
+  "ref": "main",
+  "templates": [
+    {
+      "id": "before-after",
+      "name": "Before / After",
+      "description": "Before/after transformation reveal from two photos or clips: a full-screen swipe from before to after, or a labelled top/bottom split. For glow-ups, makeovers, results, edits and app redesigns.",
+      "category": "before-after",
+      "tags": [
+        "before-after",
+        "transformation",
+        "glow-up",
+        "reveal",
+        "wipe",
+        "split-screen",
+        "results"
+      ],
+      "source": {
+        "notes": "Swipe-reveal transformation posts: hook on top, lowercase before/after labels in TikTok's native text box."
+      },
+      "inputs": [
+        {
+          "key": "before",
+          "flag": "--before",
+          "kind": "visual",
+          "required": true,
+          "description": "Before photo or clip",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "after",
+          "flag": "--after",
+          "kind": "visual",
+          "required": true,
+          "description": "After photo or clip",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "layout",
+          "flag": "--layout",
+          "kind": "enum",
+          "required": false,
+          "default": "wipe",
+          "options": [
+            "wipe",
+            "split"
+          ],
+          "description": "wipe: full-screen swipe from before to after; split: before on top, after below",
+          "hint": "wipe|split"
+        },
+        {
+          "key": "hook",
+          "flag": "--hook",
+          "kind": "text",
+          "required": false,
+          "description": "Hook text for the whole reel",
+          "hint": "\"text\""
+        },
+        {
+          "key": "payoff",
+          "flag": "--payoff",
+          "kind": "text",
+          "required": false,
+          "description": "Optional line that replaces the hook once the after is revealed",
+          "hint": "\"text\""
+        },
+        {
+          "key": "beforeLabel",
+          "flag": "--before-label",
+          "kind": "text",
+          "required": false,
+          "default": "before",
+          "description": "Label on the before (empty string hides it)",
+          "hint": "\"text\""
+        },
+        {
+          "key": "afterLabel",
+          "flag": "--after-label",
+          "kind": "text",
+          "required": false,
+          "default": "after",
+          "description": "Label on the after (empty string hides it)",
+          "hint": "\"text\""
+        },
+        {
+          "key": "theme",
+          "flag": "--theme",
+          "kind": "enum",
+          "required": false,
+          "default": "white",
+          "options": [
+            "white",
+            "dark",
+            "black",
+            "red",
+            "yellow"
+          ],
+          "description": "Text look for hook and labels: TikTok's native text box",
+          "hint": "white|dark|black|red|yellow"
+        },
+        {
+          "key": "beforeSecs",
+          "flag": "--before-secs",
+          "kind": "number",
+          "required": false,
+          "description": "How long the before shows alone (wipe, or split with --reveal); default 2s for a photo, up to 3s of a clip",
+          "hint": "<0.5..15s>"
+        },
+        {
+          "key": "afterSecs",
+          "flag": "--after-secs",
+          "kind": "number",
+          "required": false,
+          "description": "How long the after holds once revealed (split without --reveal: the reel length); default 3–8s from the media",
+          "hint": "<1..30s>"
+        },
+        {
+          "key": "wipeSecs",
+          "flag": "--wipe-secs",
+          "kind": "number",
+          "required": false,
+          "default": 0.7,
+          "description": "Length of the swipe",
+          "hint": "<0.2..3s>"
+        },
+        {
+          "key": "direction",
+          "flag": "--direction",
+          "kind": "enum",
+          "required": false,
+          "default": "right",
+          "options": [
+            "right",
+            "left",
+            "down",
+            "up"
+          ],
+          "description": "Which way the swipe travels",
+          "hint": "right|left|down|up"
+        },
+        {
+          "key": "reveal",
+          "flag": "--reveal",
+          "kind": "boolean",
+          "required": false,
+          "default": false,
+          "description": "split: keep the after half dark, then swipe it in after --before-secs",
+          "hint": ""
+        },
+        {
+          "key": "focusX",
+          "flag": "--focus-x",
+          "kind": "number",
+          "required": false,
+          "default": 50,
+          "description": "Horizontal focus kept in frame when footage is cropped",
+          "hint": "<0..100%>"
+        },
+        {
+          "key": "focusY",
+          "flag": "--focus-y",
+          "kind": "number",
+          "required": false,
+          "default": 45,
+          "description": "Vertical focus kept in frame (split halves crop a lot: lower = keep the top)",
+          "hint": "<0..100%>"
+        },
+        {
+          "key": "music",
+          "flag": "--music",
+          "kind": "audio",
+          "required": false,
+          "description": "Background music (fades out over the last 0.8s)",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "musicVolume",
+          "flag": "--music-volume",
+          "kind": "number",
+          "required": false,
+          "default": 1,
+          "description": "Music level",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "musicStart",
+          "flag": "--music-start",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the music (start on the drop)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "beforeVolume",
+          "flag": "--before-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Before clip's own sound (muted by default)",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "afterVolume",
+          "flag": "--after-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "After clip's own sound (muted by default)",
+          "hint": "<0..1>"
+        }
+      ],
+      "media": [
+        "before",
+        "after",
+        "music"
+      ],
+      "path": "templates/before-after",
+      "files": [
+        "README.md",
+        "SKILL.md",
+        "example.json",
+        "template.mjs"
+      ],
+      "install": {
+        "reelclaw": "npx reelclaw@latest add before-after",
+        "github": "npx github:danielhangan/reelclaw-templates add before-after",
+        "skills": "npx skills add danielhangan/reelclaw-templates --skill before-after"
+      }
+    },
+    {
+      "id": "greenscreen-reaction",
+      "name": "Greenscreen reaction",
+      "description": "TikTok greenscreen reaction: any video plays full screen while a creator, cut out of their background by a local AI model, talks over it from a corner. Both soundtracks on; optional drag-into-place opener.",
+      "category": "greenscreen",
+      "tags": [
+        "ugc",
+        "greenscreen",
+        "reaction",
+        "cutout",
+        "background-removal",
+        "app-promo",
+        "commentary"
+      ],
+      "inputs": [
+        {
+          "key": "video",
+          "flag": "--video",
+          "kind": "video",
+          "required": true,
+          "description": "Background video, full screen (TikTok/screen recording/clip). Landscape gets a blurred fill",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "reaction",
+          "flag": "--reaction",
+          "kind": "video",
+          "required": true,
+          "description": "Creator reaction clip; its background is removed (or pass a transparent .webm/.mov)",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "hook",
+          "flag": "--hook",
+          "kind": "text",
+          "required": false,
+          "description": "Hook caption",
+          "hint": "\"text\""
+        },
+        {
+          "key": "hookPosition",
+          "flag": "--hook-position",
+          "kind": "enum",
+          "required": false,
+          "default": "top",
+          "options": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "description": "Where the hook sits in the safe band (top clears the cut-out)",
+          "hint": "top|center|bottom"
+        },
+        {
+          "key": "hookStyle",
+          "flag": "--hook-style",
+          "kind": "enum",
+          "required": false,
+          "default": "tiktok-outline",
+          "options": [
+            "tiktok-outline",
+            "tiktok-box",
+            "tiktok-box-dark",
+            "plain"
+          ],
+          "description": "Caption look",
+          "hint": "tiktok-outline|tiktok-box|tiktok-box-dark|plain"
+        },
+        {
+          "key": "hookSize",
+          "flag": "--hook-size",
+          "kind": "number",
+          "required": false,
+          "default": 58,
+          "description": "Base caption size; long text auto-shrinks to fit",
+          "hint": "<26..120px>"
+        },
+        {
+          "key": "hookStart",
+          "flag": "--hook-start",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "When the hook appears",
+          "hint": "<secs>"
+        },
+        {
+          "key": "hookSecs",
+          "flag": "--hook-secs",
+          "kind": "number",
+          "required": false,
+          "description": "How long the hook stays up (default: rest of the reel)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "size",
+          "flag": "--size",
+          "kind": "number",
+          "required": false,
+          "default": 40,
+          "description": "Cut-out width as % of the frame width, measured on the person",
+          "hint": "<5..100%>"
+        },
+        {
+          "key": "position",
+          "flag": "--position",
+          "kind": "enum",
+          "required": false,
+          "default": "bottom-left",
+          "options": [
+            "top-left",
+            "top-center",
+            "top-right",
+            "center-left",
+            "center",
+            "center-right",
+            "bottom-left",
+            "bottom-center",
+            "bottom-right"
+          ],
+          "description": "Where the cut-out rests",
+          "hint": "top-left|top-center|top-right|center-left|center|center-right|bottom-left|bottom-center|bottom-right"
+        },
+        {
+          "key": "margin",
+          "flag": "--margin",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Inset from the frame edges (0 = flush, body runs off the bottom)",
+          "hint": "<px>"
+        },
+        {
+          "key": "x",
+          "flag": "--x",
+          "kind": "number",
+          "required": false,
+          "description": "Exact cut-out left edge; overrides --position on that axis",
+          "hint": "<px>"
+        },
+        {
+          "key": "y",
+          "flag": "--y",
+          "kind": "number",
+          "required": false,
+          "description": "Exact cut-out top edge; overrides --position on that axis",
+          "hint": "<px>"
+        },
+        {
+          "key": "flip",
+          "flag": "--flip",
+          "kind": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Mirror the cut-out so the creator faces into the frame",
+          "hint": ""
+        },
+        {
+          "key": "crop",
+          "flag": "--crop",
+          "kind": "enum",
+          "required": false,
+          "default": "auto",
+          "options": [
+            "auto",
+            "none"
+          ],
+          "description": "auto: size/place the person (alpha bounding box); none: the whole source frame",
+          "hint": "auto|none"
+        },
+        {
+          "key": "startPosition",
+          "flag": "--start-position",
+          "kind": "enum",
+          "required": false,
+          "options": [
+            "top-left",
+            "top-center",
+            "top-right",
+            "center-left",
+            "center",
+            "center-right",
+            "bottom-left",
+            "bottom-center",
+            "bottom-right"
+          ],
+          "description": "Opening spot; the cut-out is then dragged to --position (turns the drag on)",
+          "hint": "top-left|top-center|top-right|center-left|center|center-right|bottom-left|bottom-center|bottom-right"
+        },
+        {
+          "key": "startX",
+          "flag": "--start-x",
+          "kind": "number",
+          "required": false,
+          "description": "Exact opening left edge (turns the drag on)",
+          "hint": "<px>"
+        },
+        {
+          "key": "startY",
+          "flag": "--start-y",
+          "kind": "number",
+          "required": false,
+          "description": "Exact opening top edge (turns the drag on)",
+          "hint": "<px>"
+        },
+        {
+          "key": "startSize",
+          "flag": "--start-size",
+          "kind": "number",
+          "required": false,
+          "description": "Opening width, to grow/shrink during the drag (turns the drag on)",
+          "hint": "<5..100%>"
+        },
+        {
+          "key": "moveAt",
+          "flag": "--move-at",
+          "kind": "number",
+          "required": false,
+          "description": "When the drag starts (default 2)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "moveSecs",
+          "flag": "--move-secs",
+          "kind": "number",
+          "required": false,
+          "description": "Drag duration (default 0.9)",
+          "hint": "<0.1..5s>"
+        },
+        {
+          "key": "moveEase",
+          "flag": "--move-ease",
+          "kind": "text",
+          "required": false,
+          "description": "GSAP ease of the drag (default power2.inOut, reads as a hand)",
+          "hint": "\"text\""
+        },
+        {
+          "key": "length",
+          "flag": "--length",
+          "kind": "enum",
+          "required": false,
+          "default": "video",
+          "options": [
+            "video",
+            "reaction"
+          ],
+          "description": "What sets the reel length; reaction loops the video under a longer reaction",
+          "hint": "video|reaction"
+        },
+        {
+          "key": "secs",
+          "flag": "--secs",
+          "kind": "number",
+          "required": false,
+          "description": "Cap the reel length",
+          "hint": "<secs>"
+        },
+        {
+          "key": "videoTrim",
+          "flag": "--video-trim",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the background video (start right before its wow moment)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "videoFit",
+          "flag": "--video-fit",
+          "kind": "enum",
+          "required": false,
+          "default": "auto",
+          "options": [
+            "auto",
+            "cover",
+            "blur"
+          ],
+          "description": "auto: cover for portrait, blurred fill for landscape",
+          "hint": "auto|cover|blur"
+        },
+        {
+          "key": "overlayStart",
+          "flag": "--overlay-start",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "When the cut-out appears",
+          "hint": "<secs>"
+        },
+        {
+          "key": "reactionTrim",
+          "flag": "--reaction-trim",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the reaction clip",
+          "hint": "<secs>"
+        },
+        {
+          "key": "reactionSecs",
+          "flag": "--reaction-secs",
+          "kind": "number",
+          "required": false,
+          "description": "How long the cut-out stays (default: the rest of the clip)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "videoVolume",
+          "flag": "--video-volume",
+          "kind": "number",
+          "required": false,
+          "description": "Background audio (default 0.5 under a talking creator, 1 if the reaction is silent)",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "reactionVolume",
+          "flag": "--reaction-volume",
+          "kind": "number",
+          "required": false,
+          "default": 1,
+          "description": "Reaction audio",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "cutoutQuality",
+          "flag": "--cutout-quality",
+          "kind": "enum",
+          "required": false,
+          "default": "balanced",
+          "options": [
+            "fast",
+            "balanced",
+            "best"
+          ],
+          "description": "Matting encode quality (first run only)",
+          "hint": "fast|balanced|best"
+        }
+      ],
+      "media": [
+        "video",
+        "reaction"
+      ],
+      "path": "templates/greenscreen-reaction",
+      "files": [
+        "README.md",
+        "SKILL.md",
+        "example.json",
+        "template.mjs"
+      ],
+      "preview": {
+        "gif": "https://raw.githubusercontent.com/danielhangan/reelclaw-templates/main/templates/greenscreen-reaction/preview.gif"
+      },
+      "install": {
+        "reelclaw": "npx reelclaw@latest add greenscreen-reaction",
+        "github": "npx github:danielhangan/reelclaw-templates add greenscreen-reaction",
+        "skills": "npx skills add danielhangan/reelclaw-templates --skill greenscreen-reaction"
+      }
+    },
+    {
+      "id": "listicle",
+      "name": "Numbered Listicle",
+      "description": "\"3 apps that feel illegal to know\" countdown: a hook title card, then numbered items — each with its own clip or photo, title and optional note — and an optional CTA. Optional beat-synced cuts.",
+      "category": "listicle",
+      "tags": [
+        "listicle",
+        "countdown",
+        "top-3",
+        "apps",
+        "tips",
+        "numbered",
+        "beat-sync",
+        "faceless"
+      ],
+      "source": {
+        "notes": "Tool/app/tips lists: native text titles, one item per 2–4s, best item last, CTA asks which one they'll try (comment bait)."
+      },
+      "inputs": [
+        {
+          "key": "hook",
+          "flag": "--hook",
+          "kind": "text",
+          "required": true,
+          "description": "Title card text",
+          "hint": "\"text\""
+        },
+        {
+          "key": "item",
+          "flag": "--item",
+          "kind": "list<visual>",
+          "required": true,
+          "description": "Footage per item (video or photo), in order",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "title",
+          "flag": "--title",
+          "kind": "list<text>",
+          "required": true,
+          "description": "Title per item, same order as --item; append ' :: 4' to give one item 4s",
+          "hint": "\"text\""
+        },
+        {
+          "key": "note",
+          "flag": "--note",
+          "kind": "list<text>",
+          "required": false,
+          "default": [],
+          "description": "Optional note under each item (what it does); use \"\" to skip one",
+          "hint": "\"text\""
+        },
+        {
+          "key": "hookClip",
+          "flag": "--hook-clip",
+          "kind": "visual",
+          "required": false,
+          "description": "Footage under the hook card (default: the first item's footage)",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "hookSecs",
+          "flag": "--hook-secs",
+          "kind": "number",
+          "required": false,
+          "description": "Hook card length (default: from its reading time, 1.8–3.5s)",
+          "hint": "<0.8..8s>"
+        },
+        {
+          "key": "itemSecs",
+          "flag": "--item-secs",
+          "kind": "number",
+          "required": false,
+          "default": 3,
+          "description": "Seconds per item",
+          "hint": "<0.8..15s>"
+        },
+        {
+          "key": "cta",
+          "flag": "--cta",
+          "kind": "text",
+          "required": false,
+          "description": "Optional closing card over the last item's footage",
+          "hint": "\"text\""
+        },
+        {
+          "key": "ctaSecs",
+          "flag": "--cta-secs",
+          "kind": "number",
+          "required": false,
+          "default": 2.5,
+          "description": "CTA card length",
+          "hint": "<1..8s>"
+        },
+        {
+          "key": "numbering",
+          "flag": "--numbering",
+          "kind": "enum",
+          "required": false,
+          "default": "up",
+          "options": [
+            "up",
+            "down",
+            "none"
+          ],
+          "description": "1→N, countdown N→1 (best last), or no numbers",
+          "hint": "up|down|none"
+        },
+        {
+          "key": "numberStyle",
+          "flag": "--number-style",
+          "kind": "enum",
+          "required": false,
+          "default": "badge",
+          "options": [
+            "badge",
+            "inline"
+          ],
+          "description": "Number in a round badge above the title, or inline (\"1. title\")",
+          "hint": "badge|inline"
+        },
+        {
+          "key": "badgeColor",
+          "flag": "--badge-color",
+          "kind": "text",
+          "required": false,
+          "default": "#fe2c55",
+          "description": "Badge colour (any CSS colour)",
+          "hint": "\"text\""
+        },
+        {
+          "key": "textStyle",
+          "flag": "--text-style",
+          "kind": "enum",
+          "required": false,
+          "default": "tiktok-box",
+          "options": [
+            "tiktok-outline",
+            "tiktok-box",
+            "tiktok-box-dark",
+            "plain"
+          ],
+          "description": "TikTok's native white box (default), dark box, classic white-with-outline, or plain",
+          "hint": "tiktok-outline|tiktok-box|tiktok-box-dark|plain"
+        },
+        {
+          "key": "titleSize",
+          "flag": "--title-size",
+          "kind": "number",
+          "required": false,
+          "default": 62,
+          "description": "Base title size; long titles shrink to fit",
+          "hint": "<30..110px>"
+        },
+        {
+          "key": "fill",
+          "flag": "--fill",
+          "kind": "enum",
+          "required": false,
+          "default": "auto",
+          "options": [
+            "auto",
+            "cover",
+            "blur"
+          ],
+          "description": "Footage framing: auto = fill portrait, blur-fill landscape",
+          "hint": "auto|cover|blur"
+        },
+        {
+          "key": "focus",
+          "flag": "--focus",
+          "kind": "enum",
+          "required": false,
+          "default": "center",
+          "options": [
+            "center",
+            "top",
+            "bottom",
+            "left",
+            "right"
+          ],
+          "description": "Which part of cropped footage stays in frame",
+          "hint": "center|top|bottom|left|right"
+        },
+        {
+          "key": "music",
+          "flag": "--music",
+          "kind": "audio",
+          "required": false,
+          "description": "Background music (fades out over the last 0.8s)",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "musicVolume",
+          "flag": "--music-volume",
+          "kind": "number",
+          "required": false,
+          "default": 1,
+          "description": "Music level",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "musicStart",
+          "flag": "--music-start",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the music track (start on the drop)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "beatSync",
+          "flag": "--beat-sync",
+          "kind": "boolean",
+          "required": false,
+          "default": true,
+          "description": "Snap cuts to the music's beats (with --music)",
+          "hint": ""
+        },
+        {
+          "key": "itemVolume",
+          "flag": "--item-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Item footage's own sound (muted by default)",
+          "hint": "<0..1>"
+        }
+      ],
+      "media": [
+        "item",
+        "hookClip",
+        "music"
+      ],
+      "path": "templates/listicle",
+      "files": [
+        "README.md",
+        "SKILL.md",
+        "example.json",
+        "template.mjs"
+      ],
+      "install": {
+        "reelclaw": "npx reelclaw@latest add listicle",
+        "github": "npx github:danielhangan/reelclaw-templates add listicle",
+        "skills": "npx skills add danielhangan/reelclaw-templates --skill listicle"
+      }
+    },
+    {
+      "id": "no-yapping",
+      "name": "…but no yapping",
+      "description": "Silent split-screen tutorial: a fullscreen intro under an outcome hook (\"making $10k but no yapping\"), then typing footage over a screen recording with short step captions on the seam. Farms saves and shares.",
+      "category": "tutorial",
+      "tags": [
+        "split-screen",
+        "tutorial",
+        "no-voiceover",
+        "screen-recording",
+        "steps",
+        "saves"
+      ],
+      "source": {
+        "notes": "Mouth-tape intro → 50/50 typing/demo split, lowercase step captions centred on the seam, no voiceover."
+      },
+      "inputs": [
+        {
+          "key": "intro",
+          "flag": "--intro",
+          "kind": "video",
+          "required": true,
+          "description": "9:16 intro clip shown fullscreen under the hook (e.g. putting on mouth tape); loops if short",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "typing",
+          "flag": "--typing",
+          "kind": "video",
+          "required": true,
+          "description": "Creator working (hands, keyboard, screen) for the top half; loops to fill the split",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "demo",
+          "flag": "--demo",
+          "kind": "video",
+          "required": true,
+          "description": "Screen recording for the bottom half; its length sets the reel length",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "hook",
+          "flag": "--hook",
+          "kind": "text",
+          "required": true,
+          "description": "Hook over the intro",
+          "hint": "\"text\""
+        },
+        {
+          "key": "step",
+          "flag": "--step",
+          "kind": "list<text>",
+          "required": false,
+          "default": [],
+          "description": "Step caption on the seam: \"text\", \"text :: secs\" or \"text :: start-end\" (reel seconds); the last one holds to the end",
+          "hint": "\"text\""
+        },
+        {
+          "key": "stepSecs",
+          "flag": "--step-secs",
+          "kind": "number",
+          "required": false,
+          "description": "Length of a step without its own timing (default: the split shared evenly, min 1.5s)",
+          "hint": "<0.5..30s>"
+        },
+        {
+          "key": "introSecs",
+          "flag": "--intro-secs",
+          "kind": "number",
+          "required": false,
+          "description": "Fullscreen intro length (default: the intro clip's length, kept within 3–6s)",
+          "hint": "<1..15s>"
+        },
+        {
+          "key": "introTrim",
+          "flag": "--intro-trim",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the intro clip",
+          "hint": "<secs>"
+        },
+        {
+          "key": "typingTrim",
+          "flag": "--typing-trim",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the typing clip",
+          "hint": "<secs>"
+        },
+        {
+          "key": "demoTrim",
+          "flag": "--demo-trim",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Skip dead time at the start of the demo",
+          "hint": "<secs>"
+        },
+        {
+          "key": "demoSecs",
+          "flag": "--demo-secs",
+          "kind": "number",
+          "required": false,
+          "description": "Cap the split segment (default: the rest of the demo)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "demoFit",
+          "flag": "--demo-fit",
+          "kind": "enum",
+          "required": false,
+          "default": "auto",
+          "options": [
+            "auto",
+            "cover",
+            "contain",
+            "blur"
+          ],
+          "description": "Bottom half: cover fills it (crops), contain shows the whole recording on white, blur shows it over a blurred copy; auto = cover unless that crops away over 40%, else blur",
+          "hint": "auto|cover|contain|blur"
+        },
+        {
+          "key": "demoFocus",
+          "flag": "--demo-focus",
+          "kind": "enum",
+          "required": false,
+          "default": "center",
+          "options": [
+            "center",
+            "top",
+            "bottom",
+            "left",
+            "right"
+          ],
+          "description": "Which part of the demo stays in frame when it is cropped",
+          "hint": "center|top|bottom|left|right"
+        },
+        {
+          "key": "typingFocus",
+          "flag": "--typing-focus",
+          "kind": "enum",
+          "required": false,
+          "default": "center",
+          "options": [
+            "center",
+            "top",
+            "bottom",
+            "left",
+            "right"
+          ],
+          "description": "Which part of the typing clip stays in frame (the half crops a 9:16 clip to its middle)",
+          "hint": "center|top|bottom|left|right"
+        },
+        {
+          "key": "hookPosition",
+          "flag": "--hook-position",
+          "kind": "enum",
+          "required": false,
+          "default": "top",
+          "options": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "description": "Where the hook sits on the intro",
+          "hint": "top|center|bottom"
+        },
+        {
+          "key": "captionStyle",
+          "flag": "--caption-style",
+          "kind": "enum",
+          "required": false,
+          "default": "tiktok-outline",
+          "options": [
+            "tiktok-outline",
+            "tiktok-box",
+            "tiktok-box-dark",
+            "plain"
+          ],
+          "description": "Caption look for the hook and steps",
+          "hint": "tiktok-outline|tiktok-box|tiktok-box-dark|plain"
+        },
+        {
+          "key": "hookSize",
+          "flag": "--hook-size",
+          "kind": "number",
+          "required": false,
+          "default": 62,
+          "description": "Base hook size; long text auto-shrinks",
+          "hint": "<26..120px>"
+        },
+        {
+          "key": "stepSize",
+          "flag": "--step-size",
+          "kind": "number",
+          "required": false,
+          "default": 60,
+          "description": "Base step caption size; long text auto-shrinks",
+          "hint": "<26..100px>"
+        },
+        {
+          "key": "music",
+          "flag": "--music",
+          "kind": "audio",
+          "required": false,
+          "description": "Background music (fades out over the last 0.8s); default is silent — add a trending sound in-app",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "musicVolume",
+          "flag": "--music-volume",
+          "kind": "number",
+          "required": false,
+          "default": 1,
+          "description": "Music level",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "musicStart",
+          "flag": "--music-start",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the music (start on the drop)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "introVolume",
+          "flag": "--intro-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Intro clip's own sound (muted by default — no yapping)",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "typingVolume",
+          "flag": "--typing-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Typing clip's own sound, e.g. keyboard ASMR",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "demoVolume",
+          "flag": "--demo-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Demo clip's own sound",
+          "hint": "<0..1>"
+        }
+      ],
+      "media": [
+        "intro",
+        "typing",
+        "demo",
+        "music"
+      ],
+      "path": "templates/no-yapping",
+      "files": [
+        "README.md",
+        "SKILL.md",
+        "example.json",
+        "steps.mjs",
+        "template.mjs"
+      ],
+      "preview": {
+        "gif": "https://raw.githubusercontent.com/danielhangan/reelclaw-templates/main/templates/no-yapping/preview.gif"
+      },
+      "install": {
+        "reelclaw": "npx reelclaw@latest add no-yapping",
+        "github": "npx github:danielhangan/reelclaw-templates add no-yapping",
+        "skills": "npx skills add danielhangan/reelclaw-templates --skill no-yapping"
+      }
+    },
+    {
+      "id": "reaction-demo",
+      "name": "Reaction → Demo",
+      "description": "UGC reaction hook into an app demo: a creator reacts for ~3s under a hook caption, then a hard cut to the screen recording that answers it.",
+      "category": "reaction",
+      "tags": [
+        "ugc",
+        "app-promo",
+        "hook",
+        "screen-recording",
+        "hard-cut"
+      ],
+      "inputs": [
+        {
+          "key": "reaction",
+          "flag": "--reaction",
+          "kind": "video",
+          "required": true,
+          "description": "Creator reaction clip (the hook segment)",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "demo",
+          "flag": "--demo",
+          "kind": "video",
+          "required": true,
+          "description": "App demo / screen recording; plays full length after the cut",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "hook",
+          "flag": "--hook",
+          "kind": "text",
+          "required": true,
+          "description": "Hook caption over the reaction",
+          "hint": "\"text\""
+        },
+        {
+          "key": "hookPosition",
+          "flag": "--hook-position",
+          "kind": "enum",
+          "required": false,
+          "default": "center",
+          "options": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "description": "Where the hook sits inside the safe band",
+          "hint": "top|center|bottom"
+        },
+        {
+          "key": "hook2",
+          "flag": "--hook2",
+          "kind": "text",
+          "required": false,
+          "description": "Optional payoff caption over the demo",
+          "hint": "\"text\""
+        },
+        {
+          "key": "hook2Position",
+          "flag": "--hook2-position",
+          "kind": "enum",
+          "required": false,
+          "default": "center",
+          "options": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "description": "Where the payoff caption sits",
+          "hint": "top|center|bottom"
+        },
+        {
+          "key": "hookSize",
+          "flag": "--hook-size",
+          "kind": "number",
+          "required": false,
+          "default": 58,
+          "description": "Base caption size; long text auto-shrinks to fit",
+          "hint": "<26..120px>"
+        },
+        {
+          "key": "hookStyle",
+          "flag": "--hook-style",
+          "kind": "enum",
+          "required": false,
+          "default": "tiktok-outline",
+          "options": [
+            "tiktok-outline",
+            "tiktok-box",
+            "tiktok-box-dark",
+            "plain"
+          ],
+          "description": "Caption look: classic outline, TikTok white/dark box, or plain",
+          "hint": "tiktok-outline|tiktok-box|tiktok-box-dark|plain"
+        },
+        {
+          "key": "trim",
+          "flag": "--trim",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the reaction clip where the hook segment starts",
+          "hint": "<secs>"
+        },
+        {
+          "key": "reactionSecs",
+          "flag": "--reaction-secs",
+          "kind": "number",
+          "required": false,
+          "default": 3,
+          "description": "Length of the reaction (hook) segment",
+          "hint": "<0.5..15s>"
+        },
+        {
+          "key": "music",
+          "flag": "--music",
+          "kind": "audio",
+          "required": false,
+          "description": "Background music under the whole reel (fades out over the last 0.8s)",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "musicVolume",
+          "flag": "--music-volume",
+          "kind": "number",
+          "required": false,
+          "default": 1,
+          "description": "Music level",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "musicStart",
+          "flag": "--music-start",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the music track (start on the drop)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "reactionVolume",
+          "flag": "--reaction-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Reaction clip's own audio (muted by default)",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "demoVolume",
+          "flag": "--demo-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Demo clip's own audio (muted by default)",
+          "hint": "<0..1>"
+        }
+      ],
+      "media": [
+        "reaction",
+        "demo",
+        "music"
+      ],
+      "path": "templates/reaction-demo",
+      "files": [
+        "README.md",
+        "SKILL.md",
+        "example.json",
+        "template.mjs"
+      ],
+      "install": {
+        "reelclaw": "npx reelclaw@latest add reaction-demo",
+        "github": "npx github:danielhangan/reelclaw-templates add reaction-demo",
+        "skills": "npx skills add danielhangan/reelclaw-templates --skill reaction-demo"
+      }
+    },
+    {
+      "id": "talking-head-captions",
+      "name": "Talking head + word captions",
+      "description": "Creator talking to camera with bold word-by-word captions (spoken word highlighted), tightened pauses, punch-in zooms, optional hook title, b-roll cutaways and ducked music. The default edit for advice, storytime and UGC testimonials.",
+      "category": "talking-head",
+      "tags": [
+        "talking-head",
+        "captions",
+        "karaoke",
+        "subtitles",
+        "ugc",
+        "voiceover",
+        "jump-cut",
+        "b-roll"
+      ],
+      "source": {
+        "notes": "Hormozi/CapCut-style auto captions: 1–3 heavy words at a time under the chin, spoken word in yellow, zoom on every other sentence."
+      },
+      "inputs": [
+        {
+          "key": "clip",
+          "flag": "--clip",
+          "kind": "video",
+          "required": true,
+          "description": "Talking-to-camera clip; its voice is the soundtrack",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "transcript",
+          "flag": "--transcript",
+          "kind": "text",
+          "required": false,
+          "description": "Word-timed transcript (.json, .srt or .vtt) — skips transcription; fix misheard words here",
+          "hint": "\"text\""
+        },
+        {
+          "key": "hook",
+          "flag": "--hook",
+          "kind": "text",
+          "required": false,
+          "description": "Title over the first seconds",
+          "hint": "\"text\""
+        },
+        {
+          "key": "hookSecs",
+          "flag": "--hook-secs",
+          "kind": "number",
+          "required": false,
+          "default": 2.5,
+          "description": "How long the hook title stays up",
+          "hint": "<0.5..15s>"
+        },
+        {
+          "key": "hookTheme",
+          "flag": "--hook-theme",
+          "kind": "enum",
+          "required": false,
+          "default": "white",
+          "options": [
+            "white",
+            "dark",
+            "black",
+            "red",
+            "yellow"
+          ],
+          "description": "Hook look: TikTok's native text box (white, dark, black, red, yellow)",
+          "hint": "white|dark|black|red|yellow"
+        },
+        {
+          "key": "captionStyle",
+          "flag": "--caption-style",
+          "kind": "enum",
+          "required": false,
+          "default": "pop",
+          "options": [
+            "pop",
+            "box",
+            "color"
+          ],
+          "description": "pop: outlined, spoken word coloured + bigger; box: spoken word on a colour box; color: recolour only",
+          "hint": "pop|box|color"
+        },
+        {
+          "key": "highlight",
+          "flag": "--highlight",
+          "kind": "text",
+          "required": false,
+          "default": "#ffe500",
+          "description": "Colour of the spoken word (or its box)",
+          "hint": "\"text\""
+        },
+        {
+          "key": "captionPosition",
+          "flag": "--caption-position",
+          "kind": "enum",
+          "required": false,
+          "default": "lower",
+          "options": [
+            "lower",
+            "center",
+            "upper"
+          ],
+          "description": "Caption strip inside the safe band: under the chin, mid-frame or up top",
+          "hint": "lower|center|upper"
+        },
+        {
+          "key": "captionCase",
+          "flag": "--caption-case",
+          "kind": "enum",
+          "required": false,
+          "default": "upper",
+          "options": [
+            "upper",
+            "lower",
+            "as-spoken"
+          ],
+          "description": "Caption letter case",
+          "hint": "upper|lower|as-spoken"
+        },
+        {
+          "key": "wordsPerChunk",
+          "flag": "--words-per-chunk",
+          "kind": "number",
+          "required": false,
+          "default": 3,
+          "description": "Most words on screen at once",
+          "hint": "<1..4>"
+        },
+        {
+          "key": "captionSize",
+          "flag": "--caption-size",
+          "kind": "number",
+          "required": false,
+          "default": 84,
+          "description": "Base caption size; long chunks shrink to fit",
+          "hint": "<40..140px>"
+        },
+        {
+          "key": "broll",
+          "flag": "--broll",
+          "kind": "list<visual>",
+          "required": false,
+          "default": [],
+          "description": "B-roll cutaway (video or image) shown full screen over the speaker; pair each with --broll-at",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "brollAt",
+          "flag": "--broll-at",
+          "kind": "list<text>",
+          "required": false,
+          "default": [],
+          "description": "When each --broll shows, in the clip's own seconds: \"4.2-6\", \"4.2+2\" or \"4.2\" (2s)",
+          "hint": "\"text\""
+        },
+        {
+          "key": "trim",
+          "flag": "--trim",
+          "kind": "number",
+          "required": false,
+          "description": "Where to start in the clip (default: just before the first word)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "end",
+          "flag": "--end",
+          "kind": "number",
+          "required": false,
+          "description": "Where to stop in the clip (default: 0.5s after the last word)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "maxPause",
+          "flag": "--max-pause",
+          "kind": "number",
+          "required": false,
+          "default": 0.6,
+          "description": "Pauses longer than this are cut down to 0.3s (0 keeps every pause)",
+          "hint": "<0..5s>"
+        },
+        {
+          "key": "punchIn",
+          "flag": "--punch-in",
+          "kind": "number",
+          "required": false,
+          "default": 1.12,
+          "description": "Zoom on every other sentence / cut (1 = off)",
+          "hint": "<1..1.5>"
+        },
+        {
+          "key": "focusX",
+          "flag": "--focus-x",
+          "kind": "number",
+          "required": false,
+          "default": 50,
+          "description": "Speaker's position left → right (matters for landscape footage)",
+          "hint": "<0..100%>"
+        },
+        {
+          "key": "focusY",
+          "flag": "--focus-y",
+          "kind": "number",
+          "required": false,
+          "default": 38,
+          "description": "Eye-line height; punch-ins zoom towards it",
+          "hint": "<0..100%>"
+        },
+        {
+          "key": "voiceVolume",
+          "flag": "--voice-volume",
+          "kind": "number",
+          "required": false,
+          "default": 1,
+          "description": "Speaker's voice level",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "normalize",
+          "flag": "--normalize",
+          "kind": "boolean",
+          "required": false,
+          "default": true,
+          "description": "Level the voice to -14 LUFS, the loudness TikTok/IG/YouTube play at",
+          "hint": ""
+        },
+        {
+          "key": "music",
+          "flag": "--music",
+          "kind": "audio",
+          "required": false,
+          "description": "Background music under the voice (fades out over the last 0.8s)",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "musicVolume",
+          "flag": "--music-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0.12,
+          "description": "Music level — low by default so it sits under the voice",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "musicStart",
+          "flag": "--music-start",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the music track",
+          "hint": "<secs>"
+        },
+        {
+          "key": "model",
+          "flag": "--model",
+          "kind": "enum",
+          "required": false,
+          "default": "small.en",
+          "options": [
+            "tiny.en",
+            "base.en",
+            "small.en",
+            "medium.en",
+            "large-v3"
+          ],
+          "description": "Whisper model for transcription (tiny.en is fastest, large-v3 most accurate)",
+          "hint": "tiny.en|base.en|small.en|medium.en|large-v3"
+        },
+        {
+          "key": "language",
+          "flag": "--language",
+          "kind": "text",
+          "required": false,
+          "description": "Spoken language code if not English (e.g. es, de, pt) — uses a multilingual model",
+          "hint": "\"text\""
+        }
+      ],
+      "media": [
+        "clip",
+        "broll",
+        "music"
+      ],
+      "path": "templates/talking-head-captions",
+      "files": [
+        "README.md",
+        "SKILL.md",
+        "example-transcript.json",
+        "example.json",
+        "template.mjs"
+      ],
+      "install": {
+        "reelclaw": "npx reelclaw@latest add talking-head-captions",
+        "github": "npx github:danielhangan/reelclaw-templates add talking-head-captions",
+        "skills": "npx skills add danielhangan/reelclaw-templates --skill talking-head-captions"
+      }
+    },
+    {
+      "id": "wall-of-text",
+      "name": "Wall of Text over B-roll",
+      "description": "POV / storytime / confession: a long first-person text in TikTok's native white text box over looping b-roll, with an optional second card (the reveal). The go-to organic app-promo format.",
+      "category": "text-story",
+      "tags": [
+        "wall-of-text",
+        "pov",
+        "storytime",
+        "b-roll",
+        "app-promo",
+        "native-text",
+        "faceless"
+      ],
+      "source": {
+        "notes": "Native TikTok text tool (Classic font, white background) over aesthetic b-roll; the text takes longer to read than the video lasts, so viewers rewatch."
+      },
+      "inputs": [
+        {
+          "key": "broll",
+          "flag": "--broll",
+          "kind": "list<visual>",
+          "required": true,
+          "description": "B-roll videos or photos, used in order and looped/cut to fill the reel",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "text",
+          "flag": "--text",
+          "kind": "text",
+          "required": true,
+          "description": "The wall of text (first card). Newlines are kept",
+          "hint": "\"text\""
+        },
+        {
+          "key": "text2",
+          "flag": "--text2",
+          "kind": "text",
+          "required": false,
+          "description": "Optional second card that replaces the first on a cut (the reveal / payoff)",
+          "hint": "\"text\""
+        },
+        {
+          "key": "text2At",
+          "flag": "--text2-at",
+          "kind": "number",
+          "required": false,
+          "description": "When the second card replaces the first (default ≈55% in, on a cut)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "duration",
+          "flag": "--duration",
+          "kind": "number",
+          "required": false,
+          "description": "Reel length (default: from the b-roll, 6–10s; 9–15s with a second card)",
+          "hint": "<2..60s>"
+        },
+        {
+          "key": "clipSecs",
+          "flag": "--clip-secs",
+          "kind": "number",
+          "required": false,
+          "description": "Seconds per b-roll cut (default: an equal share per clip)",
+          "hint": "<0.5..30s>"
+        },
+        {
+          "key": "textStyle",
+          "flag": "--text-style",
+          "kind": "enum",
+          "required": false,
+          "default": "tiktok-box",
+          "options": [
+            "tiktok-outline",
+            "tiktok-box",
+            "tiktok-box-dark",
+            "plain"
+          ],
+          "description": "TikTok's native white box (default), dark box, classic white-with-outline, or plain",
+          "hint": "tiktok-outline|tiktok-box|tiktok-box-dark|plain"
+        },
+        {
+          "key": "textPosition",
+          "flag": "--text-position",
+          "kind": "enum",
+          "required": false,
+          "default": "center",
+          "options": [
+            "top",
+            "center",
+            "bottom"
+          ],
+          "description": "Where the text sits inside the safe band",
+          "hint": "top|center|bottom"
+        },
+        {
+          "key": "textSize",
+          "flag": "--text-size",
+          "kind": "number",
+          "required": false,
+          "description": "Base text size (default: by length, 64 short → 50 long); long text shrinks to fit",
+          "hint": "<30..90px>"
+        },
+        {
+          "key": "align",
+          "flag": "--align",
+          "kind": "enum",
+          "required": false,
+          "default": "center",
+          "options": [
+            "center",
+            "left"
+          ],
+          "description": "Text alignment",
+          "hint": "center|left"
+        },
+        {
+          "key": "fill",
+          "flag": "--fill",
+          "kind": "enum",
+          "required": false,
+          "default": "auto",
+          "options": [
+            "auto",
+            "cover",
+            "blur"
+          ],
+          "description": "Footage framing: auto = fill portrait, blur-fill landscape",
+          "hint": "auto|cover|blur"
+        },
+        {
+          "key": "focus",
+          "flag": "--focus",
+          "kind": "enum",
+          "required": false,
+          "default": "center",
+          "options": [
+            "center",
+            "top",
+            "bottom",
+            "left",
+            "right"
+          ],
+          "description": "Which part of cropped footage stays in frame",
+          "hint": "center|top|bottom|left|right"
+        },
+        {
+          "key": "dim",
+          "flag": "--dim",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Darken the footage (0–0.7) — helps the outline style",
+          "hint": "<0..0.7>"
+        },
+        {
+          "key": "music",
+          "flag": "--music",
+          "kind": "audio",
+          "required": false,
+          "description": "Background music (fades out over the last 0.8s)",
+          "hint": "<file|url>"
+        },
+        {
+          "key": "musicVolume",
+          "flag": "--music-volume",
+          "kind": "number",
+          "required": false,
+          "default": 1,
+          "description": "Music level",
+          "hint": "<0..1>"
+        },
+        {
+          "key": "musicStart",
+          "flag": "--music-start",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "Offset into the music track (start on the drop)",
+          "hint": "<secs>"
+        },
+        {
+          "key": "beatSync",
+          "flag": "--beat-sync",
+          "kind": "boolean",
+          "required": false,
+          "default": true,
+          "description": "Snap cuts and the card swap to the music's beats (with --music)",
+          "hint": ""
+        },
+        {
+          "key": "brollVolume",
+          "flag": "--broll-volume",
+          "kind": "number",
+          "required": false,
+          "default": 0,
+          "description": "B-roll's own sound (muted by default)",
+          "hint": "<0..1>"
+        }
+      ],
+      "media": [
+        "broll",
+        "music"
+      ],
+      "path": "templates/wall-of-text",
+      "files": [
+        "README.md",
+        "SKILL.md",
+        "example.json",
+        "template.mjs"
+      ],
+      "install": {
+        "reelclaw": "npx reelclaw@latest add wall-of-text",
+        "github": "npx github:danielhangan/reelclaw-templates add wall-of-text",
+        "skills": "npx skills add danielhangan/reelclaw-templates --skill wall-of-text"
+      }
+    }
+  ]
+}

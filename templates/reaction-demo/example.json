@@ -1,0 +1,15 @@
+{
+  "template": "reaction-demo",
+  "inputs": {
+    "reaction": "fixtures/portrait-talking.mp4",
+    "demo": "fixtures/landscape-screen.mp4",
+    "hook": "i was about to hit it and this app talked me out of it",
+    "hook2": "12/12 cravings resisted this week and honestly i did not think i could do it but here we are, day seven, still going",
+    "hook2Position": "top",
+    "trim": 1,
+    "music": "fixtures/music.m4a",
+    "musicStart": 2,
+    "musicVolume": 0.6,
+    "reactionVolume": 0.8
+  }
+}

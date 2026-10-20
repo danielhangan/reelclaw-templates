@@ -1,7 +1,7 @@
 {
   "name": "reelclaw-templates",
-  "version": "0.1.0",
-  "description": "One-command installer for reelclaw TikTok/Reels video templates (HyperFrames). npx reelclaw-templates <template>",
+  "version": "0.2.0",
+  "description": "Legacy alias for `reelclaw add`: installs viral TikTok/Reels/Shorts video templates for Claude Code and Codex. Use npx reelclaw@latest add <template>.",
   "type": "module",
   "bin": {
     "reelclaw-templates": "bin/index.mjs"
@@ -9,8 +9,11 @@
   "files": [
     "bin"
   ],
+  "dependencies": {
+    "reelclaw": "^0.1.0"
+  },
   "engines": {
-    "node": ">=18"
+    "node": ">=22"
   },
   "repository": {
     "type": "git",
@@ -21,11 +24,13 @@
   "keywords": [
     "tiktok",
     "reels",
+    "shorts",
     "video",
     "template",
     "hyperframes",
     "ugc",
-    "claude-code"
+    "claude-code",
+    "codex"
   ],
   "license": "MIT"
 }

@@ -1,0 +1,5163 @@
+{
+  "$comment": "Catalog of viral short-form formats → future reelclaw templates. Generated from research by Engineer #9; see catalog/TAXONOMY.md (field meanings) and catalog/PRIMITIVES_GAP.md (what to build next). Edit by hand; keep ids unique.",
+  "version": 1,
+  "updated": "2026-10-20",
+  "categories": [
+    "reaction",
+    "greenscreen",
+    "tutorial",
+    "text-story",
+    "listicle",
+    "talking-head",
+    "before-after",
+    "slideshow",
+    "meme",
+    "ugc-ad",
+    "product-demo",
+    "split-screen",
+    "trend",
+    "skit"
+  ],
+  "statuses": {
+    "exists": "template in templates/",
+    "building": "being built in v2",
+    "idea": "not started"
+  },
+  "primitives": {
+    "video": {
+      "status": "shipped",
+      "description": "video clip: trim, loop, box, fit, crop, mirror (timeline.video)"
+    },
+    "image": {
+      "status": "shipped",
+      "description": "still image clip (timeline.image)"
+    },
+    "music": {
+      "status": "shipped",
+      "description": "background music bed with fade-out (timeline.music)"
+    },
+    "clip_audio": {
+      "status": "shipped",
+      "description": "keep a clip's own sound at a volume (video volume / timeline.audio)"
+    },
+    "caption": {
+      "status": "shipped",
+      "description": "static auto-fit caption, tiktok-outline / tiktok-box / plain styles"
+    },
+    "karaoke": {
+      "status": "shipped",
+      "description": "word-by-word captions from word timings, spoken word highlighted (karaokeCaptions component)"
+    },
+    "split": {
+      "status": "shipped",
+      "description": "top/bottom split layout (layout.split)"
+    },
+    "pip": {
+      "status": "shipped",
+      "description": "picture-in-picture box (layout.pip)"
+    },
+    "solid": {
+      "status": "shipped",
+      "description": "flat colour panel (timeline.solid)"
+    },
+    "motion": {
+      "status": "shipped",
+      "description": "GSAP tweens of x/y/scale/rotation/opacity on a clip"
+    },
+    "cutout": {
+      "status": "shipped",
+      "description": "AI background removal in prepare() (hyperframes remove-background + media.derive)"
+    },
+    "html": {
+      "status": "shipped",
+      "description": "html() escape hatch for one-off motion graphics"
+    },
+    "caption_track": {
+      "status": "gap",
+      "description": "timed caption list from a script ('text :: secs' / 'text :: 10-15'), sequential or absolute; generalises no-yapping steps"
+    },
+    "sequence": {
+      "status": "shipped",
+      "description": "N clips/photos back-to-back as hard cuts, cycled and continued (sequence / evenCuts / slotBounds components)"
+    },
+    "transcribe": {
+      "status": "shipped",
+      "description": "word timestamps from a clip (transcribeMedia via hyperframes transcribe, or loadTranscript for JSON/SRT/VTT), cached"
+    },
+    "slideshow": {
+      "status": "gap",
+      "description": "image/clip slides with per-slide duration, Ken Burns pan/zoom and per-slide text"
+    },
+    "beat_sync": {
+      "status": "shipped",
+      "description": "beat times from the music (detectBeats via hyperframes beats, cached) + snapToBeats for cuts"
+    },
+    "rank_badges": {
+      "status": "shipped",
+      "description": "numbered list badges (numberBadge component); titles via caption()"
+    },
+    "chat_ui": {
+      "status": "gap",
+      "description": "iMessage / WhatsApp / DM chat bubbles appearing over time"
+    },
+    "ai_chat_ui": {
+      "status": "gap",
+      "description": "ChatGPT-style prompt + streamed answer mockup"
+    },
+    "notes_ui": {
+      "status": "gap",
+      "description": "Notes-app / notepad page with text"
+    },
+    "social_card": {
+      "status": "gap",
+      "description": "tweet / Reddit post / review / App Store review card overlay"
+    },
+    "comment_reply": {
+      "status": "gap",
+      "description": "TikTok 'Reply to @user's comment' sticker"
+    },
+    "notification_ui": {
+      "status": "gap",
+      "description": "lock-screen push notifications / widgets stacking in"
+    },
+    "search_ui": {
+      "status": "gap",
+      "description": "search bar with typed query (Google / TikTok / App Store)"
+    },
+    "phone_frame": {
+      "status": "gap",
+      "description": "device frame around a screen recording (static or tilted)"
+    },
+    "typewriter": {
+      "status": "gap",
+      "description": "character/word reveal for text that is meant to be read while typing (exception to static captions)"
+    },
+    "counter": {
+      "status": "gap",
+      "description": "animated number / money / day counter, progress bar, timer"
+    },
+    "grid": {
+      "status": "gap",
+      "description": "2x2 / 3x3 / N-up grid and side-by-side (left/right) layouts"
+    },
+    "wipe": {
+      "status": "shipped",
+      "description": "before/after wipe reveal with a divider bar (wipeReveal component)"
+    },
+    "blur_fill": {
+      "status": "shipped",
+      "description": "landscape/square footage shown whole over a blurred copy of itself (visual component, fill auto/blur)"
+    },
+    "jump_cut": {
+      "status": "shipped",
+      "description": "tighten pauses in talking-head footage from word timings (speechRanges / layoutSegments)"
+    },
+    "zoom_punch": {
+      "status": "gap",
+      "description": "punch-in zoom / shake on emphasis words or beats (preset over motion)"
+    },
+    "speed": {
+      "status": "gap",
+      "description": "speed ramps, timelapse, slow-mo, reverse, freeze-frame"
+    },
+    "tts": {
+      "status": "gap",
+      "description": "text-to-speech voiceover (hyperframes tts) cached in prepare()"
+    },
+    "sfx": {
+      "status": "gap",
+      "description": "bundled royalty-free SFX (pop, whoosh, ding, shutter, keyboard)"
+    },
+    "emoji": {
+      "status": "gap",
+      "description": "colour emoji / sticker overlays (bundled emoji font, OFL)"
+    },
+    "annotate": {
+      "status": "gap",
+      "description": "arrows, circles, highlights, X marks, redaction blur at a box over time"
+    },
+    "end_card": {
+      "status": "gap",
+      "description": "CTA end card / persistent banner: app icon, name, store badge, offer, handle"
+    },
+    "filters": {
+      "status": "gap",
+      "description": "per-clip colour treatment: grayscale, VHS, film grain, warm/cool grade"
+    },
+    "chroma_key": {
+      "status": "gap",
+      "description": "key out a solid-colour background in supplied green-screen footage"
+    },
+    "reframe": {
+      "status": "gap",
+      "description": "auto-reframe 16:9 to 9:16 following the face/subject"
+    },
+    "duck": {
+      "status": "gap",
+      "description": "duck music under voice segments automatically"
+    },
+    "poll_ui": {
+      "status": "gap",
+      "description": "poll / quiz / this-or-that UI with result reveal"
+    },
+    "transitions": {
+      "status": "gap",
+      "description": "flash / whip / zoom transitions between clips (most formats hard-cut)"
+    },
+    "waveform": {
+      "status": "gap",
+      "description": "audio waveform / audiogram visual"
+    },
+    "lower_third": {
+      "status": "gap",
+      "description": "name tag / chyron / news-style lower third"
+    }
+  },
+  "formats": [
+    {
+      "id": "reaction_demo",
+      "template_id": "reaction-demo",
+      "name": "Reaction → Demo",
+      "category": "reaction",
+      "status": "exists",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Creator reacts for ~3s under a hook caption, hard cut to the app screen recording that answers the hook. The workhorse app-growth format.",
+      "structure": [
+        "0-3s: creator reaction clip, hook caption in safe band",
+        "3s-end: hard cut to full-screen demo recording, optional payoff caption",
+        "music bed under everything"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Original reelclaw v1 template; DanSUGC 'Face Reaction' concept family (5.9M avg views across 6 concepts)."
+      }
+    },
+    {
+      "id": "reaction_split_demo",
+      "template_id": "reaction-split-demo",
+      "name": "Reaction over Demo (split)",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Reaction stays on screen in the top half while the demo plays in the bottom half, so the emotion and the proof are visible together.",
+      "structure": [
+        "0-2s: full-screen reaction + hook",
+        "2s-end: split — reaction top (looped), demo bottom",
+        "seam caption names the feature"
+      ],
+      "primitives_needed": [
+        "video",
+        "split",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Split-screen reaction is one of the most-cited 2026 TikTok formats (eliro.pro format guide).",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "reaction_pip_demo",
+      "template_id": "reaction-pip-demo",
+      "name": "Demo with Reaction PiP",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Full-screen demo with the creator's reaction in a corner picture-in-picture bubble; works when the demo itself is the hook.",
+      "structure": [
+        "0-end: demo full screen",
+        "reaction in a bottom-right PiP inside the safe zone",
+        "hook caption top of band, payoff at the end"
+      ],
+      "primitives_needed": [
+        "video",
+        "pip",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Common UGC overlay pattern ('UGC Overlay' in Motion's ad format library).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "shocked_reaction_reveal",
+      "template_id": "shocked-reaction-reveal",
+      "name": "Shocked → Reveal",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "A big shocked/surprised face over 'when I found out…' text, then a reveal of the screenshot/result that caused it.",
+      "structure": [
+        "0-1.5s: shocked reaction, hook caption",
+        "1.5-4s: screenshot or result image with zoom-in",
+        "4s-end: demo / result held with payoff caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "image",
+        "caption",
+        "motion",
+        "zoom_punch"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Shocked Reaction', ~18M views.",
+        "url": "https://www.tiktok.com/@amyycardy/video/7534704035102854422"
+      }
+    },
+    {
+      "id": "laptop_reaction",
+      "template_id": "laptop-reaction",
+      "name": "Laptop Reaction",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Creator stares at a laptop then reacts to what's on it; cut to the screen. Native for SaaS/AI tools and study apps.",
+      "structure": [
+        "0-2.5s: creator at laptop reacting, hook caption",
+        "2.5s-end: screen recording of the laptop screen (blur-filled if landscape)"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "blur_fill",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Laptop Reaction', ~4.1M views, ~1748x outlier.",
+        "url": "https://www.tiktok.com/@whoisjenniai/video/7161469296558804270"
+      }
+    },
+    {
+      "id": "surprised_mirror_reaction",
+      "template_id": "surprised-mirror-reaction",
+      "name": "Surprised (Self-care) Reaction",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Creator mid-routine (skincare, hair) turns to camera surprised; caption carries the twist, cut to the product/app.",
+      "structure": [
+        "0-2s: routine footage",
+        "2-3.5s: surprised turn to camera + hook",
+        "3.5s-end: product/app proof"
+      ],
+      "primitives_needed": [
+        "video",
+        "sequence",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Surprised', ~11M views.",
+        "url": "https://www.tiktok.com/@lolarecetas/video/7581150767059438870"
+      }
+    },
+    {
+      "id": "negative_then_positive",
+      "template_id": "negative-then-positive",
+      "name": "Head-shake → Nod",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Creator shakes head 'no' at the old way/competitor, then nods 'yes' at your product. Two-beat contrast that reads with sound off.",
+      "structure": [
+        "0-2s: head-shake clip + 'X' caption (old way)",
+        "2-4s: nod clip + 'Y' caption (your app)",
+        "4s-end: demo"
+      ],
+      "primitives_needed": [
+        "video",
+        "sequence",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Negative', ~6.1M views.",
+        "url": "https://www.tiktok.com/@lolarecetas/video/7582350641209642262"
+      }
+    },
+    {
+      "id": "double_reaction_escalation",
+      "template_id": "double-reaction-escalation",
+      "name": "Double Reaction Escalation",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Two reactions that escalate (mild → losing it) before the reveal; the second beat resets attention at ~2s.",
+      "structure": [
+        "0-1.5s: reaction 1 + hook part 1",
+        "1.5-3s: reaction 2 (bigger) + hook part 2",
+        "3s-end: reveal/demo"
+      ],
+      "primitives_needed": [
+        "video",
+        "sequence",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Pattern seen across face-reaction hooks: stacked reactions before the payoff."
+      }
+    },
+    {
+      "id": "phone_screen_reaction",
+      "template_id": "phone-screen-reaction",
+      "name": "Looks at Phone → Screen",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Creator looks down at their phone and reacts; cut to the phone screen (screenshot or recording) with a slow push-in.",
+      "structure": [
+        "0-2s: creator looking at phone, reaction + hook",
+        "2s-end: phone screen full-bleed with push-in, payoff caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "image",
+        "caption",
+        "motion"
+      ],
+      "example_reference": {
+        "description": "Standard app-promo hook; 'Relationship outcome' and widget apps use it (Lightreel Oct 2026 report).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "reaction_stat_reveal",
+      "template_id": "reaction-stat-reveal",
+      "name": "Reaction → Stat",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Reaction under 'I can't believe this worked', then a big counting-up number (money saved, streak, followers) and the screen that proves it.",
+      "structure": [
+        "0-2s: reaction + hook",
+        "2-4s: large animated counter on solid/blurred bg",
+        "4s-end: proof screen recording"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "counter",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Numeric-payoff hooks (Lightreel: 'Numeric pain point', debt-payoff results).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "crying_reaction_storytime",
+      "template_id": "crying-reaction-storytime",
+      "name": "Crying Reaction + Text",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Emotional crying/overwhelmed reaction under a wall-of-text story, resolving with the product as the turning point.",
+      "structure": [
+        "0-4s: crying reaction, long wall-of-text caption (auto-shrinks)",
+        "4s-end: calm proof shot / demo with resolution caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Hysterical crying', ~0.9M views, 177x outlier."
+      }
+    },
+    {
+      "id": "reaction_to_comment",
+      "template_id": "reaction-to-comment",
+      "name": "Comment → Reaction → Demo",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Starts with a TikTok-style comment-reply sticker ('does this actually work?'), creator reacts, then shows the demo answering it.",
+      "structure": [
+        "0-3s: reaction with comment-reply sticker top of band",
+        "3s-end: demo with answer caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "comment_reply",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Comment Response' and reply-to-comment are top native formats (Motion library).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "arms_up_win",
+      "template_id": "arms-up-win",
+      "name": "Arms-Up Win",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Creator throws arms up celebrating, caption states the win; cut to the screen that shows it (grade, payout, streak).",
+      "structure": [
+        "0-2s: celebration clip + win caption",
+        "2s-end: proof screen"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Arms up', 29x outlier.",
+        "url": "https://www.tiktok.com/@tips.withrach/video/7577408583327894839"
+      }
+    },
+    {
+      "id": "reaction_loop",
+      "template_id": "reaction-loop",
+      "name": "Reaction Loop",
+      "category": "reaction",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Reaction → demo → the same reaction again so the video loops seamlessly and gets rewatched.",
+      "structure": [
+        "0-2s: reaction + hook",
+        "2s-(end-1s): demo",
+        "last 1s: first frames of the reaction again (seam)"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "sequence",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Loop-bait editing; rewatch rate is a ranking signal on TikTok."
+      }
+    },
+    {
+      "id": "greenscreen_reaction",
+      "template_id": "greenscreen-reaction",
+      "name": "Greenscreen Reaction",
+      "category": "greenscreen",
+      "status": "exists",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Creator cut-out (AI background removal) over the demo, dragged from the centre into a corner as the demo starts. Native audio on.",
+      "structure": [
+        "0-2s: creator cut-out large over the demo, talking",
+        "2-3s: cut-out animates into a bottom corner",
+        "3s-end: demo full screen, creator cut-out in corner"
+      ],
+      "primitives_needed": [
+        "video",
+        "cutout",
+        "motion",
+        "clip_audio",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Original reelclaw v1 template."
+      }
+    },
+    {
+      "id": "greenscreen_screenshot_commentary",
+      "template_id": "greenscreen-screenshot-commentary",
+      "name": "Greenscreen over Screenshot",
+      "category": "greenscreen",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Creator cut-out in the lower third talking over a screenshot (article, tweet, app screen) as the background.",
+      "structure": [
+        "0-end: screenshot background (Ken Burns), creator cut-out bottom",
+        "auto-captions from speech",
+        "swap background per point"
+      ],
+      "primitives_needed": [
+        "image",
+        "cutout",
+        "transcribe",
+        "karaoke",
+        "clip_audio",
+        "slideshow"
+      ],
+      "example_reference": {
+        "description": "TikTok green-screen effect format; eliro.pro: 'show your source' commentary.",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "greenscreen_tweet_takedown",
+      "template_id": "greenscreen-tweet-takedown",
+      "name": "Greenscreen Tweet Takedown",
+      "category": "greenscreen",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Creator reacts/argues in front of a rendered tweet or Reddit post card; card text is input, no screenshot needed.",
+      "structure": [
+        "0-end: social card as background (scaled up)",
+        "creator cut-out bottom, talking",
+        "karaoke captions"
+      ],
+      "primitives_needed": [
+        "social_card",
+        "cutout",
+        "transcribe",
+        "karaoke",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "Common commentary format (Motion: 'Social Media Mockup', 'Greenscreen').",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "greenscreen_app_walkthrough",
+      "template_id": "greenscreen-app-walkthrough",
+      "name": "Greenscreen App Walkthrough",
+      "category": "greenscreen",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "hard",
+      "ready_today": false,
+      "description": "Creator cut-out beside a scrolling app recording, pointing at features; arrows/circles highlight what they mention.",
+      "structure": [
+        "0-end: screen recording upper 70%",
+        "creator cut-out bottom-left",
+        "annotations at feature timestamps"
+      ],
+      "primitives_needed": [
+        "video",
+        "cutout",
+        "annotate",
+        "clip_audio",
+        "karaoke",
+        "transcribe"
+      ],
+      "example_reference": {
+        "description": "Creator explainer pattern for SaaS/AI apps."
+      }
+    },
+    {
+      "id": "greenscreen_website_scroll",
+      "template_id": "greenscreen-website-scroll",
+      "name": "Greenscreen Website Scroll",
+      "category": "greenscreen",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Creator over a long website/landing-page scroll; 'this website feels illegal to know' style.",
+      "structure": [
+        "0-2s: creator cut-out + hook",
+        "2s-end: page scroll background (image pan or recording)",
+        "creator cut-out stays bottom"
+      ],
+      "primitives_needed": [
+        "image",
+        "motion",
+        "cutout",
+        "caption",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "'Underrated websites' genre; 'Website Mockup' in Motion's library.",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "greenscreen_stats_explainer",
+      "template_id": "greenscreen-stats-explainer",
+      "name": "Greenscreen Stats Explainer",
+      "category": "greenscreen",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Creator explains a statistic shown as a big animated number or simple chart behind them.",
+      "structure": [
+        "0-end: stat/counter background",
+        "creator cut-out bottom",
+        "captions"
+      ],
+      "primitives_needed": [
+        "counter",
+        "cutout",
+        "caption",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "'Statistic' / 'Benchmark education' (EveryDollar in Lightreel report).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "greenscreen_news_reaction",
+      "template_id": "greenscreen-news-reaction",
+      "name": "Greenscreen News Reaction",
+      "category": "greenscreen",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Creator reacts to a headline card (news-style) for a trend or launch; jacks into news cycles.",
+      "structure": [
+        "0-end: headline card background",
+        "creator cut-out",
+        "karaoke captions"
+      ],
+      "primitives_needed": [
+        "social_card",
+        "cutout",
+        "karaoke",
+        "transcribe",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "'News Broadcast' / 'Press' formats (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "greenscreen_photo_dump_commentary",
+      "template_id": "greenscreen-photo-dump-commentary",
+      "name": "Greenscreen Photo Commentary",
+      "category": "greenscreen",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Creator narrates over a sequence of photos that change per point (e.g. rating someone's setup, room, outfit).",
+      "structure": [
+        "0-end: photo sequence background",
+        "creator cut-out bottom",
+        "per-photo caption"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "cutout",
+        "caption_track",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "Rate-my-X commentary videos."
+      }
+    },
+    {
+      "id": "greenscreen_competitor_teardown",
+      "template_id": "greenscreen-competitor-teardown",
+      "name": "Greenscreen Competitor Teardown",
+      "category": "greenscreen",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Creator over competitor screenshots, slapping X marks / one-word verdicts, ending on your app with a check mark.",
+      "structure": [
+        "0-1.5s: hook",
+        "1.5s-(end-3s): competitor screens, red X annotations",
+        "last 3s: your app, green check"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "cutout",
+        "annotate",
+        "caption",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "'Competitor teardown list' (Hunch, Lightreel report).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "chroma_key_creator",
+      "template_id": "chroma-key-creator",
+      "name": "Real Green-Screen Footage",
+      "category": "greenscreen",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Same as greenscreen formats but with footage shot on a real green/blue screen: chroma-key instead of AI matting (faster, cleaner hair).",
+      "structure": [
+        "0-end: background (image/video)",
+        "keyed creator layer"
+      ],
+      "primitives_needed": [
+        "chroma_key",
+        "video",
+        "caption",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "Studio/UGC creators who shoot on green screens."
+      }
+    },
+    {
+      "id": "no_yapping",
+      "template_id": "no-yapping",
+      "name": "…but No Yapping",
+      "category": "tutorial",
+      "status": "exists",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Mouth-taped intro hook, then split screen: creator typing on top, screen recording below, step captions on the seam. Silence is the format.",
+      "structure": [
+        "0-6s: intro clip full screen + hook",
+        "6s-end: split — typing top, demo bottom",
+        "step captions on the seam, last holds"
+      ],
+      "primitives_needed": [
+        "video",
+        "split",
+        "caption_track",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Original reelclaw v1 template ('making $10k but no yapping')."
+      }
+    },
+    {
+      "id": "tutorial_speedrun",
+      "template_id": "tutorial-speedrun",
+      "name": "Tutorial Speed-Run",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "3-7 steps in 30-60s with numbered on-screen labels and a clear completion moment.",
+      "structure": [
+        "0-2s: result first + hook",
+        "2s-(end-3s): step clips, 'STEP N' label + instruction",
+        "last 3s: finished result"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "eliro.pro 'Tutorial speed-run' format.",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "how_to_screen_steps",
+      "template_id": "how-to-screen-steps",
+      "name": "How-To Screen Recording",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Single screen recording with step captions changing at timestamps and zoom-ins on the tapped area.",
+      "structure": [
+        "0-2s: hook over first frame",
+        "2s-end: recording with timed step captions",
+        "zoom to tapped regions"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption_track",
+        "motion",
+        "zoom_punch",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'How To' / 'Screen Recording' (Motion library).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "hack_you_didnt_know",
+      "template_id": "hack-you-didnt-know",
+      "name": "Hack You Didn't Know",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "'iPhone/app hack nobody talks about' hook over a reaction, then the 5-10s screen proof.",
+      "structure": [
+        "0-2s: reaction + 'hack' hook",
+        "2s-end: screen recording with 1-2 captions"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Evergreen hack/tips hook family."
+      }
+    },
+    {
+      "id": "prompt_reveal",
+      "template_id": "prompt-reveal",
+      "name": "The Prompt That…",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "'The ChatGPT prompt that got me X' — prompt typed in an AI chat mockup, answer streams in, result shown.",
+      "structure": [
+        "0-2s: hook over reaction or result",
+        "2-8s: AI chat mockup, prompt typing, answer streaming",
+        "8s-end: result"
+      ],
+      "primitives_needed": [
+        "ai_chat_ui",
+        "typewriter",
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "AI-tool tutorials; 'ChatGPT' format in Motion's library.",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "settings_to_change",
+      "template_id": "settings-to-change",
+      "name": "Settings You Should Change",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Numbered list of settings, each a short screen-recording clip zoomed onto the toggle.",
+      "structure": [
+        "0-2s: hook",
+        "per item 3-4s: recording + number badge + setting name",
+        "last: CTA"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "zoom_punch",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Phone/app settings listicle genre."
+      }
+    },
+    {
+      "id": "tap_zoom_walkthrough",
+      "template_id": "tap-zoom-walkthrough",
+      "name": "Tap-Zoom Walkthrough",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "hard",
+      "ready_today": false,
+      "description": "Screen recording that auto-zooms to each tap with a cursor/tap ripple, like polished product tours.",
+      "structure": [
+        "0-end: recording with zoom keyframes per tap",
+        "tap ripple + caption per step"
+      ],
+      "primitives_needed": [
+        "video",
+        "zoom_punch",
+        "annotate",
+        "caption_track"
+      ],
+      "example_reference": {
+        "description": "Screen Studio-style zoom demos."
+      }
+    },
+    {
+      "id": "do_this_not_that",
+      "template_id": "do-this-not-that",
+      "name": "Do This, Not That",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Split screen: wrong way (red X) top vs right way (green check) bottom, repeated for 2-4 tips.",
+      "structure": [
+        "per tip: top 'don't' clip + X, bottom 'do' clip + check",
+        "tip title on the seam"
+      ],
+      "primitives_needed": [
+        "split",
+        "sequence",
+        "annotate",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Comparison tips format."
+      }
+    },
+    {
+      "id": "study_with_me_timelapse",
+      "template_id": "study-with-me-timelapse",
+      "name": "Study/Work-With-Me Timelapse",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Timelapse of a work session with a ticking timer and task checklist; app shown as the timer/to-do.",
+      "structure": [
+        "0-2s: hook",
+        "2s-end: sped-up footage + counter timer + checklist items ticking"
+      ],
+      "primitives_needed": [
+        "video",
+        "speed",
+        "counter",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Work / Study' DanSUGC concept family (983K avg)."
+      }
+    },
+    {
+      "id": "workflow_in_60s",
+      "template_id": "workflow-in-60s",
+      "name": "My Workflow in 60s",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Rapid tour of a creator's tool stack: each tool a 3-5s clip with name badge and one-line why.",
+      "structure": [
+        "0-2s: hook",
+        "per tool: clip + tool-name badge + why caption",
+        "last: favourite tool CTA"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Productivity creator staple."
+      }
+    },
+    {
+      "id": "code_snippet_tutorial",
+      "template_id": "code-snippet-tutorial",
+      "name": "Code Snippet Typing",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Code typed out in an editor-style panel over b-roll or face, ending with the output.",
+      "structure": [
+        "0-2s: hook",
+        "2s-(end-3s): code panel typing",
+        "last 3s: output/result"
+      ],
+      "primitives_needed": [
+        "typewriter",
+        "html",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Dev-tool and AI coding content."
+      }
+    },
+    {
+      "id": "keyboard_shortcut_tips",
+      "template_id": "keyboard-shortcut-tips",
+      "name": "Shortcut Tips",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Key-cap overlays appear while the screen shows the effect; numbered list of shortcuts.",
+      "structure": [
+        "per shortcut: recording + key-cap graphic + label"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "html",
+        "rank_badges",
+        "video"
+      ],
+      "example_reference": {
+        "description": "Software tips genre."
+      }
+    },
+    {
+      "id": "tool_recipe",
+      "template_id": "tool-recipe",
+      "name": "Tool Recipe",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Recipe framing for software: 'ingredients' (tools) list card, then numbered steps, then the finished dish (result).",
+      "structure": [
+        "0-3s: ingredients card",
+        "steps with numbers",
+        "final result + CTA"
+      ],
+      "primitives_needed": [
+        "notes_ui",
+        "sequence",
+        "rank_badges",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Recipe-card style explainers."
+      }
+    },
+    {
+      "id": "talking_tutorial_split",
+      "template_id": "talking-tutorial-split",
+      "name": "Talking Tutorial Split",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Creator explains on top half (with voice + karaoke), screen recording on the bottom half in sync.",
+      "structure": [
+        "0-end: split — face top with karaoke, recording bottom"
+      ],
+      "primitives_needed": [
+        "split",
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "Voice-on counterpart to no-yapping."
+      }
+    },
+    {
+      "id": "wall_of_text",
+      "template_id": "wall-of-text",
+      "name": "Wall of Text",
+      "category": "text-story",
+      "status": "exists",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "A long first-person story caption covering most of the safe band over a single looping clip; the reader stays to finish reading.",
+      "structure": [
+        "0-end: one clip (aesthetic/b-roll/face), looped",
+        "wall-of-text caption auto-fit in the band",
+        "optional payoff caption last 2s"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Ubiquitous storytime/text format; 'Text Overlay' and 'Storytelling with text overlay' (eliro).",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "pov_text_hook",
+      "template_id": "pov-text-hook",
+      "name": "POV Text Hook",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "'POV: you finally…' one-line caption over b-roll acting it out, with an optional second beat revealing the app.",
+      "structure": [
+        "0-3s: b-roll + POV caption",
+        "3s-end: app moment + payoff caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "sequence",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "POV is a core 2026 TikTok format (eliro, contentgrip).",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "stacked_reveals_story",
+      "template_id": "stacked-reveals-story",
+      "name": "Stacked Reveals Story",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Story told in short caption beats that replace each other every 2-3s over one clip, each adding new information.",
+      "structure": [
+        "0-end: one looping clip",
+        "caption beats every 2-3s, 5-8 words each"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Stacked information reveals' used by text-story publishers (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "imessage_story",
+      "template_id": "imessage-story",
+      "name": "Text Message Story",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Fake-conversation drama told through iMessage bubbles appearing one by one over gameplay or b-roll.",
+      "structure": [
+        "0-1s: contact header + first shocking message",
+        "messages appear every 1-2.5s",
+        "twist message at end"
+      ],
+      "primitives_needed": [
+        "chat_ui",
+        "video",
+        "sfx",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Text Message' format (Motion); 'Extreme first-message conflict' (Lightreel).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "ai_reply_story",
+      "template_id": "ai-reply-story",
+      "name": "AI Reply Text Story",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Chat drama where the app suggests the perfect reply mid-conversation (Rizz-style native insertion).",
+      "structure": [
+        "0-3s: chat opens with conflict",
+        "app overlay suggests reply",
+        "reply sent, payoff reaction"
+      ],
+      "primitives_needed": [
+        "chat_ui",
+        "phone_frame",
+        "video",
+        "caption",
+        "sfx"
+      ],
+      "example_reference": {
+        "description": "Rizz: 'Story with native app insertion' (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "reddit_story_gameplay",
+      "template_id": "reddit-story-gameplay",
+      "name": "Reddit Story over Gameplay",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "TTS voice reads a Reddit-style post (card at top), satisfying gameplay below; karaoke captions centre.",
+      "structure": [
+        "0-3s: post card + title read",
+        "3s-end: gameplay full/bottom, karaoke captions of TTS"
+      ],
+      "primitives_needed": [
+        "social_card",
+        "tts",
+        "karaoke",
+        "video",
+        "split"
+      ],
+      "example_reference": {
+        "description": "Long-running faceless format on TikTok/Shorts."
+      }
+    },
+    {
+      "id": "notes_app_confession",
+      "template_id": "notes-app-confession",
+      "name": "Notes App Confession",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "A Notes-app page with a confession/list; text scrolls or fills, ending with the app as the fix.",
+      "structure": [
+        "0-end: notes UI full screen or over blurred b-roll",
+        "lines appear or page scrolls"
+      ],
+      "primitives_needed": [
+        "notes_ui",
+        "typewriter",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Notes App' format (Motion library).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "things_i_wish_i_knew",
+      "template_id": "things-i-wish-i-knew",
+      "name": "Things I Wish I Knew",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "'Things I wish I knew before…' numbered wall-of-text points over aesthetic b-roll cuts.",
+      "structure": [
+        "0-2s: title caption",
+        "per point 3-4s: new b-roll + numbered caption"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption_track",
+        "rank_badges",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Evergreen advice-list text format."
+      }
+    },
+    {
+      "id": "unpopular_opinion",
+      "template_id": "unpopular-opinion",
+      "name": "Unpopular Opinion",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Creator stares at camera under a bold opinion caption; second caption delivers the reason/product.",
+      "structure": [
+        "0-3s: face + opinion",
+        "3s-end: reason caption / proof"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Hot-take hook pattern."
+      }
+    },
+    {
+      "id": "day_n_diary",
+      "template_id": "day-n-diary",
+      "name": "Day N of Using X",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Diary series: 'day 12 of using X until I Y' over the day's b-roll, with a counter of progress.",
+      "structure": [
+        "0-2s: day label + goal",
+        "2s-end: b-roll with 1-2 captions + progress counter"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "counter",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Episodic series formats perform well in 2026 (contentgrip)."
+      }
+    },
+    {
+      "id": "letter_format",
+      "template_id": "letter-format",
+      "name": "Letter / Personal Note",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "A handwritten-looking letter ('dear future me', 'to the girl who…') filling the screen, slow scroll.",
+      "structure": [
+        "0-end: letter card on paper texture, slow pan",
+        "soft music"
+      ],
+      "primitives_needed": [
+        "image",
+        "html",
+        "motion",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Letter' format: ~1.7x spend ratio in Motion's 2026 library.",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "tell_me_without_telling_me",
+      "template_id": "tell-me-without-telling-me",
+      "name": "Tell Me Without Telling Me",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Prompt caption 'tell me you X without telling me', answer is a single visual (screen/b-roll).",
+      "structure": [
+        "0-2s: prompt caption",
+        "2s-end: answer clip"
+      ],
+      "primitives_needed": [
+        "video",
+        "sequence",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Recurring TikTok meme phrasing."
+      }
+    },
+    {
+      "id": "search_bar_story",
+      "template_id": "search-bar-story",
+      "name": "Search Bar Story",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Story told through search queries typed one after another ('how to stop…', 'is it normal to…'), ending on the app.",
+      "structure": [
+        "each 2s: search bar typing a query",
+        "final query: app result"
+      ],
+      "primitives_needed": [
+        "search_ui",
+        "typewriter",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Native Search' format (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "notification_story",
+      "template_id": "notification-story",
+      "name": "Lock-Screen Notification Story",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Narrative told by push notifications stacking on a lock screen (missed calls, texts, app alerts).",
+      "structure": [
+        "0-end: wallpaper/b-roll",
+        "notifications slide in every 1-2s"
+      ],
+      "primitives_needed": [
+        "notification_ui",
+        "sfx",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Couple360/Locket lock-screen proof (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "post_it_note",
+      "template_id": "post-it-note",
+      "name": "Post-It Note",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Sticky-note graphic with handwritten-style text over a product or b-roll shot.",
+      "structure": [
+        "0-end: clip + sticky note overlay",
+        "optional second note"
+      ],
+      "primitives_needed": [
+        "video",
+        "html",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'Post It': ~1.3x spend ratio (Motion 2026).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "cliffhanger_code",
+      "template_id": "cliffhanger-code",
+      "name": "Cliffhanger + Search Code",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Narrative clip cut at the peak with a persistent 'search code / continue in app' banner.",
+      "structure": [
+        "0-end: story clip(s)",
+        "persistent banner with code",
+        "hard stop at cliffhanger"
+      ],
+      "primitives_needed": [
+        "video",
+        "sequence",
+        "end_card",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "DramaBox (Lightreel Oct 2026).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "i_asked_ai",
+      "template_id": "i-asked-ai",
+      "name": "I Asked AI…",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "'I asked ChatGPT to…' question in an AI chat UI, answer streams, reaction to the answer.",
+      "structure": [
+        "0-2s: hook",
+        "2s-(end-2s): AI chat streaming",
+        "last 2s: reaction"
+      ],
+      "primitives_needed": [
+        "ai_chat_ui",
+        "typewriter",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "AI curiosity genre."
+      }
+    },
+    {
+      "id": "group_chat_story",
+      "template_id": "group-chat-story",
+      "name": "Group Chat Drama",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Group chat with multiple named participants, coloured bubbles, read receipts.",
+      "structure": [
+        "messages appear over time",
+        "twist at end"
+      ],
+      "primitives_needed": [
+        "chat_ui",
+        "sfx",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Variant of text message stories."
+      }
+    },
+    {
+      "id": "emotion_before_product",
+      "template_id": "emotion-before-product",
+      "name": "Emotion Before Product",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Pure emotional statement over moody b-roll ('a week away from you feels…'), app named only in the last caption — no UI shown.",
+      "structure": [
+        "0-(end-2s): b-roll + longing statement",
+        "last 2s: app name caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Tethered (Lightreel Oct 2026).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "reverse_psychology_text",
+      "template_id": "reverse-psychology-text",
+      "name": "Don't Download This",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "'Do NOT download this app if…' list of reasons that are actually benefits.",
+      "structure": [
+        "0-2s: warning hook",
+        "reasons 2-3s each",
+        "app reveal"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Reverse qualification (Litmatch, Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "countdown_story",
+      "template_id": "countdown-story",
+      "name": "Countdown Story",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "'X days until…' with a day counter and a short daily caption over b-roll.",
+      "structure": [
+        "0-end: b-roll",
+        "counter badge + caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "counter",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Episodic countdown series."
+      }
+    },
+    {
+      "id": "listicle",
+      "template_id": "listicle",
+      "name": "Listicle",
+      "category": "listicle",
+      "status": "exists",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Hook title then N items, each a clip with a numbered label and one-line caption; title persists.",
+      "structure": [
+        "0-2s: hook title over first clip",
+        "per item 2-4s: clip + 'N.' badge + caption",
+        "last item = payoff/app"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Listicle' is a top-10 hit-rate ad format (Motion 2026).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "top_5_countdown",
+      "template_id": "top-5-countdown",
+      "name": "Top 5 Countdown",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Countdown from 5 to 1, more time on #1; your product sits at #1.",
+      "structure": [
+        "0-2s: title",
+        "#5-#2: 2-3s each",
+        "#1: 4-6s with proof"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Ranking/countdown format (eliro).",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "tier_list",
+      "template_id": "tier-list",
+      "name": "Tier List",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "hard",
+      "ready_today": true,
+      "description": "S/A/B/C/D tier grid fills in as items are dragged in; creator voice-over or captions.",
+      "structure": [
+        "0-end: tier board, items animate into rows",
+        "creator PiP optional"
+      ],
+      "primitives_needed": [
+        "html",
+        "motion",
+        "image",
+        "pip",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Tier-list ranking content."
+      }
+    },
+    {
+      "id": "brutal_app_verdicts",
+      "template_id": "brutal-app-verdicts",
+      "name": "Rating Apps in One Word",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Rival apps each get a one-word brutal verdict ('ghosted', 'hookups'); your app gets the good one.",
+      "structure": [
+        "per app 1.5-2s: logo/screenshot + one-word verdict",
+        "last: your app + verdict"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "image",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Hunch competitor teardown (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "apps_that_feel_illegal",
+      "template_id": "apps-that-feel-illegal",
+      "name": "Apps That Feel Illegal to Know",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Rapid list of apps/websites, each a screen recording with name badge; yours placed 2nd or last.",
+      "structure": [
+        "0-2s: hook over reaction",
+        "per app 3-4s: recording + name badge"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Very common app-discovery hook family."
+      }
+    },
+    {
+      "id": "red_flags_green_flags",
+      "template_id": "red-flags-green-flags",
+      "name": "Red Flags / Green Flags",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Items labelled with red or green flag emoji; product is the green flag.",
+      "structure": [
+        "per item: clip + flag emoji + caption"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "emoji",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Dating/relationship content staple."
+      }
+    },
+    {
+      "id": "x_things_ai_can_do",
+      "template_id": "x-things-ai-can-do",
+      "name": "N Things AI Can Do Now",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Numbered list of AI capabilities with short result clips.",
+      "structure": [
+        "hook",
+        "per item: result clip + label"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "AI-tool listicle genre."
+      }
+    },
+    {
+      "id": "checklist_embed",
+      "template_id": "checklist-embed",
+      "name": "Trending Checklist Embed",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Aesthetic checklist ('fall reset', 'that girl routine') where the app is just one of the items.",
+      "structure": [
+        "checklist card; each item checks off with b-roll",
+        "app item gets a 2-3s demo"
+      ],
+      "primitives_needed": [
+        "notes_ui",
+        "sequence",
+        "annotate",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Retro: app buried as one item in a checklist (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "habits_that_changed_my_life",
+      "template_id": "habits-that-changed-my-life",
+      "name": "Habits That Changed My Life",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Numbered habits over routine b-roll; one habit is using the app.",
+      "structure": [
+        "hook",
+        "per habit: b-roll + numbered caption"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption_track",
+        "rank_badges",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Routine/self-improvement niche; DanSUGC 'Routine' (502K avg)."
+      }
+    },
+    {
+      "id": "this_or_that",
+      "template_id": "this-or-that",
+      "name": "This or That",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Two options side by side, viewer picks; 'pick one' poll UI with percentages.",
+      "structure": [
+        "per round: left/right options + poll bar",
+        "result reveal"
+      ],
+      "primitives_needed": [
+        "grid",
+        "poll_ui",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Interactive formats (polls/quizzes) cited for completion lift (2026 trend reports)."
+      }
+    },
+    {
+      "id": "worth_it_or_not",
+      "template_id": "worth-it-or-not",
+      "name": "Worth It / Not Worth It",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Purchases/subscriptions rated worth it or not with stamp overlays.",
+      "structure": [
+        "per item: clip + stamp"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "annotate",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Review/haul genre."
+      }
+    },
+    {
+      "id": "starter_pack",
+      "template_id": "starter-pack",
+      "name": "Starter Pack",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Grid of images with labels forming a 'X starter pack'; your app is one tile.",
+      "structure": [
+        "title",
+        "grid fills tile by tile"
+      ],
+      "primitives_needed": [
+        "grid",
+        "image",
+        "caption",
+        "motion"
+      ],
+      "example_reference": {
+        "description": "Long-lived meme/listicle format."
+      }
+    },
+    {
+      "id": "signs_you_are",
+      "template_id": "signs-you-are",
+      "name": "Signs You're a…",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "'Signs you're a [persona]' numbered relatable items, final sign is using the app.",
+      "structure": [
+        "hook",
+        "per sign: b-roll + caption"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Identity-relatable listicle."
+      }
+    },
+    {
+      "id": "underrated_websites",
+      "template_id": "underrated-websites",
+      "name": "Underrated Websites",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Each website: URL badge + 3s scroll recording.",
+      "structure": [
+        "hook",
+        "per site: url badge + scroll"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "blur_fill",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Web discovery genre."
+      }
+    },
+    {
+      "id": "products_under_price",
+      "template_id": "products-under-price",
+      "name": "Products Under $X",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Items with price tags, ending with the cheapest/best (your product).",
+      "structure": [
+        "per item: clip + price tag"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Shopping listicle."
+      }
+    },
+    {
+      "id": "three_tips_one_secret",
+      "template_id": "three-tips-one-secret",
+      "name": "3 Tips + 1 Secret",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Three known tips quickly, then a 'secret' fourth that is the product, with a held beat before it.",
+      "structure": [
+        "tips 1-3: 2s each",
+        "pause beat",
+        "secret: demo"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Open-loop listicle structure."
+      }
+    },
+    {
+      "id": "talking_head_captions",
+      "template_id": "talking-head-captions",
+      "name": "Talking Head + Captions",
+      "category": "talking-head",
+      "status": "exists",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Creator to camera with auto word-by-word captions and a hook title for the first seconds. The base of all spoken formats.",
+      "structure": [
+        "0-3s: hook title top of band",
+        "0-end: face + karaoke captions centre-low of band"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Word-by-word captions are the top caption style for spoken short-form in 2026 (caption studies)."
+      }
+    },
+    {
+      "id": "jump_cut_talking_head",
+      "template_id": "jump-cut-talking-head",
+      "name": "Jump-Cut Talking Head",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "hard",
+      "ready_today": false,
+      "description": "Silences removed automatically, punch-in zoom on every other cut, karaoke captions.",
+      "structure": [
+        "0-end: talking clip with pauses removed",
+        "alternate 100%/115% zoom per cut",
+        "karaoke"
+      ],
+      "primitives_needed": [
+        "jump_cut",
+        "zoom_punch",
+        "transcribe",
+        "karaoke",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "Standard creator edit style."
+      }
+    },
+    {
+      "id": "podcast_clip_two_speakers",
+      "template_id": "podcast-clip-two-speakers",
+      "name": "Podcast Clip (2 Speakers)",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Two speakers stacked top/bottom (or active speaker full) with karaoke captions on the seam.",
+      "structure": [
+        "0-3s: hook title",
+        "0-end: split speakers, captions on seam"
+      ],
+      "primitives_needed": [
+        "split",
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "'Podcast' format (Motion library).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "podcast_audiogram",
+      "template_id": "podcast-audiogram",
+      "name": "Audiogram",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Audio-only clip with cover art, waveform and captions.",
+      "structure": [
+        "0-end: cover image, waveform, karaoke"
+      ],
+      "primitives_needed": [
+        "image",
+        "waveform",
+        "clip_audio",
+        "transcribe",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "Podcast promo standard."
+      }
+    },
+    {
+      "id": "founder_story",
+      "template_id": "founder-story",
+      "name": "Founder Story",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Founder to camera ('I built this because…') with b-roll cutaways and karaoke captions.",
+      "structure": [
+        "0-3s: hook",
+        "talking head with b-roll inserts at marked times",
+        "CTA end card"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke",
+        "sequence",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Founder' format (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "yapper_hot_take",
+      "template_id": "yapper-hot-take",
+      "name": "Yapper Hot Take",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Fast, opinionated rant to camera; big emphasis words, punch zooms.",
+      "structure": [
+        "0-end: face, karaoke with emphasised words, zoom punches"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke",
+        "zoom_punch"
+      ],
+      "example_reference": {
+        "description": "'Yapper' format (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "mirror_interview",
+      "template_id": "mirror-interview",
+      "name": "Vanity-Mirror Interview",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Host interviews a guest at a vanity mirror about dating/lifestyle; question caption + captions.",
+      "structure": [
+        "0-2s: question caption",
+        "two-shot conversation with karaoke"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Tinder (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "street_interview",
+      "template_id": "street-interview",
+      "name": "Street Interview",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Mic-in-hand question to strangers; question as top caption, answers captioned, product as the twist.",
+      "structure": [
+        "0-2s: question caption",
+        "answers 3-5s each",
+        "twist/product reveal"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "clip_audio",
+        "transcribe",
+        "karaoke",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'Street Interview' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "reverse_qualification",
+      "template_id": "reverse-qualification",
+      "name": "Don't Watch If…",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Opens by telling the wrong viewers to leave ('if you're in a relationship, scroll'), then pitches.",
+      "structure": [
+        "0-2s: disqualifier hook",
+        "pitch with captions"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "karaoke",
+        "transcribe",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Litmatch reverse qualification (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "expert_broll_explainer",
+      "template_id": "expert-broll-explainer",
+      "name": "Expert + B-Roll Explainer",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Expert talking head interleaved with full-screen b-roll while the voice continues (J/L cuts).",
+      "structure": [
+        "voice continuous",
+        "visual alternates face / b-roll",
+        "karaoke throughout"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "sequence",
+        "transcribe",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "'Expert Explainer' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "answer_comment_talking",
+      "template_id": "answer-comment-talking",
+      "name": "Answering a Comment",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Comment-reply sticker over the creator answering it.",
+      "structure": [
+        "0-end: talking head + comment sticker for first 3-5s + karaoke"
+      ],
+      "primitives_needed": [
+        "video",
+        "comment_reply",
+        "clip_audio",
+        "transcribe",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "Native reply-to-comment videos."
+      }
+    },
+    {
+      "id": "walk_and_talk",
+      "template_id": "walk-and-talk",
+      "name": "Walk and Talk",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Selfie walking vlog with captions; light b-roll inserts.",
+      "structure": [
+        "0-end: walking clip + karaoke",
+        "inserts"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "DanSUGC 'Fitness Walking POVs' requests."
+      }
+    },
+    {
+      "id": "car_talk",
+      "template_id": "car-talk",
+      "name": "Car Talk",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Parked-car confessional, hook title then karaoke captions.",
+      "structure": [
+        "0-3s: hook",
+        "0-end: face + karaoke"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Common UGC setting."
+      }
+    },
+    {
+      "id": "faceless_tts_explainer",
+      "template_id": "faceless-tts-explainer",
+      "name": "Faceless TTS Explainer",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Script → TTS voice over stock/b-roll/screen clips with karaoke captions; no creator needed.",
+      "structure": [
+        "0-end: b-roll sequence timed to sentences",
+        "TTS voice + karaoke"
+      ],
+      "primitives_needed": [
+        "tts",
+        "sequence",
+        "karaoke",
+        "transcribe",
+        "music",
+        "duck"
+      ],
+      "example_reference": {
+        "description": "Faceless channels on Shorts/TikTok."
+      }
+    },
+    {
+      "id": "storytime_talking",
+      "template_id": "storytime-talking",
+      "name": "Storytime",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Creator storytime with a title card and chapter-like captions at story beats.",
+      "structure": [
+        "0-3s: title",
+        "talking + karaoke",
+        "beat captions"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke",
+        "caption_track"
+      ],
+      "example_reference": {
+        "description": "'Storytime' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "benchmark_education",
+      "template_id": "benchmark-education",
+      "name": "Benchmark Education",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "'The average household spends $X on…' stat card then creator explains and demos the tool.",
+      "structure": [
+        "0-3s: stat counter",
+        "talking head + demo inserts"
+      ],
+      "primitives_needed": [
+        "counter",
+        "video",
+        "clip_audio",
+        "karaoke",
+        "transcribe"
+      ],
+      "example_reference": {
+        "description": "EveryDollar (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "multi_hook_variants",
+      "template_id": "multi-hook-variants",
+      "name": "Hook Variants (Batch)",
+      "category": "talking-head",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Same body clip with N different hook intros, rendered as separate reels for A/B testing.",
+      "structure": [
+        "hook clip/caption variant",
+        "shared body"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "sequence"
+      ],
+      "example_reference": {
+        "description": "Standard ad-testing practice (many hooks, one body)."
+      }
+    },
+    {
+      "id": "before_after",
+      "template_id": "before-after",
+      "name": "Before → After",
+      "category": "before-after",
+      "status": "exists",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Before clip with 'before' label, hard cut (on the beat) to after with 'after' label; optional process middle.",
+      "structure": [
+        "0-3s: before + label",
+        "optional 3-5s process",
+        "after + label held"
+      ],
+      "primitives_needed": [
+        "video",
+        "sequence",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Before and After' is a top-10 hit-rate format (Motion 2026).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "wipe_reveal",
+      "template_id": "wipe-reveal",
+      "name": "Slider Wipe Reveal",
+      "category": "before-after",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Before and after layered; a wipe line slides across revealing the after.",
+      "structure": [
+        "0-1s: before",
+        "1-3s: wipe",
+        "3s-end: after"
+      ],
+      "primitives_needed": [
+        "wipe",
+        "video",
+        "image",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Split-screen before/after: 65% completion in 2026 creator analytics (eliro/others)."
+      }
+    },
+    {
+      "id": "glow_up_beat_drop",
+      "template_id": "glow-up-beat-drop",
+      "name": "Glow-Up on the Drop",
+      "category": "before-after",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Before held until the music drop, then hard cut/flash to after.",
+      "structure": [
+        "before until beat",
+        "flash transition at drop",
+        "after"
+      ],
+      "primitives_needed": [
+        "video",
+        "beat_sync",
+        "transitions",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Classic transformation trend."
+      }
+    },
+    {
+      "id": "day1_vs_day30",
+      "template_id": "day1-vs-day30",
+      "name": "Day 1 vs Day 30",
+      "category": "before-after",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Progress over time with day counter ticking between snapshots.",
+      "structure": [
+        "day 1 clip",
+        "counter ticks",
+        "day 30 clip"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "counter",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'I tested X for 30 days' testimonial structure."
+      }
+    },
+    {
+      "id": "expectation_vs_reality",
+      "template_id": "expectation-vs-reality",
+      "name": "Expectation vs Reality",
+      "category": "before-after",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Split: expectation top, reality bottom (or sequential), labels.",
+      "structure": [
+        "split with two labels"
+      ],
+      "primitives_needed": [
+        "split",
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Meme/comparison staple."
+      }
+    },
+    {
+      "id": "room_makeover_timelapse",
+      "template_id": "room-makeover-timelapse",
+      "name": "Makeover Timelapse",
+      "category": "before-after",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Fixed-camera timelapse of a transformation with before/after bookends.",
+      "structure": [
+        "before still 1s",
+        "timelapse",
+        "after reveal slow push-in"
+      ],
+      "primitives_needed": [
+        "video",
+        "speed",
+        "motion",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "eliro 'Time-lapse transformation'.",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "ai_transformation",
+      "template_id": "ai-transformation",
+      "name": "AI Transformation",
+      "category": "before-after",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Photo before → app processing state → transformed result, with visible tool UI (Facetune-style).",
+      "structure": [
+        "0-2s: before photo + hook",
+        "2-4s: app processing screen",
+        "4s-end: result + reaction"
+      ],
+      "primitives_needed": [
+        "image",
+        "video",
+        "sequence",
+        "wipe",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Facetune 'meme plus feature proof' (Lightreel); AI Style Transfer 72% completion (2026 analytics).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "old_way_new_way",
+      "template_id": "old-way-new-way",
+      "name": "Old Way vs New Way",
+      "category": "before-after",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Old painful workflow (grayscale, sped up, frustrated) vs new way with the app (colour, fast).",
+      "structure": [
+        "old way: grayscale + 'old way' label",
+        "new way: colour + label"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "filters",
+        "speed",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Us vs Them' / problem-solution family."
+      }
+    },
+    {
+      "id": "progress_grid",
+      "template_id": "progress-grid",
+      "name": "Progress Grid",
+      "category": "before-after",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Grid of progress photos filling chronologically, final cell enlarges.",
+      "structure": [
+        "grid fills",
+        "last tile zooms to full screen"
+      ],
+      "primitives_needed": [
+        "grid",
+        "image",
+        "motion",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Fitness/skin progress posts."
+      }
+    },
+    {
+      "id": "debt_payoff_result",
+      "template_id": "debt-payoff-result",
+      "name": "Payoff Result",
+      "category": "before-after",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Big money counter from debt to zero, then feature demo.",
+      "structure": [
+        "counter from -$X to $0",
+        "creator reaction",
+        "app demo"
+      ],
+      "primitives_needed": [
+        "counter",
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "EveryDollar debt-payoff showcase (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "photo_mode_slideshow",
+      "template_id": "photo-mode-slideshow",
+      "name": "Photo-Mode Slideshow",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "TikTok photo-carousel look as a video: 4-8 full-screen images with tiktok-box text, one per 2-3s, problem→payoff story.",
+      "structure": [
+        "slide 1: hook text",
+        "middle slides: tension/reasons",
+        "last slide: payoff/app"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Carousels get ~1.9x likes / 2.6x shares vs video per TikTok data (virlo, posteverywhere 2026 guides)."
+      }
+    },
+    {
+      "id": "problem_proof_product_carousel",
+      "template_id": "problem-proof-product-carousel",
+      "name": "Problem → Proof → Product",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Three-slide story: the problem, the visible proof the solution works, the product name.",
+      "structure": [
+        "slide 1: problem",
+        "slide 2: proof screenshot",
+        "slide 3: product"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Bump (Lightreel Oct 2026).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "aesthetic_photo_dump",
+      "template_id": "aesthetic-photo-dump",
+      "name": "Aesthetic Photo Dump",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Fast photo dump cut on the beat with a single caption.",
+      "structure": [
+        "photos switch on each beat",
+        "caption throughout"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "beat_sync",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Lifestyle photo-dump trend."
+      }
+    },
+    {
+      "id": "ken_burns_story",
+      "template_id": "ken-burns-story",
+      "name": "Ken Burns Story",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Slow pan/zoom across photos with narrative captions (or TTS).",
+      "structure": [
+        "per photo 3-4s with pan/zoom + caption"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Documentary-style slideshow."
+      }
+    },
+    {
+      "id": "screenshot_carousel",
+      "template_id": "screenshot-carousel",
+      "name": "App Screenshot Carousel",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "App screenshots (in phone frame) one per slide with benefit captions.",
+      "structure": [
+        "per screenshot: phone frame + benefit caption"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "phone_frame",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "App store screenshots repurposed as content."
+      }
+    },
+    {
+      "id": "quote_cards",
+      "template_id": "quote-cards",
+      "name": "Quote Cards",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Quote text slides over moody backgrounds.",
+      "structure": [
+        "per quote: bg + quote"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Motivation niche."
+      }
+    },
+    {
+      "id": "moodboard_build",
+      "template_id": "moodboard-build",
+      "name": "Moodboard Build",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Images drop into a collage one by one forming a moodboard.",
+      "structure": [
+        "images animate into grid positions"
+      ],
+      "primitives_needed": [
+        "grid",
+        "image",
+        "motion",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Collage' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "then_vs_now_slides",
+      "template_id": "then-vs-now-slides",
+      "name": "Then vs Now Slides",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Paired slides: then (grayscale) / now (colour) per topic.",
+      "structure": [
+        "pairs of slides with labels"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "filters",
+        "caption_track"
+      ],
+      "example_reference": {
+        "description": "Nostalgia comparison."
+      }
+    },
+    {
+      "id": "slideshow_voiceover",
+      "template_id": "slideshow-voiceover",
+      "name": "Slideshow + Voiceover",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Slides timed to a voiceover (recorded or TTS) with karaoke captions.",
+      "structure": [
+        "slides advance at sentence boundaries",
+        "karaoke"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "tts",
+        "transcribe",
+        "karaoke",
+        "music",
+        "duck"
+      ],
+      "example_reference": {
+        "description": "Faceless explainers."
+      }
+    },
+    {
+      "id": "static_to_video",
+      "template_id": "static-to-video",
+      "name": "Static-to-Video",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "A static ad image brought to life: subtle zoom, text pops in sequence, CTA.",
+      "structure": [
+        "image with slow zoom",
+        "text lines appear",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "image",
+        "motion",
+        "caption_track",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Static To Video Hybrid' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "meme_top_bar",
+      "template_id": "meme-top-bar",
+      "name": "Meme Top Bar",
+      "category": "meme",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Classic white bar with black text above a reaction clip; clip scaled into the lower area.",
+      "structure": [
+        "0-end: white top panel with text, clip below"
+      ],
+      "primitives_needed": [
+        "solid",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'Meme' format (Motion); evergreen.",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "nobody_me",
+      "template_id": "nobody-me",
+      "name": "Nobody: / Me:",
+      "category": "meme",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "'Nobody: / Me:' setup text over an absurd clip.",
+      "structure": [
+        "0-end: clip + two-line setup"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Long-running meme template."
+      }
+    },
+    {
+      "id": "me_explaining",
+      "template_id": "me-explaining",
+      "name": "Me Explaining to…",
+      "category": "meme",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "'Me explaining to my mom why I need this app' over a passionate-explaining clip.",
+      "structure": [
+        "0-end: clip + caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Meme phrasing."
+      }
+    },
+    {
+      "id": "meme_feature_proof",
+      "template_id": "meme-feature-proof",
+      "name": "Meme + Feature Proof",
+      "category": "meme",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Topical joke becomes a visible transformation using the app (shows tool + processing).",
+      "structure": [
+        "0-2s: meme setup",
+        "2-5s: app UI doing it",
+        "5s-end: punchline result"
+      ],
+      "primitives_needed": [
+        "video",
+        "sequence",
+        "caption",
+        "phone_frame"
+      ],
+      "example_reference": {
+        "description": "Facetune (Lightreel Oct 2026).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "drake_preference",
+      "template_id": "drake-preference",
+      "name": "Two-Panel Preference",
+      "category": "meme",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Two stacked panels: reject (top) vs approve (bottom) reaction clips with labels.",
+      "structure": [
+        "top: reject clip + label",
+        "bottom: approve clip + label"
+      ],
+      "primitives_needed": [
+        "split",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Preference meme structure (use own footage, not copyrighted stills)."
+      }
+    },
+    {
+      "id": "when_you",
+      "template_id": "when-you",
+      "name": "When You…",
+      "category": "meme",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "'When you finally…' relatable caption over a reaction clip.",
+      "structure": [
+        "0-end: reaction + caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Relatable caption meme."
+      }
+    },
+    {
+      "id": "expanding_brain",
+      "template_id": "expanding-brain",
+      "name": "Escalating Levels",
+      "category": "meme",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Levels 1-4 of increasingly galaxy-brain solutions, final is your app.",
+      "structure": [
+        "4 stacked panels revealing one by one"
+      ],
+      "primitives_needed": [
+        "grid",
+        "image",
+        "caption",
+        "motion"
+      ],
+      "example_reference": {
+        "description": "Escalation meme."
+      }
+    },
+    {
+      "id": "that_one_friend",
+      "template_id": "that-one-friend",
+      "name": "That One Friend",
+      "category": "meme",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "'That one friend who…' skit-lite with a caption.",
+      "structure": [
+        "0-end: clip + caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Relatable persona meme."
+      }
+    },
+    {
+      "id": "punchline_still",
+      "template_id": "punchline-still",
+      "name": "Punchline Cut",
+      "category": "meme",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Setup clip, then a hard cut to a still image punchline with a sound sting.",
+      "structure": [
+        "setup clip",
+        "still punchline + sfx"
+      ],
+      "primitives_needed": [
+        "video",
+        "image",
+        "sfx",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Cut-to-punchline edit."
+      }
+    },
+    {
+      "id": "what_they_think",
+      "template_id": "what-they-think",
+      "name": "What They Think vs Reality",
+      "category": "meme",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "'What my friends think I do / what I actually do' stacked labels.",
+      "structure": [
+        "sequential labelled clips"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Identity meme."
+      }
+    },
+    {
+      "id": "pattern_interrupt_meme",
+      "template_id": "pattern-interrupt-meme",
+      "name": "Pattern Interrupt",
+      "category": "meme",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "A deliberately weird first frame (odd zoom, upside-down, glitch) then the actual message.",
+      "structure": [
+        "0-1s: weird visual",
+        "1s-end: message"
+      ],
+      "primitives_needed": [
+        "video",
+        "motion",
+        "filters",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'Pattern Interrupt' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "testimonial_ugc",
+      "template_id": "testimonial-ugc",
+      "name": "UGC Testimonial",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Creator's personal result story to camera with karaoke captions, product shots, CTA end card.",
+      "structure": [
+        "0-3s: result hook",
+        "story + product inserts",
+        "CTA end card"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "transcribe",
+        "karaoke",
+        "sequence",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Testimonial' 6.5% hit rate (Motion 2026).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "unboxing_reveal",
+      "template_id": "unboxing-reveal",
+      "name": "Unboxing Reveal",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Package open → product reveal → first use; ASMR sound kept.",
+      "structure": [
+        "0-2s: package + hook",
+        "reveal",
+        "first use",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "clip_audio",
+        "caption_track",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Unboxing' 9.8% hit rate, the top format (Motion 2026).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "offer_first_banner",
+      "template_id": "offer-first-banner",
+      "name": "Offer-First Banner",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "A persistent offer banner ('50% off this week') from frame one over UGC footage.",
+      "structure": [
+        "0-end: UGC clip(s)",
+        "persistent offer banner in band top",
+        "CTA end card"
+      ],
+      "primitives_needed": [
+        "video",
+        "end_card",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Offer-First Banner' 8.6% hit rate (Motion 2026).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "problem_agitate_solve",
+      "template_id": "problem-agitate-solve",
+      "name": "Problem → Agitate → Solve",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Three acts: name the pain, twist the knife, product solves it; each act its own clip/caption.",
+      "structure": [
+        "0-3s: problem",
+        "3-6s: agitation",
+        "6s-end: solution demo + CTA"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption_track",
+        "end_card",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Problem Agitation' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "us_vs_them",
+      "template_id": "us-vs-them",
+      "name": "Us vs Them",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Comparison table/checklist: competitor column with X marks, yours with checks, or split footage.",
+      "structure": [
+        "0-2s: hook",
+        "rows reveal one by one",
+        "verdict + CTA"
+      ],
+      "primitives_needed": [
+        "html",
+        "annotate",
+        "split",
+        "caption",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Us Vs Them' top-10 hit rate (Motion 2026).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "three_reasons_why",
+      "template_id": "three-reasons-why",
+      "name": "3 Reasons Why",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "'3 reasons I switched to X' numbered reasons, each with a proof clip.",
+      "structure": [
+        "hook",
+        "reason 1-3 with proof",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "caption_track",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "Listicle ad structure (Motion: Listicle top-10).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "tested_for_30_days",
+      "template_id": "tested-for-30-days",
+      "name": "I Tested It for 30 Days",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Day-stamped clips through a trial period ending in the result.",
+      "structure": [
+        "day labels over clips",
+        "result + verdict"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "counter",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'I tested [product] for 30 days' — top UGC testimonial pattern 2026."
+      }
+    },
+    {
+      "id": "genuine_discovery",
+      "template_id": "genuine-discovery",
+      "name": "Genuine First Use",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Creator uses the app for the first time on camera and reacts in real time; screen PiP.",
+      "structure": [
+        "0-end: face + screen PiP",
+        "captions of reactions"
+      ],
+      "primitives_needed": [
+        "video",
+        "pip",
+        "clip_audio",
+        "transcribe",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "Genuine discovery outperforms scripted testimonials (2026 TikTok ad guides)."
+      }
+    },
+    {
+      "id": "social_proof_mashup",
+      "template_id": "social-proof-mashup",
+      "name": "Social Proof Mashup",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Rapid cuts of many short testimonials, review cards and star ratings.",
+      "structure": [
+        "hook",
+        "1-2s testimonial cuts + review cards",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "social_card",
+        "caption",
+        "end_card",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Social Proof Mashup' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "founder_offer_ad",
+      "template_id": "founder-offer-ad",
+      "name": "Founder Offer Ad",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Founder to camera with a direct offer, captions and end card.",
+      "structure": [
+        "face + karaoke",
+        "offer banner",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "karaoke",
+        "transcribe",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Founder' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "warning_screen",
+      "template_id": "warning-screen",
+      "name": "Warning Screen",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "A 'WARNING / STOP scrolling if…' full-screen card then the pitch.",
+      "structure": [
+        "0-1.5s: warning card",
+        "pitch footage"
+      ],
+      "primitives_needed": [
+        "solid",
+        "caption",
+        "video",
+        "sfx"
+      ],
+      "example_reference": {
+        "description": "'Warning Screen' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "ugc_overlay_product",
+      "template_id": "ugc-overlay-product",
+      "name": "UGC Overlay on Product",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Product footage full screen with the creator cut-out or PiP talking over it.",
+      "structure": [
+        "product b-roll",
+        "creator PiP/cut-out",
+        "captions"
+      ],
+      "primitives_needed": [
+        "video",
+        "pip",
+        "cutout",
+        "clip_audio",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "'UGC Overlay' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "app_review_cards",
+      "template_id": "app-review-cards",
+      "name": "App Store Review Cards",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "5-star review cards pop in over b-roll; final card + store badge.",
+      "structure": [
+        "b-roll",
+        "review cards stack",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "social_card",
+        "video",
+        "end_card",
+        "sfx"
+      ],
+      "example_reference": {
+        "description": "'Review' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "short_vsl",
+      "template_id": "short-vsl",
+      "name": "Short VSL",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Compressed video sales letter: hook, problem, mechanism, proof, offer — text-led with b-roll.",
+      "structure": [
+        "5 beats with captions",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption_track",
+        "end_card",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'VSL' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "friend_to_friend_loop",
+      "template_id": "friend-to-friend-loop",
+      "name": "Download With Your Bestie",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Two friends side by side; one invites the other — app only complete with two users.",
+      "structure": [
+        "split L/R friends",
+        "invite moment",
+        "both using app"
+      ],
+      "primitives_needed": [
+        "grid",
+        "video",
+        "caption",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "Yope friend-to-friend loop (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "lifestyle_integration",
+      "template_id": "lifestyle-integration",
+      "name": "Lifestyle Integration",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "App appears for a few seconds inside an ordinary vlog (day of eating, family day) without breaking the story.",
+      "structure": [
+        "vlog clips",
+        "2-3s app insert",
+        "vlog continues"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption_track",
+        "phone_frame",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Cal AI utility insertion (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "native_search_ad",
+      "template_id": "native-search-ad",
+      "name": "Native Search Ad",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Search bar types the problem, results appear, your app is the hit.",
+      "structure": [
+        "search typing",
+        "result list",
+        "app demo"
+      ],
+      "primitives_needed": [
+        "search_ui",
+        "typewriter",
+        "video",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Native Search' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "comment_response_ad",
+      "template_id": "comment-response-ad",
+      "name": "Comment Response Ad",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Reply to a real objection comment with proof.",
+      "structure": [
+        "comment sticker + creator",
+        "proof clip",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "comment_reply",
+        "video",
+        "karaoke",
+        "transcribe",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Comment Response' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "statistic_hook_ad",
+      "template_id": "statistic-hook-ad",
+      "name": "Statistic Hook",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Big shocking number first frame, then explanation and product.",
+      "structure": [
+        "0-2s: counter",
+        "creator explains",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "counter",
+        "video",
+        "caption",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Statistic' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "nostalgia_proof",
+      "template_id": "nostalgia-proof",
+      "name": "Nostalgia + Proof",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Nostalgic hook (old photo, throwback song) then a feature walkthrough.",
+      "structure": [
+        "0-3s: nostalgic clip + filter",
+        "feature demo"
+      ],
+      "primitives_needed": [
+        "video",
+        "filters",
+        "sequence",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Locket (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "invite_only_flex",
+      "template_id": "invite-only-flex",
+      "name": "Invite-Only Flex",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "App named as a social signal ('if you know you know'), no UI shown.",
+      "structure": [
+        "lifestyle clip + caption naming app"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Hoppy (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "campaign_ugc_compilation",
+      "template_id": "campaign-ugc-compilation",
+      "name": "UGC Campaign Compilation",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Compilation of user-submitted clips under one theme with handles as lower-thirds.",
+      "structure": [
+        "hook",
+        "clips 2-3s each + handle",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "lower_third",
+        "music",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "Locket Memories campaign (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "screen_recording_demo",
+      "template_id": "screen-recording-demo",
+      "name": "Screen Recording Demo",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Screen recording in a phone frame on a coloured/blurred background, captions per feature.",
+      "structure": [
+        "0-2s: hook",
+        "framed recording with timed captions",
+        "CTA"
+      ],
+      "primitives_needed": [
+        "video",
+        "phone_frame",
+        "caption_track",
+        "end_card",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Screen-recording demos that create desire through UI' (Lightreel FAQ); 'Demo' 8.1% hit rate (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "phone_in_hand_demo",
+      "template_id": "phone-in-hand-demo",
+      "name": "Phone-in-Hand Demo",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "hard",
+      "ready_today": true,
+      "description": "Screen recording composited onto a phone held in hand (tracked corners provided by user or a static hold).",
+      "structure": [
+        "hand-held phone clip",
+        "recording mapped to screen",
+        "captions"
+      ],
+      "primitives_needed": [
+        "video",
+        "html",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "UGC phone-in-hand demos."
+      }
+    },
+    {
+      "id": "two_phone_demo",
+      "template_id": "two-phone-demo",
+      "name": "Two-Phone Demo",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Two phones side by side showing a synchronized action (send/receive, draw together).",
+      "structure": [
+        "two recordings in phone frames L/R",
+        "sync caption"
+      ],
+      "primitives_needed": [
+        "grid",
+        "phone_frame",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Lovio synchronized drawing (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "feature_pointout",
+      "template_id": "feature-pointout",
+      "name": "Feature Benefit Pointout",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Product/app shot with arrows and labels pointing at features one by one.",
+      "structure": [
+        "hero shot",
+        "callouts appear sequentially"
+      ],
+      "primitives_needed": [
+        "video",
+        "annotate",
+        "caption_track"
+      ],
+      "example_reference": {
+        "description": "'Feature Benefit Pointout' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "floating_phone_mockup",
+      "template_id": "floating-phone-mockup",
+      "name": "Floating 3D Phone",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Tilted floating phone with the recording playing, slow rotation, bold headline.",
+      "structure": [
+        "phone frame with 3D tilt",
+        "headline + CTA"
+      ],
+      "primitives_needed": [
+        "phone_frame",
+        "motion",
+        "video",
+        "caption",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'App Mockup' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "website_tour_scroll",
+      "template_id": "website-tour-scroll",
+      "name": "Website Tour Scroll",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Full-page screenshot scrolled smoothly with section captions.",
+      "structure": [
+        "long image pan",
+        "section captions"
+      ],
+      "primitives_needed": [
+        "image",
+        "motion",
+        "caption_track"
+      ],
+      "example_reference": {
+        "description": "Landing-page showcases."
+      }
+    },
+    {
+      "id": "launch_day",
+      "template_id": "launch-day",
+      "name": "Launch Day",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Countdown to launch, product reveal, upvote/user counter climbing.",
+      "structure": [
+        "countdown",
+        "reveal",
+        "counter"
+      ],
+      "primitives_needed": [
+        "counter",
+        "video",
+        "caption",
+        "end_card",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Product launch posts."
+      }
+    },
+    {
+      "id": "whats_new_changelog",
+      "template_id": "whats-new-changelog",
+      "name": "What's New",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Numbered new features, each a short recording with label.",
+      "structure": [
+        "per feature: recording + badge"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "rank_badges",
+        "phone_frame",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Changelog videos."
+      }
+    },
+    {
+      "id": "hidden_feature",
+      "template_id": "hidden-feature",
+      "name": "Hidden Feature",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "'You've been using X wrong' + the hidden feature reveal.",
+      "structure": [
+        "hook",
+        "recording with zoom to the feature"
+      ],
+      "primitives_needed": [
+        "video",
+        "zoom_punch",
+        "annotate",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Hidden-feature hook family."
+      }
+    },
+    {
+      "id": "speed_race",
+      "template_id": "speed-race",
+      "name": "Speed Race",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Side-by-side race: old tool vs your app doing the same task, timers running.",
+      "structure": [
+        "L/R recordings with timers",
+        "winner stamp"
+      ],
+      "primitives_needed": [
+        "grid",
+        "counter",
+        "video",
+        "annotate",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Comparison/demo hybrid."
+      }
+    },
+    {
+      "id": "widget_demo",
+      "template_id": "widget-demo",
+      "name": "Widget / Lock-Screen Demo",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Shows the widget or lock-screen notification appearing in a real-life moment.",
+      "structure": [
+        "lifestyle clip",
+        "lock-screen with widget/notification"
+      ],
+      "primitives_needed": [
+        "notification_ui",
+        "video",
+        "phone_frame",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Couple360/Locket (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "ai_generation_reveal",
+      "template_id": "ai-generation-reveal",
+      "name": "Prompt → Result Reveal",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Prompt typed, loading shimmer, generated result revealed big.",
+      "structure": [
+        "prompt typing",
+        "loading",
+        "result reveal + reaction"
+      ],
+      "primitives_needed": [
+        "typewriter",
+        "html",
+        "image",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "AI app demos; 'AI Style Transfer' highest completion in 2026 creator analytics."
+      }
+    },
+    {
+      "id": "ui_mockup_highlight",
+      "template_id": "ui-mockup-highlight",
+      "name": "UI Highlight Reel",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Quick cuts of best UI moments with zoom punches on the beat.",
+      "structure": [
+        "2-3s recording snippets on beats"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "beat_sync",
+        "zoom_punch",
+        "phone_frame",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Sizzle-style app promos."
+      }
+    },
+    {
+      "id": "before_download_walkthrough",
+      "template_id": "before-download-walkthrough",
+      "name": "Onboarding Walkthrough",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "First 30 seconds of the app (onboarding) sped up with captions explaining value.",
+      "structure": [
+        "recording sped 1.5-2x",
+        "captions"
+      ],
+      "primitives_needed": [
+        "video",
+        "speed",
+        "caption_track"
+      ],
+      "example_reference": {
+        "description": "App onboarding showcases."
+      }
+    },
+    {
+      "id": "brainrot_split_gameplay",
+      "template_id": "brainrot-split-gameplay",
+      "name": "Content + Gameplay Split",
+      "category": "split-screen",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Any talking/story content on top, satisfying gameplay (parkour, sand cutting) on the bottom for retention.",
+      "structure": [
+        "top: content",
+        "bottom: gameplay loop",
+        "captions on seam"
+      ],
+      "primitives_needed": [
+        "split",
+        "video",
+        "clip_audio",
+        "karaoke",
+        "transcribe"
+      ],
+      "example_reference": {
+        "description": "Long-running retention split format on TikTok/Shorts."
+      }
+    },
+    {
+      "id": "duet_side_by_side",
+      "template_id": "duet-side-by-side",
+      "name": "Duet Side-by-Side",
+      "category": "split-screen",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Original clip left, creator right, synced.",
+      "structure": [
+        "L/R halves"
+      ],
+      "primitives_needed": [
+        "grid",
+        "video",
+        "clip_audio",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'Duet' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "stitch_response",
+      "template_id": "stitch-response",
+      "name": "Stitch Response",
+      "category": "split-screen",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "3-5s source clip then the creator's response.",
+      "structure": [
+        "0-4s: source clip + 'stitch' label",
+        "response with captions"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "video",
+        "clip_audio",
+        "karaoke",
+        "transcribe",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "eliro 'Duet/Stitch response'.",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "ab_comparison_split",
+      "template_id": "ab-comparison-split",
+      "name": "A vs B Split",
+      "category": "split-screen",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Two options doing the same thing simultaneously, top vs bottom, labels.",
+      "structure": [
+        "top A + label",
+        "bottom B + label",
+        "verdict"
+      ],
+      "primitives_needed": [
+        "split",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Split-screen comparison (Motion 'Split Screen' top-10 hit rate).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "which_one_of_us",
+      "template_id": "which-one-of-us",
+      "name": "Which One of Us",
+      "category": "split-screen",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Two people split screen answering 'which one of us…' prompts by pointing.",
+      "structure": [
+        "split L/R or T/B",
+        "prompt captions in sequence"
+      ],
+      "primitives_needed": [
+        "split",
+        "video",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Which one of us is cooler' trend (2026 format guides)."
+      }
+    },
+    {
+      "id": "reaction_to_original",
+      "template_id": "reaction-to-original",
+      "name": "Original + Reaction",
+      "category": "split-screen",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Original content top, creator reaction bottom (reaction-video staple).",
+      "structure": [
+        "top original",
+        "bottom reaction"
+      ],
+      "primitives_needed": [
+        "split",
+        "video",
+        "clip_audio",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "eliro 'Reaction split-screen'.",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "three_way_split",
+      "template_id": "three-way-split",
+      "name": "Three-Way Split",
+      "category": "split-screen",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Three stacked strips (3 options / 3 angles).",
+      "structure": [
+        "3 horizontal bands"
+      ],
+      "primitives_needed": [
+        "grid",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Comparison variant."
+      }
+    },
+    {
+      "id": "beat_sync_montage",
+      "template_id": "beat-sync-montage",
+      "name": "Beat-Sync Montage",
+      "category": "trend",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Clips cut exactly on the music's beats; one caption.",
+      "structure": [
+        "clips change on each beat (or every 2nd)",
+        "caption"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "beat_sync",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "CapCut beat-sync templates (CapCut help: trending templates 2026).",
+        "url": "https://www.capcut.com/help/templates-for-tiktok"
+      }
+    },
+    {
+      "id": "beat_drop_transition",
+      "template_id": "beat-drop-transition",
+      "name": "Beat-Drop Transition",
+      "category": "trend",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Slow build clip, transition on the drop to the payoff clip.",
+      "structure": [
+        "build clip",
+        "drop: flash/whip",
+        "payoff"
+      ],
+      "primitives_needed": [
+        "video",
+        "beat_sync",
+        "transitions",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Transition trends."
+      }
+    },
+    {
+      "id": "day_in_the_life",
+      "template_id": "day-in-the-life",
+      "name": "Day in the Life",
+      "category": "trend",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Chronological clips with time stamps (7:00am…), app used at one point.",
+      "structure": [
+        "timestamped clips"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "eliro 'Day-in-the-life'.",
+        "url": "https://eliro.pro/blog/10-video-formats-best-tiktok"
+      }
+    },
+    {
+      "id": "grwm_voiceover",
+      "template_id": "grwm-voiceover",
+      "name": "GRWM + Story",
+      "category": "trend",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Get-ready-with-me footage with a voiceover/caption story; product mid-way.",
+      "structure": [
+        "GRWM clips",
+        "voiceover karaoke"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "clip_audio",
+        "transcribe",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "GRWM is a top native format (2026 trend reports)."
+      }
+    },
+    {
+      "id": "morning_routine_app",
+      "template_id": "morning-routine-app",
+      "name": "Morning Routine",
+      "category": "trend",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Aesthetic morning routine clips with short captions; app as a routine step.",
+      "structure": [
+        "routine clips 1.5-3s",
+        "app step"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Morning Routine & Productivity'.",
+        "url": "https://www.tiktok.com/@louisegreen_/video/7666120071026101526"
+      }
+    },
+    {
+      "id": "night_routine_app",
+      "template_id": "night-routine-app",
+      "name": "Night Routine",
+      "category": "trend",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Wind-down routine; app as sleep/journal step.",
+      "structure": [
+        "routine clips",
+        "app step"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC 'Night Time Routine' request (172 clips)."
+      }
+    },
+    {
+      "id": "chore_motivation",
+      "template_id": "chore-motivation",
+      "name": "Chore Motivation",
+      "category": "trend",
+      "status": "idea",
+      "priority": 1,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Cleaning/chore clips sped up with a caption hook about motivation; app gamifies it.",
+      "structure": [
+        "sped chore clips",
+        "caption"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "speed",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'chore', ~626K views.",
+        "url": "https://www.tiktok.com/@dansugcmodels7/video/7573773528206527757"
+      }
+    },
+    {
+      "id": "lip_sync_caption",
+      "template_id": "lip-sync-caption",
+      "name": "Lip-Sync + Relatable Caption",
+      "category": "trend",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Creator lip-syncs a trending sound; caption makes it about the niche.",
+      "structure": [
+        "lip-sync clip + caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "clip_audio",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Trending audio participation (2026 TikTok trend guides)."
+      }
+    },
+    {
+      "id": "slow_mo_cinematic",
+      "template_id": "slow-mo-cinematic",
+      "name": "Slow-Mo Cinematic",
+      "category": "trend",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Slow-motion cinematic b-roll with one line of text.",
+      "structure": [
+        "slowed clips",
+        "caption"
+      ],
+      "primitives_needed": [
+        "video",
+        "speed",
+        "filters",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "CapCut slow-motion templates."
+      }
+    },
+    {
+      "id": "asmr_satisfying",
+      "template_id": "asmr-satisfying",
+      "name": "ASMR / Satisfying",
+      "category": "trend",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Close-up satisfying action with native sound up, minimal text.",
+      "structure": [
+        "close-ups",
+        "native audio"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "clip_audio",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'ASMR' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "day_n_challenge",
+      "template_id": "day-n-challenge",
+      "name": "Day N Challenge Series",
+      "category": "trend",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Challenge series episode: day counter, attempt, result.",
+      "structure": [
+        "day badge",
+        "attempt",
+        "result"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "counter",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Episodic series."
+      }
+    },
+    {
+      "id": "outfit_of_the_day",
+      "template_id": "outfit-of-the-day",
+      "name": "Outfit of the Day",
+      "category": "trend",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Outfit transitions on the beat with labels.",
+      "structure": [
+        "outfit clips on beats",
+        "item labels"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "beat_sync",
+        "caption_track",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Outfit of the day', ~1.45M views."
+      }
+    },
+    {
+      "id": "year_recap",
+      "template_id": "year-recap",
+      "name": "Recap / Wrapped",
+      "category": "trend",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Stats and highlights recap (Wrapped style) with counters.",
+      "structure": [
+        "stat slides with counters",
+        "highlight clips"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "counter",
+        "html",
+        "music"
+      ],
+      "example_reference": {
+        "description": "Wrapped-style recaps."
+      }
+    },
+    {
+      "id": "rebrand_reveal",
+      "template_id": "rebrand-reveal",
+      "name": "Rebrand Reveal",
+      "category": "trend",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Old look → new look reveal for a brand/creator.",
+      "structure": [
+        "old identity clips",
+        "transition",
+        "new identity"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "transitions",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Rebranding', ~703K views.",
+        "url": "https://www.tiktok.com/@mayaspirationn/video/7517602291218713889"
+      }
+    },
+    {
+      "id": "matcha_lifestyle",
+      "template_id": "matcha-lifestyle",
+      "name": "Aesthetic Lifestyle Vlog",
+      "category": "trend",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Soft aesthetic lifestyle clips (matcha, desk, walk) with a gentle caption; app moment woven in.",
+      "structure": [
+        "aesthetic clips 2s",
+        "app insert",
+        "caption"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "caption",
+        "music"
+      ],
+      "example_reference": {
+        "description": "DanSUGC tracked viral concept (reelclaw_suggest_formats, Oct 2026): 'Matcha Girl Lifestyle'.",
+        "url": "https://www.tiktok.com/@aishapotters/video/7687614907008732438"
+      }
+    },
+    {
+      "id": "pov_skit_two_characters",
+      "template_id": "pov-skit-two-characters",
+      "name": "Two-Character Skit",
+      "category": "skit",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Same creator plays two characters (labelled), cutting between them; product is the punchline.",
+      "structure": [
+        "alternating shots with character labels",
+        "punchline"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "clip_audio",
+        "caption_track",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "'Skit' (Motion); POV skits outperform polished ads (2026).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "customer_vs_support",
+      "template_id": "customer-vs-support",
+      "name": "Customer vs Support",
+      "category": "skit",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Skit of a frustrated customer vs a support agent; the app resolves it instantly.",
+      "structure": [
+        "two roles",
+        "resolution"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "clip_audio",
+        "caption_track"
+      ],
+      "example_reference": {
+        "description": "Workplace skits."
+      }
+    },
+    {
+      "id": "fake_facetime",
+      "template_id": "fake-facetime",
+      "name": "FaceTime Call Skit",
+      "category": "skit",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Call UI mockup (caller name, buttons) around a selfie clip; small PiP of the other person.",
+      "structure": [
+        "call UI frame",
+        "main + PiP"
+      ],
+      "primitives_needed": [
+        "html",
+        "pip",
+        "video",
+        "clip_audio"
+      ],
+      "example_reference": {
+        "description": "'Phone Call Mockup' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "news_parody",
+      "template_id": "news-parody",
+      "name": "News Broadcast Parody",
+      "category": "skit",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Creator as news anchor with chyron/lower third breaking news about the product.",
+      "structure": [
+        "anchor clip",
+        "lower third + ticker"
+      ],
+      "primitives_needed": [
+        "video",
+        "lower_third",
+        "clip_audio",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'News Broadcast' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "documentary_parody",
+      "template_id": "documentary-parody",
+      "name": "Nature Doc Parody",
+      "category": "skit",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Narrator voiceover describing everyday behaviour like wildlife.",
+      "structure": [
+        "b-roll",
+        "voiceover (recorded/TTS)",
+        "captions"
+      ],
+      "primitives_needed": [
+        "video",
+        "tts",
+        "karaoke",
+        "transcribe",
+        "filters"
+      ],
+      "example_reference": {
+        "description": "Parody narration trend."
+      }
+    },
+    {
+      "id": "office_skit",
+      "template_id": "office-skit",
+      "name": "Office Skit",
+      "category": "skit",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": true,
+      "description": "Workplace scenario skit with title caption; tool as hero.",
+      "structure": [
+        "scene clips",
+        "title"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "clip_audio",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Work niche skits."
+      }
+    },
+    {
+      "id": "conflict_to_affection",
+      "template_id": "conflict-to-affection",
+      "name": "Conflict → Affection",
+      "category": "skit",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Couple argument resolved when a message/widget appears on the lock screen.",
+      "structure": [
+        "argument clip",
+        "lock-screen moment",
+        "hug"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "notification_ui",
+        "clip_audio",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "Couple360 (Lightreel).",
+        "url": "https://www.lightreel.ai/blogs/consumer-apps-on-tiktok"
+      }
+    },
+    {
+      "id": "ai_vs_human",
+      "template_id": "ai-vs-human",
+      "name": "AI vs Human",
+      "category": "skit",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Human attempt vs AI app attempt at the same task, scored.",
+      "structure": [
+        "human attempt",
+        "app attempt",
+        "score card"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "split",
+        "counter",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "AI comparison genre."
+      }
+    },
+    {
+      "id": "quiz_challenge",
+      "template_id": "quiz-challenge",
+      "name": "Can You Answer This?",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 2,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Question on screen with countdown timer, answer revealed; quiz app hook.",
+      "structure": [
+        "question + options",
+        "timer",
+        "answer reveal"
+      ],
+      "primitives_needed": [
+        "poll_ui",
+        "counter",
+        "caption",
+        "sfx"
+      ],
+      "example_reference": {
+        "description": "'Quiz' (Motion); interactive formats.",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "guess_the_price",
+      "template_id": "guess-the-price",
+      "name": "Guess the Price",
+      "category": "listicle",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Item shown, pause, price revealed.",
+      "structure": [
+        "item",
+        "pause timer",
+        "price"
+      ],
+      "primitives_needed": [
+        "sequence",
+        "counter",
+        "caption",
+        "sfx"
+      ],
+      "example_reference": {
+        "description": "Game-show style engagement."
+      }
+    },
+    {
+      "id": "map_travel_route",
+      "template_id": "map-travel-route",
+      "name": "Travel Route Recap",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "hard",
+      "ready_today": false,
+      "description": "Route drawn on a map between photos from each stop.",
+      "structure": [
+        "map with animated path",
+        "photos per stop"
+      ],
+      "primitives_needed": [
+        "html",
+        "slideshow",
+        "motion"
+      ],
+      "example_reference": {
+        "description": "Travel recap trend."
+      }
+    },
+    {
+      "id": "receipt_breakdown",
+      "template_id": "receipt-breakdown",
+      "name": "Receipt Breakdown",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Receipt-style list of costs that totals to a shocking number, then the saving app.",
+      "structure": [
+        "receipt printing line by line",
+        "total",
+        "app"
+      ],
+      "primitives_needed": [
+        "html",
+        "typewriter",
+        "counter",
+        "video"
+      ],
+      "example_reference": {
+        "description": "'Document Mockup' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "email_mockup_story",
+      "template_id": "email-mockup-story",
+      "name": "Email Story",
+      "category": "text-story",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "An email (acceptance, rejection, offer) shown as a mockup with reaction.",
+      "structure": [
+        "email mockup",
+        "reaction"
+      ],
+      "primitives_needed": [
+        "social_card",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'Email Mockup' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "calendar_week_plan",
+      "template_id": "calendar-week-plan",
+      "name": "Week Plan Calendar",
+      "category": "product-demo",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": true,
+      "description": "Calendar fills with blocks for the week, timelapse-like, then the planner app.",
+      "structure": [
+        "calendar UI fills",
+        "app demo"
+      ],
+      "primitives_needed": [
+        "html",
+        "motion",
+        "video",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'Calendar App Mockup' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "giveaway_announce",
+      "template_id": "giveaway-announce",
+      "name": "Giveaway Announcement",
+      "category": "ugc-ad",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "easy",
+      "ready_today": false,
+      "description": "Prize reveal, rules list, deadline counter.",
+      "structure": [
+        "prize",
+        "rules list",
+        "deadline"
+      ],
+      "primitives_needed": [
+        "video",
+        "caption_track",
+        "counter",
+        "end_card"
+      ],
+      "example_reference": {
+        "description": "'Giveaway' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "whiteboard_explainer",
+      "template_id": "whiteboard-explainer",
+      "name": "Whiteboard Explainer",
+      "category": "tutorial",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "hard",
+      "ready_today": true,
+      "description": "Hand-drawn style diagram builds while voice explains.",
+      "structure": [
+        "diagram strokes reveal",
+        "voice + captions"
+      ],
+      "primitives_needed": [
+        "html",
+        "motion",
+        "clip_audio",
+        "karaoke"
+      ],
+      "example_reference": {
+        "description": "'Whiteboard' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "stop_motion_product",
+      "template_id": "stop-motion-product",
+      "name": "Stop-Motion Product",
+      "category": "trend",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "medium",
+      "ready_today": false,
+      "description": "Product shots stepped at 6-8 fps for a stop-motion feel.",
+      "structure": [
+        "photo sequence at low frame rate"
+      ],
+      "primitives_needed": [
+        "slideshow",
+        "beat_sync",
+        "music"
+      ],
+      "example_reference": {
+        "description": "'Stop Motion' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    },
+    {
+      "id": "comic_strip_story",
+      "template_id": "comic-strip-story",
+      "name": "Comic Strip Story",
+      "category": "slideshow",
+      "status": "idea",
+      "priority": 3,
+      "difficulty": "hard",
+      "ready_today": false,
+      "description": "Panels reveal one by one with speech bubbles.",
+      "structure": [
+        "panel grid reveals"
+      ],
+      "primitives_needed": [
+        "grid",
+        "image",
+        "html",
+        "caption"
+      ],
+      "example_reference": {
+        "description": "'Comic Strip' (Motion).",
+        "url": "https://motionapp.com/library/formats/"
+      }
+    }
+  ]
+}

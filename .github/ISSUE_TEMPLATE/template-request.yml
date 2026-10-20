@@ -1,0 +1,65 @@
+name: Template request
+description: Suggest a viral video format to turn into a reelclaw template
+title: "Template: <format name>"
+labels: ["template-request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Seen a format going viral? Drop the link. Want to build it yourself? Open Claude Code or Codex in a clone of this repo and say **"make a template from &lt;link&gt;"**. The `new-template` skill does the rest (see CONTRIBUTING.md).
+
+        Links only, please. Don't upload the video or screenshots of it.
+  - type: input
+    id: link
+    attributes:
+      label: Reference video
+      description: TikTok / Instagram Reels / YouTube Shorts / X link
+      placeholder: https://www.tiktok.com/@creator/video/7301234567890123456
+    validations:
+      required: true
+  - type: input
+    id: more-links
+    attributes:
+      label: More examples of the same format (optional)
+      description: Other videos using this format help separate the format from one creator's style.
+  - type: textarea
+    id: format
+    attributes:
+      label: The format
+      description: What happens, beat by beat? Cuts, text on screen, layout, sound.
+      placeholder: |
+        0–3s: creator reacts to camera, hook text on top
+        hard cut
+        3–10s: app screen recording with a payoff caption
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why it works
+      description: Views / likes if you know them, and what keeps people watching (curiosity gap, payoff, loop…).
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - reaction
+        - tutorial
+        - split-screen
+        - greenscreen
+        - talking-head
+        - slideshow
+        - listicle
+        - meme
+        - text-story
+        - before-after
+        - product-demo
+        - ugc-ad
+        - other
+  - type: checkboxes
+    id: build
+    attributes:
+      label: Building it
+      options:
+        - label: I'd like to build this template myself (assign me)
+        - label: I checked `registry.json` / `npx reelclaw list` and no existing template covers this format

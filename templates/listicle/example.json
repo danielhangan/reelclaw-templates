@@ -1,0 +1,14 @@
+{
+  "template": "listicle",
+  "inputs": {
+    "hook": "3 apps that feel illegal to know",
+    "item": ["fixtures/landscape-screen.mp4", "fixtures/photo.jpg", "fixtures/portrait-silent.mp4"],
+    "title": ["perplexity", "remove.bg :: 2.5", "notion calendar"],
+    "note": ["does your homework research in 10 seconds", "", "plans your whole week for you and syncs everything"],
+    "itemSecs": 2.8,
+    "cta": "which one are you downloading first?",
+    "numbering": "down",
+    "music": "fixtures/music.m4a",
+    "musicVolume": 0.8
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "template": "wall-of-text",
+  "inputs": {
+    "broll": ["fixtures/portrait-silent.mp4", "fixtures/landscape-screen.mp4", "fixtures/photo.jpg"],
+    "text": "pov: you stopped doomscrolling at 2am because your phone literally locks you out after 11pm\n\nand now you sleep 8 hours like a functioning adult and actually wake up before your alarm",
+    "text2": "the app is called lumen btw (not sponsored i'm just obsessed)",
+    "music": "fixtures/music.m4a",
+    "musicStart": 1,
+    "musicVolume": 0.7
+  }
+}

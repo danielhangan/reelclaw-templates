@@ -1,0 +1,39 @@
+{
+  "name": "reelclaw-templates",
+  "owner": {
+    "name": "Daniel Hangan (DanSUGC)",
+    "url": "https://dansugc.com"
+  },
+  "metadata": {
+    "description": "Viral short-form video templates (TikTok / Reels / Shorts) you make and edit with Claude Code or Codex."
+  },
+  "plugins": [
+    {
+      "name": "reelclaw-templates",
+      "description": "7 viral short-form video templates (TikTok / Reels / Shorts, 1080x1920). Each template is a skill that sets up the reelclaw engine in your folder and walks you from footage to a rendered MP4.",
+      "source": "./",
+      "strict": false,
+      "homepage": "https://github.com/danielhangan/reelclaw-templates",
+      "repository": "https://github.com/danielhangan/reelclaw-templates",
+      "license": "MIT",
+      "keywords": [
+        "tiktok",
+        "reels",
+        "shorts",
+        "video",
+        "ugc",
+        "templates",
+        "hyperframes"
+      ],
+      "skills": [
+        "./templates/before-after",
+        "./templates/greenscreen-reaction",
+        "./templates/listicle",
+        "./templates/no-yapping",
+        "./templates/reaction-demo",
+        "./templates/talking-head-captions",
+        "./templates/wall-of-text"
+      ]
+    }
+  ]
+}

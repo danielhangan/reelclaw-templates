@@ -1,0 +1,122 @@
+[
+ {
+  "text": "Stop",
+  "start": 0.3,
+  "end": 0.52,
+  "id": "w0"
+ },
+ {
+  "text": "scrolling.",
+  "start": 0.52,
+  "end": 1,
+  "id": "w1"
+ },
+ {
+  "text": "Here",
+  "start": 1.9,
+  "end": 2.05,
+  "id": "w2"
+ },
+ {
+  "text": "are",
+  "start": 2.05,
+  "end": 2.15,
+  "id": "w3"
+ },
+ {
+  "text": "three",
+  "start": 2.15,
+  "end": 2.4,
+  "id": "w4"
+ },
+ {
+  "text": "things",
+  "start": 2.4,
+  "end": 2.65,
+  "id": "w5"
+ },
+ {
+  "text": "nobody",
+  "start": 2.65,
+  "end": 2.95,
+  "id": "w6"
+ },
+ {
+  "text": "tells",
+  "start": 2.95,
+  "end": 3.15,
+  "id": "w7"
+ },
+ {
+  "text": "you",
+  "start": 3.15,
+  "end": 3.25,
+  "id": "w8"
+ },
+ {
+  "text": "about",
+  "start": 3.25,
+  "end": 3.45,
+  "id": "w9"
+ },
+ {
+  "text": "growing",
+  "start": 3.45,
+  "end": 3.8,
+  "id": "w10"
+ },
+ {
+  "text": "on",
+  "start": 3.8,
+  "end": 3.9,
+  "id": "w11"
+ },
+ {
+  "text": "TikTok.",
+  "start": 3.9,
+  "end": 4.35,
+  "id": "w12"
+ },
+ {
+  "text": "Number",
+  "start": 4.5,
+  "end": 4.7,
+  "id": "w13"
+ },
+ {
+  "text": "one,",
+  "start": 4.7,
+  "end": 4.9,
+  "id": "w14"
+ },
+ {
+  "text": "your",
+  "start": 4.95,
+  "end": 5.05,
+  "id": "w15"
+ },
+ {
+  "text": "first",
+  "start": 5.05,
+  "end": 5.2,
+  "id": "w16"
+ },
+ {
+  "text": "second",
+  "start": 5.2,
+  "end": 5.4,
+  "id": "w17"
+ },
+ {
+  "text": "decides",
+  "start": 5.4,
+  "end": 5.62,
+  "id": "w18"
+ },
+ {
+  "text": "everything.",
+  "start": 5.62,
+  "end": 5.9,
+  "id": "w19"
+ }
+]

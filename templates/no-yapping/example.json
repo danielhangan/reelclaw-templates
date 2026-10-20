@@ -1,0 +1,22 @@
+{
+  "template": "no-yapping",
+  "inputs": {
+    "intro": "fixtures/portrait-talking.mp4",
+    "typing": "fixtures/portrait-silent.mp4",
+    "demo": "fixtures/landscape-screen.mp4",
+    "hook": "making $10k a month with one app but no yapping",
+    "step": [
+      "go to claude :: 1.5",
+      "paste ur script",
+      "hit generate :: 6.4-7.5",
+      "easyyy 10 bands"
+    ],
+    "introSecs": 3,
+    "introTrim": 4,
+    "demoTrim": 0.5,
+    "typingFocus": "top",
+    "music": "fixtures/music.m4a",
+    "musicStart": 2,
+    "musicVolume": 0.8
+  }
+}
