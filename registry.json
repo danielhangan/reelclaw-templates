@@ -224,6 +224,9 @@
         "example.json",
         "template.mjs"
       ],
+      "preview": {
+        "gif": "https://raw.githubusercontent.com/danielhangan/reelclaw-templates/main/templates/before-after/preview.gif"
+      },
       "install": {
         "reelclaw": "npx reelclaw@latest add before-after",
         "github": "npx github:danielhangan/reelclaw-templates add before-after",
@@ -830,6 +833,9 @@
         "example.json",
         "template.mjs"
       ],
+      "preview": {
+        "gif": "https://raw.githubusercontent.com/danielhangan/reelclaw-templates/main/templates/listicle/preview.gif"
+      },
       "install": {
         "reelclaw": "npx reelclaw@latest add listicle",
         "github": "npx github:danielhangan/reelclaw-templates add listicle",
@@ -1288,6 +1294,9 @@
         "example.json",
         "template.mjs"
       ],
+      "preview": {
+        "gif": "https://raw.githubusercontent.com/danielhangan/reelclaw-templates/main/templates/reaction-demo/preview.gif"
+      },
       "install": {
         "reelclaw": "npx reelclaw@latest add reaction-demo",
         "github": "npx github:danielhangan/reelclaw-templates add reaction-demo",
@@ -1583,6 +1592,9 @@
         "example.json",
         "template.mjs"
       ],
+      "preview": {
+        "gif": "https://raw.githubusercontent.com/danielhangan/reelclaw-templates/main/templates/talking-head-captions/preview.gif"
+      },
       "install": {
         "reelclaw": "npx reelclaw@latest add talking-head-captions",
         "github": "npx github:danielhangan/reelclaw-templates add talking-head-captions",
@@ -1800,6 +1812,9 @@
         "example.json",
         "template.mjs"
       ],
+      "preview": {
+        "gif": "https://raw.githubusercontent.com/danielhangan/reelclaw-templates/main/templates/wall-of-text/preview.gif"
+      },
       "install": {
         "reelclaw": "npx reelclaw@latest add wall-of-text",
         "github": "npx github:danielhangan/reelclaw-templates add wall-of-text",
