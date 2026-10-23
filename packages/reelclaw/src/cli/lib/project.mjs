@@ -2,18 +2,20 @@
 /**
  * Reel-project scaffolding for `reelclaw add`: template folders, package.json
  * (the "reelclaw" engine dependency + install records), .gitignore, AGENTS.md /
- * CLAUDE.md and the per-agent skill copies. Every step is idempotent.
+ * CLAUDE.md, the per-agent skill copies and the shared reelclaw-playbook skill.
+ * Every step is idempotent.
  */
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { copyFile, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { copyFile, cp, mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ReelclawError } from "../../core/errors.mjs";
 import { SAFE_BAND } from "../../core/geometry.mjs";
 import { ENGINE_ROOT, REPO_ROOT } from "../../core/project.mjs";
 import { parseFrontmatter } from "../../core/validate.mjs";
-import { DEFAULT_REF, ENGINE_VERSION, REPO, templateFiles } from "./registry.mjs";
+import { DEFAULT_REF, ENGINE_VERSION, PLAYBOOK_ID, PLAYBOOK_PATH, REPO, templateFiles } from "./registry.mjs";
+import { copyPlaybook } from "./sources.mjs";
 
 /** @typedef {import('./registry.mjs').RegistryEntry} RegistryEntry */
 /** @typedef {import('./sources.mjs').TemplateSource} TemplateSource */
@@ -143,6 +145,57 @@ export async function syncSkills(root, ids, { overwrite }) {
   }
 }
 
+/* ───────────────────────── playbook ───────────────────────── */
+
+/**
+ * The playbook bundled with this engine: packages/reelclaw/playbook in the npm
+ * package (prepack copies it), or playbook/ in a checkout / GitHub snapshot.
+ * @returns {string | null}
+ */
+export function bundledPlaybook() {
+  for (const dir of [join(ENGINE_ROOT, PLAYBOOK_PATH), REPO_ROOT && join(REPO_ROOT, PLAYBOOK_PATH)]) {
+    if (dir && existsSync(join(dir, "SKILL.md"))) return dir;
+  }
+  return null;
+}
+
+/**
+ * Install the shared reelclaw-playbook skill (SKILL.md + references/) into
+ * every agent skill folder, from the same source and ref as the templates.
+ * Each copy is replaced whole when it differs (files removed upstream go too);
+ * the playbook is generated content, refreshed by every `add`. Falls back to
+ * the copy bundled with this engine when the source has none (an older ref).
+ * @param {{ root: string, source: TemplateSource }} o
+ * @returns {Promise<{ status: InstallStatus | 'missing', bundled?: boolean }>}
+ */
+export async function installPlaybook({ root, source }) {
+  const staging = join(root, ".reelclaw", "tmp", `playbook-${process.pid}-${Date.now()}`);
+  try {
+    let bundled = false;
+    if (!(await source.playbook(staging))) {
+      const dir = bundledPlaybook();
+      if (!dir || !(await copyPlaybook(dir, staging))) return { status: "missing" };
+      bundled = true;
+    }
+    const hash = hashDir(staging);
+    let added = false;
+    let updated = false;
+    for (const skills of SKILL_DIRS) {
+      const dest = join(root, skills, PLAYBOOK_ID);
+      const exists = existsSync(dest);
+      if (exists && hashDir(dest) === hash) continue;
+      if (exists) updated = true;
+      else added = true;
+      await rm(dest, { recursive: true, force: true });
+      await mkdir(dirname(dest), { recursive: true });
+      await cp(staging, dest, { recursive: true });
+    }
+    return { status: updated ? "updated" : added ? "added" : "unchanged", bundled };
+  } finally {
+    await rm(staging, { recursive: true, force: true });
+  }
+}
+
 /* ───────────────────────── project files ───────────────────────── */
 
 /**
@@ -231,7 +284,11 @@ export async function writeAgentDocs(root) {
     const fm = existsSync(skill) ? parseFrontmatter(readFileSync(skill, "utf8")) : null;
     return `- **${id}**: ${fm?.description ?? "(no SKILL.md)"}\n  Playbook: [templates/${id}/SKILL.md](templates/${id}/SKILL.md)`;
   });
+  const playbook = `.agents/skills/${PLAYBOOK_ID}/SKILL.md`;
   const vars = {
+    PLAYBOOK: existsSync(join(root, ...playbook.split("/")))
+      ? `Planning reels, writing hooks, choosing footage or music, QA, variants, "make N reels"? **Load the \`${PLAYBOOK_ID}\` skill first** ([${playbook}](${playbook}); Claude Code: \`.claude/skills/${PLAYBOOK_ID}/\`). It is the producer workflow every template shares: brief → format → hooks → footage → music → make → QA loop → variants → deliver. Each template's SKILL.md adds what is specific to that format.`
+      : `The \`${PLAYBOOK_ID}\` skill (the producer workflow every template shares) is not installed here: run \`npx reelclaw@latest add <template>\` again to install it.`,
     TEMPLATES: lines.join("\n") || "_None yet: `npx reelclaw@latest add <template>`._",
     DANSUGC_MCP,
     SAFE_X: `${SAFE_BAND.x}–${SAFE_BAND.x + SAFE_BAND.w}`,

@@ -12,10 +12,10 @@ import { ensureProject, REPO_ROOT } from "../../core/project.mjs";
 import { runChecks } from "./doctor.mjs";
 import { formatCatalog, pickTemplates } from "../lib/picker.mjs";
 import {
-  engineSpec, installTemplate, installedTemplates, readInstallRecords, syncSkills,
+  engineSpec, installPlaybook, installTemplate, installedTemplates, readInstallRecords, syncSkills,
   updateGitignore, updatePackageJson, writeAgentDocs,
 } from "../lib/project.mjs";
-import { DEFAULT_REF, REPO } from "../lib/registry.mjs";
+import { DEFAULT_REF, PLAYBOOK_ID, REPO } from "../lib/registry.mjs";
 import { githubSource, localSource } from "../lib/sources.mjs";
 
 /** @typedef {import('../lib/registry.mjs').RegistryEntry} RegistryEntry */
@@ -43,12 +43,14 @@ Usage
 
 Turns the folder into a reel project (or updates it): templates/<id>/,
 package.json with the reelclaw engine, AGENTS.md + CLAUDE.md, the template
-skills in .claude/skills/ and .agents/skills/, fonts in assets/; then runs
-npm install and doctor. Safe to re-run: it adds new templates, updates the
-ones you have not edited, and keeps the ones you have.
+skills and the shared ${PLAYBOOK_ID} skill (the producer workflow: hooks,
+footage, music, QA, variants) in .claude/skills/ and .agents/skills/, fonts in
+assets/; then runs npm install and doctor. Safe to re-run: it adds new
+templates, updates the ones you have not edited, keeps the ones you have, and
+refreshes the playbook.
 
-Templates come from GitHub (registry.json on main), so new templates need no
-reelclaw update.
+Templates and the playbook come from GitHub (registry.json on main), so new
+templates need no reelclaw update.
 
 Flags
   --all              install every template in the catalog
@@ -117,6 +119,13 @@ Examples
     const all = installedTemplates(root);
     await syncSkills(root, touched, { overwrite: true });
     await syncSkills(root, all, { overwrite: false });
+    try {
+      const pb = await installPlaybook({ root, source });
+      const note = pb.status === "missing" ? color.yellow("! not found in this source") : `${STATUS[pb.status]}${pb.bundled ? color.dim(" (bundled with this reelclaw)") : ""}`;
+      console.log(`  ${color.bold(PLAYBOOK_ID.padEnd(24))} ${note}`);
+    } catch (err) {
+      ctx.log.warn(`could not install the ${PLAYBOOK_ID} skill: ${/** @type {Error} */ (err).message} (templates are fine; run add again later)`);
+    }
     await writeAgentDocs(root);
     ctx.log.success(`project files: package.json (reelclaw ${pkg.engine}), AGENTS.md, CLAUDE.md, .claude/skills, .agents/skills`);
 
@@ -231,6 +240,7 @@ ${color.bold("Next")}
   ${cd}claude        ${color.dim("# Claude Code")}
   ${cd}codex         ${color.dim("# Codex")}
   then ask: ${color.cyan(`"make a ${id} reel with my footage: <files or links>"`)}
+       or:  ${color.cyan(`"plan 5 reels for my app"`)} ${color.dim(`(the agent loads the ${PLAYBOOK_ID} skill)`)}
 
   by hand:  ${cd}npx reelclaw make ${id} --help
 

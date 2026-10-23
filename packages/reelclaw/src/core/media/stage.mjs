@@ -9,20 +9,29 @@
  *
  * Per-entry cache files under .reelclaw/cache/ make repeated runs instant and
  * are safe for concurrent processes (atomic rename, no shared JSON index).
+ *
+ * Video with sparse keyframes (> MAX_KEYFRAME_GAP s apart — phone exports,
+ * platform downloads) is re-encoded once into `assets/<stem>.seekable.mp4`
+ * (see keyframes.mjs), and templates receive that copy.
  */
 import { createHash, randomUUID } from "node:crypto";
 import { createReadStream, existsSync } from "node:fs";
 import { constants, copyFile, mkdir, readFile, rename, rm, stat, writeFile } from "node:fs/promises";
-import { basename, extname, join, resolve } from "node:path";
+import { basename, dirname, extname, join, resolve } from "node:path";
 import { ReelclawError } from "../errors.mjs";
+import { requireTool, run } from "../exec.mjs";
 import { projectPaths } from "../project.mjs";
 import { classifySource, downloadDirect, downloadPage } from "./download.mjs";
+import { keyframeTimes, MAX_KEYFRAME_GAP, maxKeyframeGap, SEEKABLE_KEY, seekableArgs } from "./keyframes.mjs";
 import { ffprobe } from "./probe.mjs";
 
 /** @typedef {import('../types.mjs').MediaRef} MediaRef */
 /** @typedef {import('../types.mjs').MediaKind} MediaKind */
 /** @typedef {import('../types.mjs').ProbeInfo} ProbeInfo */
 /** @typedef {import('../log.mjs').Logger} Logger */
+
+/** A file name stageMedia/deriveMedia wrote: `<slug>-<sha256:12>[.<derive-key>].<ext>`. */
+const STAGED_NAME = /-[0-9a-f]{12}(\.[a-z0-9-]+)*\.[a-z0-9]+$/;
 
 /**
  * Stage one media input into `<root>/assets/` and probe it.
@@ -50,10 +59,14 @@ export async function stageMedia({ root, value, kind, label, cwd = process.cwd()
     if (!existsSync(file)) {
       throw new ReelclawError(`${label}: file not found: ${value}`, { hint: `check the path (resolved to ${file}), or pass a URL` });
     }
+    // already staged here (a saved reels/<name>.json): use it in place instead of copying it to a second name
+    if (dirname(file) === resolve(paths.assets) && STAGED_NAME.test(basename(file))) {
+      return seekSafe(root, await finish(root, basename(file), kind, label), log);
+    }
   } else {
     const cached = await readJson(join(paths.cache, "url", `${sha1(value)}.json`));
     if (cached?.name && existsSync(join(paths.assets, cached.name))) {
-      return finish(root, cached.name, kind, label);
+      return seekSafe(root, await finish(root, cached.name, kind, label), log);
     }
     tmpDir = join(paths.cache, "tmp", randomUUID());
     log?.step(`downloading ${label}: ${value}`);
@@ -71,7 +84,7 @@ export async function stageMedia({ root, value, kind, label, cwd = process.cwd()
       await rename(partial, target);
     }
     if (source !== "local") await writeJsonAtomic(join(paths.cache, "url", `${sha1(value)}.json`), { url: value, name });
-    return await finish(root, name, kind, label);
+    return await seekSafe(root, await finish(root, name, kind, label), log);
   } finally {
     if (tmpDir) await rm(tmpDir, { recursive: true, force: true });
   }
@@ -113,6 +126,44 @@ export async function deriveMedia({ root, from, key, ext, kind, produce }) {
     }
   }
   return finish(root, name, kind, `${from.label} (${key})`);
+}
+
+/**
+ * Swap a staged video with sparse keyframes for a seek-safe re-encode (made
+ * once, cached by content hash like every derived file). Stills, audio,
+ * transparent video (cut-outs: re-encoding to H.264 would drop the alpha) and
+ * already-dense files pass through untouched.
+ * @param {string} root
+ * @param {MediaRef} ref
+ * @param {Logger} [log]
+ * @returns {Promise<MediaRef>}
+ */
+async function seekSafe(root, ref, log) {
+  if (ref.kind === "audio" || !ref.hasVideo || ref.isImage || ref.hasAlpha || !(ref.duration > 0)) return ref;
+  const name = basename(ref.path);
+  const cacheFile = join(projectPaths(root).cache, "keyframes", `${name}.json`);
+  let gap = (await readJson(cacheFile))?.maxGap;
+  if (typeof gap !== "number") {
+    gap = maxKeyframeGap(await keyframeTimes(ref.path), ref.duration);
+    await writeJsonAtomic(cacheFile, { maxGap: gap });
+  }
+  if (gap <= MAX_KEYFRAME_GAP) return ref;
+  const seekable = await deriveMedia({
+    root,
+    from: ref,
+    key: SEEKABLE_KEY,
+    ext: ".mp4",
+    kind: ref.kind,
+    produce: async (input, output) => {
+      requireTool("ffmpeg", "re-encode video with sparse keyframes");
+      log?.step(`${ref.label}: keyframes up to ${gap}s apart — re-encoding once with a keyframe every 30 frames so seeks don't freeze (cached as assets/${basename(ref.src, extname(ref.src))}.${SEEKABLE_KEY}.mp4)`);
+      const r = await run("ffmpeg", seekableArgs(input, output));
+      if (r.code !== 0) {
+        throw new ReelclawError(`${ref.label}: could not re-encode ${ref.src} with dense keyframes`, { hint: r.stderr.trim().split("\n").slice(-2).join(" ") || "is the file a valid video?" });
+      }
+    },
+  });
+  return { ...seekable, label: ref.label };
 }
 
 /**

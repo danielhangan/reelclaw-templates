@@ -87,9 +87,11 @@ Flags
       for (const w of ex.made.warnings) ctx.log.warn(w);
       for (const w of check.warnings) ctx.log.warn(w);
       for (const p of check.problems) ctx.log.error(p);
+      const renderWarnings = ex.made.renderWarnings ?? [];
+      for (const w of renderWarnings) ctx.log.error(`render warning: ${w.message} — ${w.line}`);
       for (const f of written) ctx.log.success(displayPath(ctx.cwd, f));
       console.log(color.dim(`  ${info.width}x${info.height} · ${info.fps}fps · ${info.duration}s · audio ${info.hasAudio ? `${info.meanVolume} dB mean` : "none"} · frames at ${times.join("s, ")}s`));
-      return check.problems.length ? 1 : 0;
+      return check.problems.length || renderWarnings.length ? 1 : 0;
     } finally {
       await ex.cleanup();
     }

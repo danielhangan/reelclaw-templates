@@ -1,6 +1,6 @@
 // @ts-check
 import { basename } from "node:path";
-import { displayPath } from "../../core/log.mjs";
+import { color, displayPath } from "../../core/log.mjs";
 import { ReelclawError } from "../../core/errors.mjs";
 import { QUALITIES, renderReel } from "../../core/render.mjs";
 import { numberFlag } from "../args.mjs";
@@ -16,7 +16,10 @@ Usage
 
 Renders with the pinned HyperFrames CLI, then checks the MP4's duration.
 <name> is a reel in reels/ (reels/<name>.html also works). Hand-edited
-compositions render the same way.
+compositions render the same way. The full HyperFrames output is saved to
+renders/<name>.render.log and scanned for silent failures (a font, script or
+media file that never loaded): they print as RENDER WARNINGS and exit 1.
+Then run \`reelclaw qa <name>\` and look at the frames.
 
 Flags
   --draft          fast preview quality
@@ -37,10 +40,13 @@ Flags
     if (!QUALITIES.includes(quality)) throw new ReelclawError(`--quality must be one of ${QUALITIES.join(", ")}`);
     if (v.output && names.length > 1) throw new ReelclawError("--output only works with a single reel");
     const workers = v.workers === "auto" ? "auto" : numberFlag(v.workers, "workers");
+    let failed = 0;
     for (const name of names) {
       const r = await renderReel({ root: ctx.root, name, quality, workers, output: /** @type {string|undefined} */ (v.output), log: ctx.log });
       ctx.log.success(`${displayPath(ctx.cwd, r.output)}  (${r.duration}s)`);
+      if (r.warnings.length) failed++;
     }
-    return 0;
+    console.log(color.dim(`  next: reelclaw qa ${names.length === 1 ? names[0] : "<name>"}${ctx.root === ctx.cwd ? "" : ` --project ${displayPath(ctx.cwd, ctx.root)}`}   # frames + checks; look at every frame before delivering`));
+    return failed ? 1 : 0;
   },
 };

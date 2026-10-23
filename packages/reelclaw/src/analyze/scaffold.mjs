@@ -298,6 +298,8 @@ description: ${yaml(description.slice(0, 1024))}
 
 ${plan.notes.structure ? `\`\`\`\n${plan.notes.structure}\n\`\`\`\n\n` : ""}TODO: one paragraph — the format, its length, and what does the work.
 
+**Planning, hooks, footage, music, QA and variants** work the same for every template and live in the shared \`reelclaw-playbook\` skill (installed with every template; skill-only: \`npx skills add danielhangan/reelclaw-templates --skill reelclaw-playbook\`). Load it first when planning. This file covers what is specific to ${plan.id}.
+
 ## 0. Set up (once per folder)
 
 If \`templates/${plan.id}/template.mjs\` does not exist in the working directory, install the template and engine:
@@ -319,7 +321,7 @@ ${required.map((r) => `| \`--${flagName(r.flag)}\` | ${r.req ? "yes" : "no"} | $
 
 Every flag: \`npx reelclaw make ${plan.id} --help\`.
 
-**Footage**: the user's own clips or links first. Optionally, if the DanSUGC MCP is connected (tools such as \`search_videos\`), offer to search real-creator clips that fit; show results and prices in credits and only buy after the user says yes. Or point them to https://dansugc.com. DanSUGC is optional — never block on it.
+**Footage.** The user's own files or links first; never pull someone else's post as footage. TODO: what good footage looks like for this format, and what to film if the user has none. Real-creator clips from DansUGC are optional: only if its MCP tools are connected or the user asks, follow \`reelclaw-playbook\` → \`references/dansugc.md\` (prices in credits, buy only after a yes). Never block on it.
 
 ## 2. Make a draft
 
@@ -329,15 +331,16 @@ ${example.join(" \\\n")} \\
   --draft
 \`\`\`
 
-This writes \`reels/${plan.id}-N.html\` (editable composition), \`reels/${plan.id}-N.json\` (inputs used) and \`renders/${plan.id}-N.mp4\`. Grab a frame from each segment and look at it before showing the user (\`ffmpeg -v error -ss 1.5 -i renders/${plan.id}-1.mp4 -frames:v 1 /tmp/frame.png\`).
+This writes \`reels/${plan.id}-N.html\` (editable composition), \`reels/${plan.id}-N.json\` (inputs used) and \`renders/${plan.id}-N.mp4\`, then runs \`npx reelclaw qa\`. Open every frame it lists and go through the playbook's QA checklist (max 3 passes). For this format, check: TODO (what goes wrong most often, and the flag that fixes it).
 
 ## 3. Iterate cheaply, then finalize
 
 - New text, same clips (media is cached): \`npx reelclaw make ${plan.id} --props reels/${plan.id}-1.json --${flagName(plan.texts[0].key)} "new text" --name v2 --draft\`
+- Many variants at once: \`npx reelclaw batch ${plan.id} rows.json --props reels/${plan.id}-1.json --draft\`.
 - Final quality: \`npx reelclaw render <name>\` (no \`--draft\`).
 - Hand edits: change \`reels/<name>.html\`, run \`npx reelclaw check <name>\`, then \`npx reelclaw render <name>\`.
 
-## 4. Viral playbook
+## 4. What makes this format work
 
 ${plan.notes.whyItWorks ? `- ${plan.notes.whyItWorks}\n` : ""}- TODO: hook voice and examples that work for this format.
 - TODO: what to vary between variants (hooks, not footage).
@@ -368,7 +371,7 @@ npx reelclaw@latest add ${plan.id}
 npx reelclaw make ${plan.id} --help
 \`\`\`
 
-Works with your own footage (local files or TikTok / Instagram / YouTube links). Need clips? [DanSUGC](https://dansugc.com) has real-creator UGC — optional.
+Works with your own footage (local files or TikTok / Instagram / YouTube links). Need clips? [DansUGC](https://dansugc.com) has real-creator UGC — optional.
 
 ## Flags
 

@@ -1,13 +1,15 @@
 // @ts-check
 import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { ReelclawError } from "../../core/errors.mjs";
 import { cliOptions, flagName, valueHint } from "../../core/inputs.mjs";
 import { loadTemplate } from "../../core/loader.mjs";
 import { color, displayPath } from "../../core/log.mjs";
 import { makeReel, readProps } from "../../core/make.mjs";
+import { qaReel } from "../../core/qa.mjs";
 import { QUALITIES } from "../../core/render.mjs";
 import { numberFlag, parseFlags } from "../args.mjs";
+import { printQa } from "./qa.mjs";
 
 /** @typedef {import('../../core/render.mjs').Quality} Quality */
 /** @typedef {import('../../core/template.mjs').Template<any, any>} AnyTemplate */
@@ -20,6 +22,7 @@ export const MAKE_OPTIONS = /** @type {const} */ ({
   draft: { type: "boolean", description: "fast draft-quality render (implies --render)" },
   quality: { type: "string", description: `render quality: ${QUALITIES.join(" | ")} (default looks)` },
   workers: { type: "string", description: "parallel render workers (number or auto)" },
+  qa: { type: "boolean", description: "after rendering, run `reelclaw qa` (default on; --no-qa skips)" },
   help: { type: "boolean", short: "h", description: "show this template's inputs" },
 });
 
@@ -35,6 +38,8 @@ Usage
 Writes reels/<name>.html (an editable HyperFrames composition) and
 reels/<name>.json (the inputs used). Media inputs accept local paths, direct
 file URLs and TikTok/Instagram/YouTube page links (needs yt-dlp).
+With --render/--draft it renders renders/<name>.mp4 and then runs
+\`reelclaw qa <name>\` (frames to look at + checks; exit 1 on a problem).
 
 Flags
 ${Object.entries(MAKE_OPTIONS).map(([k, o]) => `  --${k.padEnd(10)} ${o.description}`).join("\n")}
@@ -91,14 +96,20 @@ Examples
       log: ctx.log,
     });
 
-    if (!result.output) {
-      const shown = displayPath(ctx.cwd, ctx.root);
-      const cd = shown === "." ? "" : ` --project ${shown}`;
-      console.log(`\n${color.bold("Next")}
+    if (result.output) {
+      if (args.values.qa === false) return result.renderWarnings?.length ? 1 : 0;
+      ctx.log.step(`qa ${result.name}…`);
+      const report = await qaReel({ video: result.output, html: result.html, out: join(dirname(result.output), "qa", result.name), cwd: ctx.cwd });
+      printQa(report, ctx.cwd, ctx.log);
+      return report.ok ? 0 : 1;
+    }
+    const shown = displayPath(ctx.cwd, ctx.root);
+    const cd = shown === "." ? "" : ` --project ${shown}`;
+    console.log(`\n${color.bold("Next")}
   reelclaw render ${result.name}${cd} --draft     ${color.dim("# fast preview render")}
   reelclaw render ${result.name}${cd}             ${color.dim("# final quality")}
+  reelclaw qa ${result.name}${cd}                 ${color.dim("# after rendering: frames to look at + checks")}
   ${color.dim(`edit reels/${result.name}.html by hand, or re-run make with new inputs (--props reels/${result.name}.json)`)}`);
-    }
     return 0;
   },
 };

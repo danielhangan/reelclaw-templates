@@ -15,10 +15,11 @@
   "files": [
     "bin",
     "src",
-    "fonts"
+    "fonts",
+    "playbook"
   ],
   "scripts": {
-    "prepack": "node -e \"require('node:fs').cpSync('../../shared/fonts','fonts',{recursive:true})\""
+    "prepack": "node -e \"const fs=require('node:fs');fs.cpSync('../../shared/fonts','fonts',{recursive:true});fs.rmSync('playbook',{recursive:true,force:true});fs.cpSync('../../playbook','playbook',{recursive:true})\""
   },
   "engines": {
     "node": ">=22"

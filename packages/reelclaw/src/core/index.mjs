@@ -16,9 +16,12 @@ export { findTemplates, locateTemplate, loadTemplate, templateRoots, normalizeId
 export { validateTemplate, parseFrontmatter, standIn } from "./validate.mjs";
 export { makeReel, readProps } from "./make.mjs";
 export { makeExample, missingMedia } from "./example.mjs";
-export { probeRender, checkRender, expectationsFor, frameTimes, frameStrip, previewGif, previewMp4 } from "./inspect.mjs";
+export { probeRender, checkRender, expectationsFor, frameTimes, frameStrip, cropFrame, contactSheet, audioLevel, previewGif, previewMp4 } from "./inspect.mjs";
+export { qaReel, resolveQaTarget, parseComposition, hardCuts, captionWindows, qaFramePlan, formatQaReport } from "./qa.mjs";
+export { scanRenderLog, formatRenderWarnings, RENDER_LOG_SIGNATURES } from "./render-log.mjs";
+export { keyframeTimes, maxKeyframeGap, MAX_KEYFRAME_GAP } from "./media/keyframes.mjs";
 export { summarizeTemplate } from "./manifest.mjs";
-export { renderReel, lintReel, runHyperframes, hyperframesCommand, isNoise, HYPERFRAMES_VERSION, QUALITIES } from "./render.mjs";
+export { renderReel, renderLogPath, lintReel, runHyperframes, hyperframesCommand, isNoise, HYPERFRAMES_VERSION, QUALITIES } from "./render.mjs";
 export { toolVersion, requireTool, run, TOOLS } from "./exec.mjs";
 export { consoleLogger, silentLogger, color, displayPath } from "./log.mjs";
 

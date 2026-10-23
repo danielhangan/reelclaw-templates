@@ -1,5 +1,6 @@
 // @ts-check
 import assert from "node:assert/strict";
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { createServer } from "node:http";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -10,11 +11,12 @@ import { translateArgs } from "../../../cli/bin/forward.mjs";
 import { nameRows } from "../src/cli/commands/batch.mjs";
 import { parseSelection } from "../src/cli/lib/picker.mjs";
 import {
-  engineDependency, installTemplate, packageName, updateGitignore, updatePackageJson, upsertBlock, writeAgentDocs, syncSkills,
+  SKILL_DIRS, engineDependency, installPlaybook, installTemplate, packageName, updateGitignore, updatePackageJson, upsertBlock, writeAgentDocs, syncSkills,
 } from "../src/cli/lib/project.mjs";
-import { buildRegistry, marketplaceManifest, templateFiles, withGallery } from "../src/cli/lib/registry.mjs";
-import { checkEntry, githubSource, localSource } from "../src/cli/lib/sources.mjs";
-import { REPO_ROOT } from "../src/core/project.mjs";
+import { PLAYBOOK_ID, buildRegistry, marketplaceManifest, templateFiles, withGallery } from "../src/cli/lib/registry.mjs";
+import { checkEntry, checkPlaybook, githubSource, localSource } from "../src/cli/lib/sources.mjs";
+import { ENGINE_ROOT, REPO_ROOT } from "../src/core/project.mjs";
+import { parseFrontmatter } from "../src/core/validate.mjs";
 
 /** @typedef {import('../src/cli/lib/registry.mjs').RegistryEntry} RegistryEntry */
 /** @typedef {import('../src/cli/lib/sources.mjs').TemplateSource} TemplateSource */
@@ -97,6 +99,29 @@ describe("registry", () => {
     assert.ok(plugin.skills.includes("./templates/reaction-demo"));
   });
 
+  it("lists the shared playbook skill, and the marketplace exposes it to npx skills / the plugin", async (t) => {
+    if (!REPO_ROOT) return t.skip("not running from the repo");
+    const { registry, errors } = await buildRegistry(REPO_ROOT);
+    assert.deepEqual(errors, []);
+    const pb = registry.playbook;
+    assert.ok(pb, "registry.playbook is set");
+    assert.equal(pb.id, PLAYBOOK_ID);
+    assert.equal(pb.path, "playbook");
+    assert.ok(pb.files.includes("SKILL.md") && pb.files.includes("references/dansugc.md") && pb.files.includes("references/qa.md"));
+    assert.equal(pb.install.skills, "npx skills add danielhangan/reelclaw-templates --skill reelclaw-playbook");
+    checkPlaybook(pb);
+    const skills = marketplaceManifest(registry).plugins[0].skills;
+    assert.equal(skills[0], "./playbook", "the playbook is listed first");
+  });
+
+  it("refuses a playbook entry that would write outside the playbook folder", () => {
+    const ok = /** @type {any} */ ({ id: PLAYBOOK_ID, path: "playbook", files: ["SKILL.md", "references/hooks.md"] });
+    checkPlaybook(ok);
+    for (const bad of [{ path: "templates/x" }, { files: ["../x"] }, { files: ["SKILL.md", ".env"] }, { files: ["references/hooks.md"] }]) {
+      assert.throws(() => checkPlaybook({ ...ok, ...bad }), /unsafe paths/);
+    }
+  });
+
   it("rewrites only the README gallery block", async (t) => {
     if (!REPO_ROOT) return t.skip("not running from the repo");
     const { registry } = await buildRegistry(REPO_ROOT);
@@ -130,15 +155,22 @@ describe("registry", () => {
 describe("installTemplate", () => {
   /** @type {Record<string, string>} */
   let upstream = { "template.mjs": "v1", "SKILL.md": "---\nname: t\ndescription: Test skill\n---\n" };
+  /** @type {Record<string, string>} */
+  let playbook = { "SKILL.md": "---\nname: reelclaw-playbook\ndescription: Test playbook\n---\n", "references/hooks.md": "hooks v1", "references/old.md": "old" };
+  /** @param {Record<string, string>} files @param {string} dest */
+  const writeAll = async (files, dest) => {
+    for (const [f, text] of Object.entries(files)) {
+      await mkdir(join(dest, f, ".."), { recursive: true });
+      await writeFile(join(dest, f), text);
+    }
+  };
   /** @type {TemplateSource} */
   const source = {
     label: "fake",
     from: "fake",
     catalog: async () => ({ entries: [], warnings: [] }),
-    fetch: async (_e, dest) => {
-      await mkdir(dest, { recursive: true });
-      for (const [f, text] of Object.entries(upstream)) await writeFile(join(dest, f), text);
-    },
+    fetch: async (_e, dest) => writeAll(upstream, dest),
+    playbook: async (dest) => (await writeAll(playbook, dest), true),
   };
   const entry = /** @type {RegistryEntry} */ (/** @type {unknown} */ ({ id: "t", path: "templates/t", files: [] }));
 
@@ -166,6 +198,23 @@ describe("installTemplate", () => {
     assert.ok(!existsSync(join(root, "templates/t/extra.mjs")), "files removed upstream are removed");
     assert.deepEqual(readdirSync(join(root, ".reelclaw/tmp")), [], "staging folders are cleaned up");
 
+    // the shared playbook lands (whole folder) in every agent skill dir, and refreshes on re-run
+    assert.equal((await installPlaybook({ root, source })).status, "added");
+    for (const dir of SKILL_DIRS) {
+      assert.equal(readFileSync(join(root, dir, PLAYBOOK_ID, "SKILL.md"), "utf8"), playbook["SKILL.md"]);
+      assert.equal(readFileSync(join(root, dir, PLAYBOOK_ID, "references/hooks.md"), "utf8"), "hooks v1");
+    }
+    assert.equal((await installPlaybook({ root, source })).status, "unchanged");
+    playbook = { "SKILL.md": playbook["SKILL.md"], "references/hooks.md": "hooks v2" };
+    assert.equal((await installPlaybook({ root, source })).status, "updated");
+    for (const dir of SKILL_DIRS) {
+      assert.equal(readFileSync(join(root, dir, PLAYBOOK_ID, "references/hooks.md"), "utf8"), "hooks v2");
+      assert.ok(!existsSync(join(root, dir, PLAYBOOK_ID, "references/old.md")), "files removed upstream are removed");
+    }
+    rmSync(join(root, ".agents/skills", PLAYBOOK_ID), { recursive: true });
+    assert.equal((await installPlaybook({ root, source })).status, "added", "a deleted copy is restored");
+    assert.ok(existsSync(join(root, ".agents/skills", PLAYBOOK_ID, "references/hooks.md")));
+
     // project files are idempotent and keep user content
     writeFileSync(join(root, ".gitignore"), "secrets.txt");
     writeFileSync(join(root, "AGENTS.md"), "# My notes\n");
@@ -182,8 +231,30 @@ describe("installTemplate", () => {
     assert.ok(gi.startsWith("secrets.txt\n") && gi.split("renders/").length === 2);
     const agents = readFileSync(join(root, "AGENTS.md"), "utf8");
     assert.ok(agents.startsWith("# My notes") && agents.includes("**t**: Test skill") && agents.split("reelclaw:start").length === 2);
+    assert.match(agents, /Load the `reelclaw-playbook` skill first/);
+    assert.match(agents, /\(\.agents\/skills\/reelclaw-playbook\/SKILL\.md\)/);
+    assert.match(readFileSync(join(root, "CLAUDE.md"), "utf8"), /reelclaw-playbook/);
     assert.match(readFileSync(join(root, "CLAUDE.md"), "utf8"), /^@AGENTS\.md$/m);
     assert.ok(existsSync(join(root, ".claude/skills/t/SKILL.md")) && existsSync(join(root, ".agents/skills/t/SKILL.md")));
+    rmSync(root, { recursive: true });
+  });
+
+  it("falls back to the playbook bundled with this engine when the source has none", async (t) => {
+    if (!REPO_ROOT && !existsSync(join(ENGINE_ROOT, "playbook"))) return t.skip("no bundled playbook");
+    const root = tmp();
+    const r = await installPlaybook({ root, source: { ...source, playbook: async () => false } });
+    assert.equal(r.status, "added");
+    assert.equal(r.bundled, true);
+    for (const dir of SKILL_DIRS) assert.ok(existsSync(join(root, dir, PLAYBOOK_ID, "references", "hooks.md")));
+    await writeAgentDocs(root);
+    assert.match(readFileSync(join(root, "AGENTS.md"), "utf8"), /Load the `reelclaw-playbook` skill first/);
+    rmSync(root, { recursive: true });
+  });
+
+  it("says so in AGENTS.md when the playbook is missing", async () => {
+    const root = tmp();
+    await writeAgentDocs(root);
+    assert.match(readFileSync(join(root, "AGENTS.md"), "utf8"), /is not installed here/);
     rmSync(root, { recursive: true });
   });
 
@@ -229,9 +300,86 @@ describe("sources", () => {
     rmSync(dest, { recursive: true });
   });
 
+  it("github source fetches the playbook from the same repo and ref", async (t) => {
+    if (!REPO_ROOT || !existsSync(join(REPO_ROOT, "registry.json"))) return t.skip("no registry.json in the checkout");
+    const dest = tmp();
+    assert.equal(await githubSource({ ref: "main" }).playbook(join(dest, "pb")), true);
+    assert.deepEqual(templateFiles(join(dest, "pb")), templateFiles(join(REPO_ROOT, "playbook")));
+    assert.equal(await localSource(REPO_ROOT).playbook(join(dest, "local")), true);
+    assert.deepEqual(templateFiles(join(dest, "local")), templateFiles(join(REPO_ROOT, "playbook")));
+    rmSync(dest, { recursive: true });
+  });
+
   it("explains a missing registry and a bad repo", async () => {
     await assert.rejects(githubSource({ ref: "nope" }).catalog(), (/** @type {any} */ e) => /not found/.test(e.message) && /check --ref/.test(e.hint));
     assert.throws(() => githubSource({ repo: "not a repo" }), /owner\/name/);
     assert.throws(() => localSource(tmpdir()), /not a reelclaw-templates checkout/);
+  });
+});
+
+describe("reelclaw add (end to end, local source)", () => {
+  it("installs the template and the whole playbook into both agent skill dirs, and refreshes it on re-run", { timeout: 60_000 }, (t) => {
+    if (!REPO_ROOT) return t.skip("not running from the repo");
+    const repo = /** @type {string} */ (REPO_ROOT);
+    const dir = tmp();
+    const add = () => spawnSync(process.execPath, [join(ENGINE_ROOT, "bin", "reelclaw.mjs"), "add", "reaction-demo", "--src", repo, "--dir", dir, "--no-install"], { encoding: "utf8" });
+    const first = add();
+    assert.equal(first.status, 0, first.stderr || first.stdout);
+    assert.match(first.stdout, /reelclaw-playbook\s+\S*\+ added/);
+    const want = templateFiles(join(repo, "playbook"));
+    for (const skills of SKILL_DIRS) {
+      assert.ok(existsSync(join(dir, skills, "reaction-demo", "SKILL.md")));
+      assert.deepEqual(templateFiles(join(dir, skills, PLAYBOOK_ID)), want, `${skills}/${PLAYBOOK_ID} has every playbook file`);
+      assert.equal(readFileSync(join(dir, skills, PLAYBOOK_ID, "SKILL.md"), "utf8"), readFileSync(join(repo, "playbook", "SKILL.md"), "utf8"));
+    }
+    assert.match(readFileSync(join(dir, "AGENTS.md"), "utf8"), /Load the `reelclaw-playbook` skill first/);
+
+    writeFileSync(join(dir, ".claude/skills", PLAYBOOK_ID, "SKILL.md"), "stale");
+    const second = add();
+    assert.equal(second.status, 0, second.stderr || second.stdout);
+    assert.match(second.stdout, /reelclaw-playbook\s+\S*↻ updated/);
+    assert.equal(readFileSync(join(dir, ".claude/skills", PLAYBOOK_ID, "SKILL.md"), "utf8"), readFileSync(join(repo, "playbook", "SKILL.md"), "utf8"));
+    rmSync(dir, { recursive: true });
+  });
+});
+
+describe("playbook skill", { skip: !(REPO_ROOT && existsSync(join(REPO_ROOT, "playbook"))) && "not in a reelclaw-templates checkout" }, () => {
+  const dir = join(/** @type {string} */ (REPO_ROOT ?? ""), "playbook");
+  /** GitHub-style heading anchor. @param {string} heading */
+  const slug = (heading) => heading.trim().toLowerCase().replace(/[^\p{L}\p{N}\s_-]/gu, "").replace(/\s/g, "-");
+
+  it("has Agent Skills frontmatter, is not hidden, and stays lean", () => {
+    const text = readFileSync(join(dir, "SKILL.md"), "utf8");
+    const fm = parseFrontmatter(text);
+    assert.equal(fm?.name, PLAYBOOK_ID);
+    assert.ok(fm?.description && fm.description.length >= 40 && fm.description.length <= 1024);
+    // a plain YAML scalar: `: ` or ` #` would break strict parsers (npx skills skips the skill)
+    assert.ok(!/: | #/.test(fm.description) && !/^["'\[{>|&*!%@`]/.test(fm.description), "description must stay a valid plain YAML scalar");
+    assert.ok(!/^\s*internal:\s*true/m.test(text.split(/^---$/m)[1] ?? ""), "must not be hidden from npx skills");
+    assert.ok(text.split("\n").length <= 200, "SKILL.md stays under ~200 lines; detail goes in references/");
+  });
+
+  it("links resolve (files and #anchors)", () => {
+    for (const file of templateFiles(dir).filter((f) => f.endsWith(".md"))) {
+      const text = readFileSync(join(dir, file), "utf8");
+      for (const [, target] of text.matchAll(/\]\(([^)\s]+)\)/g)) {
+        if (/^(https?:|mailto:)/.test(target)) continue;
+        const [path, anchor] = target.split("#");
+        const resolved = path ? join(dir, file, "..", path) : join(dir, file);
+        assert.ok(existsSync(resolved), `${file}: broken link ${target}`);
+        if (anchor) {
+          const headings = [...readFileSync(resolved, "utf8").matchAll(/^#{1,6}\s+(.+)$/gm)].map((m) => slug(m[1]));
+          assert.ok(headings.includes(anchor), `${file}: no heading for #${anchor} in ${path || file}`);
+        }
+      }
+    }
+  });
+
+  it("keeps DansUGC optional: everything DansUGC-specific lives in references/dansugc.md", () => {
+    const tools = /\b(search_videos|purchase_videos|reelclaw_trending_music|get_media_upload_url|create_post|list_accounts)\b/;
+    for (const file of templateFiles(dir).filter((f) => f.endsWith(".md") && f !== "references/dansugc.md")) {
+      assert.ok(!tools.test(readFileSync(join(dir, file), "utf8")), `${file} names a DansUGC tool; move it to references/dansugc.md`);
+    }
+    assert.match(readFileSync(join(dir, "references", "dansugc.md"), "utf8"), /only if the DansUGC MCP tools are available/i);
   });
 });

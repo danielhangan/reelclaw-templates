@@ -9,8 +9,8 @@ npx reelclaw@latest add reaction-demo
 Then open `claude` or `codex` in that folder and say *"make a reaction-demo reel with react.mp4 and demo.mov, hook: i was about to quit and this app talked me out of it"*.
 
 - **One line per template.** No clone and no boilerplate. New templates ship from this repo without an npm release.
-- **Agent-native.** Every template is also an [Agent Skill](https://agentskills.io): inputs to collect, the exact command and a playbook for the format. Claude Code and Codex both read it.
-- **Your footage.** Local files, links (TikTok, Instagram, YouTube, X) or direct URLs. Optionally, real-creator clips from [DanSUGC](#footage-with-or-without-dansugc).
+- **Agent-native.** Every template is also an [Agent Skill](https://agentskills.io): inputs to collect, the exact command and what makes the format work. Every install also ships [the playbook](#the-playbook), the producer workflow they share. Claude Code and Codex both read them.
+- **Your footage.** Local files, links (TikTok, Instagram, YouTube, X) or direct URLs. Optionally, real-creator clips from [DansUGC](#footage-with-or-without-dansugc).
 - **Editable output.** Each reel is a plain [HyperFrames](https://hyperframes.heygen.com) HTML composition with semantic ids. Ask the agent to move a caption, change a cut or retime a word, then re-render.
 - **Platform-safe by default.** TikTok Sans, captions auto-fitted inside the cross-platform safe zone, static text, muted clip audio unless the format needs it ([RULES.md](RULES.md)).
 
@@ -29,10 +29,11 @@ Then open `claude` or `codex` in that folder and say *"make a reaction-demo reel
 | Pick from the catalog | `npx reelclaw@latest add` |
 | Every template | `npx reelclaw@latest add --all` |
 | Only the skill (any agent; it installs the engine the first time it runs) | `npx skills add danielhangan/reelclaw-templates --skill reaction-demo` |
+| Only the playbook skill | `npx skills add danielhangan/reelclaw-templates --skill reelclaw-playbook` |
 | All template skills as a Claude Code plugin | `claude plugin marketplace add danielhangan/reelclaw-templates && claude plugin install reelclaw-templates@reelclaw-templates` |
 | Straight from GitHub (no npm release needed) | `npx github:danielhangan/reelclaw-templates add reaction-demo` |
 
-`add` sets up a reel project: `templates/<id>/`, the `reelclaw` engine (`npm install`), and instructions for both agents (`CLAUDE.md` and `.claude/skills/` for Claude Code, `AGENTS.md` and `.agents/skills/` for Codex). It finishes with `reelclaw doctor`. Run it again later to add more templates. It updates the ones you have not edited and keeps the ones you have. Details: [docs/INSTALL.md](docs/INSTALL.md).
+`add` sets up a reel project: `templates/<id>/`, the `reelclaw` engine (`npm install`), the `reelclaw-playbook` skill, and instructions for both agents (`CLAUDE.md` and `.claude/skills/` for Claude Code, `AGENTS.md` and `.agents/skills/` for Codex). It finishes with `reelclaw doctor`. Run it again later to add more templates. It updates the ones you have not edited and keeps the ones you have. Details: [docs/INSTALL.md](docs/INSTALL.md).
 
 **Requirements:** Node.js 22+ and ffmpeg (`brew install ffmpeg` · `sudo apt install ffmpeg` · `winget install ffmpeg`). yt-dlp is optional and only needed for page links. HyperFrames downloads headless Chrome on the first render.
 
@@ -50,7 +51,23 @@ Then open `claude` or `codex` in that folder and say *"make a reaction-demo reel
 |  | **[Wall of Text over B-roll](templates/wall-of-text/)**<br>`wall-of-text` · text-story | POV / storytime / confession: a long first-person text in TikTok's native white text box over looping b-roll, with an optional second card (the reveal). The go-to organic app-promo format.<br><sub>media: `--broll`, `--music`</sub> | `npx reelclaw@latest add wall-of-text` |
 <!-- gallery:end -->
 
-Each template folder has a README with every flag, and a SKILL.md with the playbook. [`catalog/`](catalog/) holds the roadmap: about 200 researched viral formats, their taxonomy, and the engine features each one needs.
+Each template folder has a README with every flag, and a SKILL.md with what makes that format work. [`catalog/`](catalog/) holds the roadmap: about 200 researched viral formats, their taxonomy, and the engine features each one needs.
+
+## The playbook
+
+Every install ships one more skill next to the templates: **[`reelclaw-playbook`](playbook/SKILL.md)**, the producer workflow they all share. It is what the agent loads when you say *"plan 5 reels for my app"* or *"make my reels go viral"*:
+
+**brief → format → hooks → footage → music → make → QA loop → variants → deliver → publish (optional)**
+
+- [Brief](playbook/references/brief.md): read the repo, write a truthful 6-line brief, ask at most one question.
+- [Hooks](playbook/references/hooks.md): 15 hook formats, emotion pairing, per-template patterns, anti-patterns, length and pacing.
+- [Footage](playbook/references/footage.md): your own clips first, trimming to the peak with a frame sheet, pre-trimming demos to the aha.
+- [Music](playbook/references/music.md): matching energy, organic vs ads licensing.
+- [QA](playbook/references/qa.md): `reelclaw qa` plus a 19-point checklist; look at every frame, at most 3 passes.
+- [Variants](playbook/references/variants.md): concepts × hooks with `reelclaw batch`, post captions, reading results.
+- [DansUGC](playbook/references/dansugc.md): only if you use it (creator clips, viral formats, trending music, posting).
+
+`add` installs it into `.claude/skills/reelclaw-playbook/` and `.agents/skills/reelclaw-playbook/` and refreshes it on every run.
 
 ## Make a reel by hand
 
@@ -62,6 +79,7 @@ npx reelclaw make reaction-demo --reaction react.mp4 --demo demo.mov \
 npx reelclaw make reaction-demo --props reels/reaction-demo-1.json --hook "new hook" --name b --draft
 npx reelclaw batch reaction-demo hooks.json --props reels/reaction-demo-1.json   # one reel per row
 npx reelclaw render b                                                      # final quality
+npx reelclaw qa b                                                          # frames + report to check before posting
 npx reelclaw make reaction-demo --help                                     # every flag
 ```
 
@@ -96,24 +114,25 @@ claude   # or codex
 
 The repo's `new-template` skill runs `reelclaw analyze` on the video (shots, cut times, pacing, keyframes), describes the format and checks it with you. It then scaffolds `templates/<id>/`, renders it next to the reference to compare, validates, and opens a PR. Only the link is stored, never the video. The manual steps and the review criteria are in [CONTRIBUTING.md](CONTRIBUTING.md). No time to build it? [Request a template](https://github.com/danielhangan/reelclaw-templates/issues/new?template=template-request.yml).
 
-## Footage: with or without DanSUGC
+## Footage: with or without DansUGC
 
 Templates run on **your own clips**. A 3-second phone selfie makes a fine reaction hook.
 
-If you want real-creator UGC (reaction hooks, typing shots, intros), **[DanSUGC](https://dansugc.com)** sells clips ready to drop into these templates. Connect its MCP server and the agent can search for clips that match your hook, show prices in credits, and buy only after you say yes:
+If you want real-creator UGC (reaction hooks, typing shots, intros), **[DansUGC](https://dansugc.com)** sells clips ready to drop into these templates. Connect its MCP server (OAuth login, no API keys) and the agent can search for clips that match your hook, show prices in credits, and buy only after you say yes:
 
 ```bash
-claude mcp add --transport http dansugc https://dansugc.com/mcp    # Claude Code
-codex mcp add dansugc --url https://dansugc.com/mcp                # Codex
+claude mcp add --transport http dansugc https://dansugc.com/mcp                     # Claude Code
+codex mcp add dansugc --url https://dansugc.com/mcp && codex mcp login dansugc     # Codex
 ```
 
-This is optional. Every template works without it.
+This is optional. Every template works without it. How the agent uses it: [playbook/references/dansugc.md](playbook/references/dansugc.md).
 
 ## Repo layout
 
 ```
 packages/reelclaw/    the `reelclaw` npm package: engine (src/core), CLI (src/cli), analyze/scaffold (src/analyze)
 templates/<id>/       template.mjs · SKILL.md · README.md · example.json · preview.gif
+playbook/             the reelclaw-playbook skill every install ships (SKILL.md + references/)
 registry.json         generated catalog that `reelclaw add` reads from GitHub (npm run registry)
 .claude-plugin/       generated marketplace manifest (Claude Code plugin + `npx skills`)
 .claude/ .agents/     the new-template skill for contributors (Claude Code / Codex)

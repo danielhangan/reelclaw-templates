@@ -105,6 +105,8 @@ export async function validateTemplate(loc, { root, base, render = false, keep =
     res.duration = made.duration;
     res.output = made.output;
     res.warnings.push(...made.warnings);
+    // a render that "succeeded" while a font/script/media file failed to load is a failure
+    for (const w of made.renderWarnings ?? []) res.errors.push(`render warning: ${w.message} — ${w.line}`);
   } catch (e) {
     err(e);
   } finally {

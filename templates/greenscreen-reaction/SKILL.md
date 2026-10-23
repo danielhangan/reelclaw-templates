@@ -13,6 +13,8 @@ description: Make a TikTok "greenscreen reaction" short-form video (TikTok / Ree
 
 Reel length = the background video (or the reaction, with `--length reaction`). 1080×1920 @ 30fps. There is no real green screen: `hyperframes remove-background` (a local matting model) cuts the creator out, like TikTok's in-app effect does.
 
+**Planning, hooks, footage, music, QA and variants** work the same for every template and live in the shared `reelclaw-playbook` skill (installed with every template; skill-only: `npx skills add danielhangan/reelclaw-templates --skill reelclaw-playbook`). Load it first when planning. This file covers what is specific to greenscreen-reaction.
+
 ## 0. Set up (once per folder)
 
 If `templates/greenscreen-reaction/template.mjs` does not exist in the working directory, install the template and engine:
@@ -31,12 +33,11 @@ The first reel with a new reaction clip runs background removal: about 1s of wor
 
 | Input | Required | Notes |
 | --- | --- | --- |
-| `--video` | yes | What the creator reacts to: a TikTok screen recording, app demo, gameplay, a news clip. Plays full screen; landscape is shown whole over a blurred copy. Local path, direct URL, or TikTok/IG/YouTube link. |
+| `--video` | yes | What the creator reacts to: an app demo, a screen recording, gameplay, a result. Plays full screen; landscape is shown whole over a blurred copy. Local path, direct URL, or a link to the user's own post. |
 | `--reaction` | yes | The creator, ideally waist- or chest-up, facing the camera, evenly lit, against a plain-ish background. Already transparent (`.webm` or ProRes 4444 `.mov`)? Pass it: matting is skipped. |
 | `--hook` | strongly recommended | Caption at the top of the frame. Write it with the user (§4). |
 
-Use the user's own files or links first. A 5–10s phone selfie of them talking works. If they have no reaction footage:
-- Optional: if the DanSUGC MCP is connected (tools such as `search_videos`), offer to search real-creator reaction clips that match the emotion (shocked, laughing, "wait what", pointing). Show the results and their prices in credits, and buy only after the user says yes. Or point them to https://dansugc.com. DanSUGC is never required, so don't block on it.
+**Footage.** The user's own files or links first. The background must be something the user has the rights to (their own app, recording or post); never pull someone else's post as footage (to react to another creator's video, use TikTok's own Stitch or green-screen effect, which credits them). A 5–10s phone selfie of the user talking is a fine reaction. Real-creator reaction clips from DansUGC (shocked, laughing, "wait what", pointing) are optional: only if its MCP tools are connected or the user asks, follow `reelclaw-playbook` → `references/dansugc.md` (prices in credits, buy only after a yes). Never block on it.
 
 Every flag: `npx reelclaw make greenscreen-reaction --help`.
 
@@ -51,16 +52,9 @@ npx reelclaw make greenscreen-reaction \
   --draft
 ```
 
-This writes `reels/greenscreen-reaction-N.html` (the editable composition), `reels/greenscreen-reaction-N.json` (the inputs used) and `renders/greenscreen-reaction-N.mp4`. Read the warnings it prints: they flag a hook sitting on the creator, a creator who leaves before the reel ends, and a floating torso.
+This writes `reels/greenscreen-reaction-N.html` (the editable composition), `reels/greenscreen-reaction-N.json` (the inputs used) and `renders/greenscreen-reaction-N.mp4`, then runs `npx reelclaw qa`. Read the warnings `make` prints: they flag a hook sitting on the creator, a creator who leaves before the reel ends, and a floating torso.
 
-Before you show the user, look at a frame with the creator at rest (and one before the drag if you used it):
-
-```bash
-ffmpeg -v error -ss 1 -i renders/greenscreen-reaction-1.mp4 -frames:v 1 /tmp/open.png
-ffmpeg -v error -ss 4 -i renders/greenscreen-reaction-1.mp4 -frames:v 1 /tmp/rest.png
-```
-
-Check these:
+Before you show the user, open every frame `qa` lists (it includes the creator before and after the drag) and go through the playbook's QA checklist (max 3 passes). For this format, check:
 - **Clean cut-out?** Hair, motion blur and busy backgrounds can leave halos or holes. Try `--cutout-quality best`, or ask for a better-lit clip.
 - **Creator the right size?** `--size` is the person's width as % of the frame: 25–30 = secondary, **40–50 = the classic greenscreen look** (the default is 40), 60+ = the creator is the star.
 - **Facing into the frame?** If they look off-screen, add `--flip`.
@@ -70,12 +64,13 @@ Check these:
 ## 3. Iterate cheaply, then finalize
 
 - **New hook, size or position with the same clips.** The cut-out is cached, so this takes seconds: `npx reelclaw make greenscreen-reaction --props reels/greenscreen-reaction-1.json --hook "new hook" --size 50 --name v2 --draft`.
+- **Many hooks at once:** `npx reelclaw batch greenscreen-reaction hooks.json --props reels/greenscreen-reaction-1.json --draft` (rows: `[{ "name": "hook-c", "hook": "…" }]`).
 - **Timing:** `--video-trim` (start the video right before its wow moment), `--overlay-start` (creator pops in late), `--reaction-trim`/`--reaction-secs` (which part of the reaction), `--secs` (cap the length), `--length reaction` (end with the creator; the video loops underneath).
 - **Audio:** the creator's voice is levelled to -14 LUFS and the video's sound plays at 0.5 under it (1 when the reaction is silent). Use `--video-volume 0` to mute the video, or `--video-volume 0.2` if it fights the voice.
 - **Final quality:** `npx reelclaw render <name>` (without `--draft`).
 - **Hand edits:** edit `reels/<name>.html` (a HyperFrames composition; ids are `background`, `reaction`, `reaction-audio`, `hook`; the drag is one `tl.fromTo("#reaction", …)` line). Then run `npx reelclaw check <name>` and `npx reelclaw render <name>`. Running `make` again with the same `--name` overwrites hand edits.
 
-## 4. Viral playbook
+## 4. What makes this format work
 
 The background is the star and the creator is the commentary, so the reel inherits the background's watchability.
 
@@ -84,5 +79,5 @@ The background is the star and the creator is the commentary, so the reel inheri
 - **The drag-in is a pattern interrupt.** `--start-position center --move-at 2` opens with the creator big and centred, then a "hand" drags them to the corner right when viewers would swipe, which resets attention. Add `--start-size 60` to also shrink them during the drag. For chest-up footage, `--start-position bottom-center --start-size 75` looks more native: the creator opens big and anchored to the bottom edge, then shrinks into the corner, and the cut-off torso never shows.
 - **Both soundtracks on is the format.** The creator talks over the video. Duck the video (`--video-volume 0.2`) instead of muting it.
 - **Keep it tight.** 7–20s. If the reaction ends early, end the reel with it (`--secs` or `--length reaction`); a corner with no creator for the last seconds looks broken.
-- **Variants:** same clips, 3–5 hooks, and maybe two sizes (40 vs 55). Propose 5–10 hooks in this voice, let the user pick, then make one reel per hook with `--name`.
+- **Variants:** same clips, 3–5 hooks, and maybe two sizes (40 vs 55). Propose 5–10 hooks in this voice, let the user pick, then batch them.
 - **Sound for organic posts:** keep the native audio. The talking is the content. Don't add music under two live tracks.
