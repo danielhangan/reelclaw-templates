@@ -106,7 +106,7 @@ Then check the safe zones and make the preview: `npx reelclaw preview <id> --saf
 
 ## 8. Docs
 
-- `SKILL.md`: resolve every TODO. The `description` is what agents match on: what it makes + when to use it, ≤ 1024 chars. Keep the bootstrap (`npx reelclaw@latest add <id>`), the inputs table, the exact make command, iteration, and a **viral playbook** (hook voice with 3+ example hooks in the format's style, what to vary between variants, sound advice). Footage: the user's own first; DanSUGC (MCP `search_videos` or dansugc.com) as an optional source — never required.
+- `SKILL.md`: resolve every TODO. The `description` is what agents match on: what it makes + when to use it, ≤ 1024 chars. Keep the bootstrap (`npx reelclaw@latest add <id>`), the pointer to the shared `reelclaw-playbook` skill, the inputs table, the exact make command, the format-specific QA checks, iteration, and a **"What makes this format work"** section (hook voice with 3+ example hooks in the format's style, what to vary between variants, sound advice for this format). Advice that is true for every template (hook rules, footage sourcing, music licensing, the QA checklist, variants, DansUGC) lives in `playbook/`: link it, don't copy it. Footage: the user's own first; DansUGC optional, via the playbook's `references/dansugc.md` — never required.
 - `README.md`: what it is, the structure diagram, how inputs map to it, any deliberate RULES.md exceptions. Refresh the flags table with `npx reelclaw docs <id> --write`.
 - `example.json`: exercise the optional inputs too (CI makes it). Write your own example text in the format's voice — don't copy the creator's captions.
 

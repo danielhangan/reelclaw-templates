@@ -12,8 +12,10 @@ import { ReelclawError } from "./errors.mjs";
 import { requireTool, run } from "./exec.mjs";
 import { ffprobe } from "./media/probe.mjs";
 import { projectPaths } from "./project.mjs";
+import { formatRenderWarnings, scanRenderLog } from "./render-log.mjs";
 
 /** @typedef {import('./log.mjs').Logger} Logger */
+/** @typedef {import('./render-log.mjs').RenderWarning} RenderWarning */
 
 /** The HyperFrames version every reel is rendered with. Bump deliberately (and re-run CI renders). */
 export const HYPERFRAMES_VERSION = "0.8.181";
@@ -42,16 +44,18 @@ export function hyperframesCommand() {
 /**
  * Run the pinned HyperFrames CLI in `cwd`, streaming its output (noise filtered).
  * @param {string[]} args
- * @param {{ cwd: string, onLine?: (line: string) => void }} o
+ * @param {{ cwd: string, onLine?: (line: string) => void, onRawLine?: (line: string) => void }} o
+ *   `onRawLine` receives every line, unfiltered (for the render log)
  * @returns {Promise<number>} exit code
  */
-export function runHyperframes(args, { cwd, onLine = (l) => process.stdout.write(`${l}\n`) }) {
+export function runHyperframes(args, { cwd, onLine = (l) => process.stdout.write(`${l}\n`), onRawLine }) {
   const hf = hyperframesCommand();
   return new Promise((resolve, reject) => {
     const child = spawn(hf.cmd, [...hf.args, ...args], { cwd, stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, FORCE_COLOR: "0" } });
     let lastDecile = -1;
     /** Progress bars are printed at most once per 10% so agent transcripts stay short. */
     const emit = (/** @type {string} */ line) => {
+      onRawLine?.(line);
       if (isNoise(line)) return;
       const pct = /^\s*[█░]+\s+(\d+)%/.exec(line);
       if (pct) {
@@ -114,9 +118,26 @@ const TRANSIENT = /not ready after|Capture failed|Parallel worker cancelled|Targ
  */
 
 /**
- * Render a reel to MP4 and verify the output (exists, expected duration).
+ * @typedef {object} RenderResult
+ * @property {string} output    absolute MP4 path
+ * @property {number} duration  probed seconds
+ * @property {string} logFile   absolute path of the full HyperFrames log (renders/<name>.render.log)
+ * @property {RenderWarning[]} warnings  silent-failure signatures found in the log (render-log.mjs)
+ */
+
+/**
+ * The render log saved next to an output: renders/<name>.mp4 → renders/<name>.render.log.
+ * @param {string} output
+ */
+export const renderLogPath = (output) => `${output.replace(/\.mp4$/i, "")}.render.log`;
+
+/**
+ * Render a reel to MP4 and verify the output (exists, expected duration). The
+ * full HyperFrames output is saved to renders/<name>.render.log and scanned for
+ * silent failures (missing font/script/media): they are printed as a RENDER
+ * WARNINGS block and returned — the MP4 exists but should not be delivered.
  * @param {RenderOptions} o
- * @returns {Promise<{ output: string, duration: number }>} absolute output path + probed duration
+ * @returns {Promise<RenderResult>}
  */
 export async function renderReel({ root, name, output, quality = "looks", workers, log, onLine }) {
   requireTool("ffmpeg", "encode the video");
@@ -127,23 +148,34 @@ export async function renderReel({ root, name, output, quality = "looks", worker
   const out = output ?? join("renders", `${name}.mp4`);
   const args = ["render", "-c", reel, "-o", out, "--quality", quality];
   if (workers !== undefined) args.push("--workers", String(workers));
-  log?.step(`rendering ${out} (${quality})…`);
+  const logRel = renderLogPath(out);
+  const logFile = join(root, logRel);
+  await mkdir(dirname(logFile), { recursive: true });
+  log?.step(`rendering ${out} (${quality}; full log: ${logRel})…`);
+  /** @type {string[]} */
+  let raw = [`$ hyperframes@${HYPERFRAMES_VERSION} ${args.join(" ")}`];
+  const record = (/** @type {string} */ line) => { raw.push(line); };
   let transient = false;
   const watch = (/** @type {string} */ line) => {
     if (TRANSIENT.test(line)) transient = true;
     (onLine ?? ((l) => process.stdout.write(`${l}\n`)))(line);
   };
-  let code = await runHyperframes(args, { cwd: root, onLine: watch });
+  let code = await runHyperframes(args, { cwd: root, onLine: watch, onRawLine: record });
+  await writeFile(logFile, `${raw.join("\n")}\n`);
   if (code !== 0 && transient) {
     // one retry with a single worker: the usual cause is a busy machine timing out a browser worker
     log?.warn("render hit a browser timeout (busy machine?) — retrying once with 1 worker");
     const retry = [...args.filter((a, i) => a !== "--workers" && args[i - 1] !== "--workers"), "--workers", "1"];
-    code = await runHyperframes(retry, { cwd: root, onLine });
+    // the log keeps only the run that produced the MP4, so the scan sees that run's warnings
+    raw = [`$ hyperframes@${HYPERFRAMES_VERSION} ${retry.join(" ")}  (retry after a browser timeout)`];
+    code = await runHyperframes(retry, { cwd: root, onLine, onRawLine: record });
+    await writeFile(logFile, `${raw.join("\n")}\n`);
   }
   const abs = join(root, out);
   if (code !== 0 || !existsSync(abs)) {
-    throw new ReelclawError(`render failed for ${reel} (hyperframes exit ${code})`, {
-      hint: `run \`reelclaw doctor\`, then \`reelclaw check ${name}\` to lint the composition`,
+    const found = scanRenderLog(raw.join("\n"));
+    throw new ReelclawError(`render failed for ${reel} (hyperframes exit ${code})${found.length ? `\n${formatRenderWarnings(found, { reel, failed: true })}` : ""}`, {
+      hint: `full log: ${logRel} — run \`reelclaw doctor\`, then \`reelclaw check ${name}\` to lint the composition`,
     });
   }
   const info = await ffprobe(abs);
@@ -151,7 +183,11 @@ export async function renderReel({ root, name, output, quality = "looks", worker
   if (expected && Math.abs(info.duration - expected) > 0.15) {
     log?.warn(`rendered ${info.duration}s but the reel declares ${expected}s — inspect ${out}`);
   }
-  return { output: abs, duration: info.duration };
+  const warnings = scanRenderLog(raw.join("\n"));
+  if (warnings.length) {
+    log?.warn(formatRenderWarnings(warnings, { reel, logFile: logRel }));
+  }
+  return { output: abs, duration: info.duration, logFile, warnings };
 }
 
 /**

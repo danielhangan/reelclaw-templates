@@ -20,6 +20,7 @@
     "packages/reelclaw/bin",
     "packages/reelclaw/src",
     "packages/reelclaw/package.json",
+    "playbook",
     "shared",
     "templates",
     "RULES.md",

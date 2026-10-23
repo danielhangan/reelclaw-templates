@@ -1,7 +1,7 @@
 {
   "name": "reelclaw-templates",
   "owner": {
-    "name": "Daniel Hangan (DanSUGC)",
+    "name": "Daniel Hangan (DansUGC)",
     "url": "https://dansugc.com"
   },
   "metadata": {
@@ -10,7 +10,7 @@
   "plugins": [
     {
       "name": "reelclaw-templates",
-      "description": "7 viral short-form video templates (TikTok / Reels / Shorts, 1080x1920). Each template is a skill that sets up the reelclaw engine in your folder and walks you from footage to a rendered MP4.",
+      "description": "7 viral short-form video templates (TikTok / Reels / Shorts, 1080x1920). Each template is a skill that sets up the reelclaw engine in your folder and walks you from footage to a rendered MP4; the reelclaw-playbook skill is the producer workflow they share (brief, hooks, footage, music, QA, variants).",
       "source": "./",
       "strict": false,
       "homepage": "https://github.com/danielhangan/reelclaw-templates",
@@ -26,6 +26,7 @@
         "hyperframes"
       ],
       "skills": [
+        "./playbook",
         "./templates/before-after",
         "./templates/greenscreen-reaction",
         "./templates/listicle",

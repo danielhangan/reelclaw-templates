@@ -1806,5 +1806,23 @@
         "skills": "npx skills add danielhangan/reelclaw-templates --skill wall-of-text"
       }
     }
-  ]
+  ],
+  "playbook": {
+    "id": "reelclaw-playbook",
+    "description": "The producer's playbook for short-form reels (TikTok / Reels / Shorts) made with reelclaw templates, from a product brief to postable videos — pick the format and template, write scroll-stopping hooks, choose footage and music, make the reel, QA every render frame by frame, and spin up variants. Use when planning reels or a content batch, writing or fixing hooks, choosing footage or a sound, checking a render before delivery, making hook variants, or when the user says \"make N reels / ads for my app\", \"make my reels go viral\", or isn't sure which template fits.",
+    "path": "playbook",
+    "files": [
+      "SKILL.md",
+      "references/brief.md",
+      "references/dansugc.md",
+      "references/footage.md",
+      "references/hooks.md",
+      "references/music.md",
+      "references/qa.md",
+      "references/variants.md"
+    ],
+    "install": {
+      "skills": "npx skills add danielhangan/reelclaw-templates --skill reelclaw-playbook"
+    }
+  }
 }

@@ -95,8 +95,9 @@ Every input is declared once and drives the CLI flag, validation, `--props` JSON
 
 - Keys are camelCase; the flag is kebab-case (`hookPosition` → `--hook-position`). Props files accept either.
 - An input is `T | undefined` in `build()` unless it is `required: true` or has a `default` — the types (JSDoc + `// @ts-check`) enforce this, so `npm run typecheck` catches a forgotten `inputs.hook2 &&`.
-- Reserved keys (built-in `make` flags): `name`, `props`, `render`, `draft`, `quality`, `workers`, `project`, `help`, `json`, `open`.
+- Reserved keys (built-in `make` flags): `name`, `props`, `render`, `draft`, `quality`, `workers`, `project`, `help`, `json`, `open`, `qa`.
 - Media values may be local paths (relative to where the command runs), direct file URLs (downloaded), or page links — TikTok/Instagram/YouTube/X (yt-dlp). Everything is copied into `assets/<slug>-<sha256:12>.<ext>`: same bytes reuse one file, different bytes never collide.
+- Video with sparse keyframes (> 2s apart: phone exports, platform downloads) is re-encoded once to `assets/<stem>.seekable.mp4` (H.264, a keyframe every 30 frames) and `build()` receives that copy, so HyperFrames' per-frame seeks never freeze. Transparent video (cut-outs) and already-dense files are left alone.
 
 ### `MediaRef`
 
@@ -219,12 +220,18 @@ A new component belongs in core when a second template needs it: add `components
 ```
 reels/<name>.html   standalone HyperFrames composition (no <template>/host page)
 reels/<name>.json   { "template": id, "inputs": {...} } with media as staged assets/ paths
-renders/<name>.mp4  with --render / --draft
+renders/<name>.mp4         with --render / --draft
+renders/<name>.render.log  the full HyperFrames output, scanned for silent failures
+renders/qa/<name>/         `reelclaw qa`: review frames + report (run automatically after make --render)
 ```
 
 The HTML is meant to be edited — by people and agents — after generation: semantic ids, plain CSS, one paused GSAP timeline on `window.__timelines[<name>]`, media paths `../assets/…`, `data-start` / `data-duration` / `data-media-start` / `data-volume` / `data-fade-out` attributes. After hand edits: `reelclaw check <name>` (HyperFrames lint), then `reelclaw render <name>`. Re-running `make` with the same `--name` overwrites the file.
 
 `makeReel()` lints every generated reel; a lint error means a template bug (usually inside an `html()` clip).
+
+### Review: `reelclaw qa <name>`
+
+HyperFrames can exit 0 with a font, a script or an image that never loaded, so every render's log is scanned and a hit prints a **RENDER WARNINGS** block with the fix (and `render`/`make` exit 1). `reelclaw qa` (automatic after `make --render`; `--no-qa` skips it) then reads the reel's composition to find its cuts and caption windows and writes 540×960 frames with the safe band outlined — 0.0/0.5/1.0s, 0.2s before and 0.5s after every cut, the middle of every caption, the last frame — plus a full-resolution `font-check.png` of the first caption, a 2 fps `contact-sheet.png` and `report.txt`/`report.json` (canvas, fps, duration vs the composition, audio level or SILENT, music tail fade, black and frozen frames, render warnings). Wrong canvas/length, silence when the composition has sound, black frames and render warnings fail it. Any MP4 works too: `reelclaw qa clip.mp4 --cut 3`. The numbers can't judge a hook — open every frame before delivering. Templates get all of this for free; give clips semantic ids so the report's cut/caption labels read well.
 
 ## `example.json` and CI
 
@@ -256,7 +263,7 @@ description: <what it makes + when to use it, ≤ 1024 chars — this is what ag
 ---
 ```
 
-The body must: (0) bootstrap with `npx reelclaw@latest add <id>` when `templates/<id>/template.mjs` is missing, then `npx reelclaw doctor`; (1) list the inputs to collect; (2) give the exact `npx reelclaw make <id> … --draft` command; (3) explain iterating (`--props reels/<name>.json`, `--name`), final render and hand edits (`reelclaw check`); (4) the viral playbook for the format. Footage sourcing: the user's own files/links first; DanSUGC (MCP `search_videos` if connected, or dansugc.com) is an optional extra — never required. See `templates/reaction-demo/SKILL.md`.
+The body must: (0) bootstrap with `npx reelclaw@latest add <id>` when `templates/<id>/template.mjs` is missing, then `npx reelclaw doctor`; (1) list the inputs to collect; (2) give the exact `npx reelclaw make <id> … --draft` command; (3) explain iterating (`--props reels/<name>.json`, `--name`), final render and hand edits (`reelclaw check`); (4) what makes the format work (its hook voice, what to vary, sound). Advice shared by every template (hook rules, footage sourcing, music licensing, the QA checklist, variants, DansUGC) lives in the `reelclaw-playbook` skill ([`playbook/`](../playbook/SKILL.md)): point to it instead of copying it. Footage sourcing: the user's own files/links first; DansUGC is an optional extra via the playbook's `references/dansugc.md` — never required. See `templates/reaction-demo/SKILL.md`.
 
 ## Gotchas
 

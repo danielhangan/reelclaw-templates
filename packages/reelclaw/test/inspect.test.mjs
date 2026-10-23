@@ -7,7 +7,7 @@ import { join } from "node:path";
 import { after, describe, it } from "node:test";
 import { ffprobe } from "../src/core/media/probe.mjs";
 import {
-  checkRender, expectationsFor, frameStrip, frameTimes, parseBlack, parseVolume,
+  audioLevel, checkRender, contactSheet, cropFrame, expectationsFor, frameStrip, frameTimes, parseBlack, parseSegments, parseVolume,
   previewGif, probeRender, safeZoneFilter, stripFilter,
 } from "../src/core/inspect.mjs";
 
@@ -67,6 +67,19 @@ describe("ffmpeg output parsing", () => {
     assert.equal(parseBlack("black_start:0 black_end:1.2 black_duration:1.2\nblack_start:5 black_end:5.5 black_duration:0.5"), 1.7);
     assert.equal(parseBlack(""), 0);
   });
+
+  it("lists black and frozen segments, closing a freeze that runs to the end", () => {
+    const black = "[blackdetect @ 0x1] black_start:0 black_end:0.4 black_duration:0.4\n[blackdetect @ 0x1] black_start:5 black_end:5.5 black_duration:0.5";
+    assert.deepEqual(parseSegments(black, "black"), [{ start: 0, end: 0.4, duration: 0.4 }, { start: 5, end: 5.5, duration: 0.5 }]);
+    const freeze = [
+      "[freezedetect @ 0x2] lavfi.freezedetect.freeze_start: 4",
+      "[freezedetect @ 0x2] lavfi.freezedetect.freeze_duration: 4.3",
+      "[freezedetect @ 0x2] lavfi.freezedetect.freeze_end: 8.3",
+      "[freezedetect @ 0x2] lavfi.freezedetect.freeze_start: 10.1",
+    ].join("\n");
+    assert.deepEqual(parseSegments(freeze, "freeze", 12), [{ start: 4, end: 8.3, duration: 4.3 }, { start: 10.1, end: 12, duration: 1.9 }]);
+    assert.deepEqual(parseSegments("", "freeze", 3), []);
+  });
 });
 
 describe("frame sampling and filters", () => {
@@ -82,6 +95,9 @@ describe("frame sampling and filters", () => {
     assert.match(f, /drawbox=x=0:y=0:w=1080:h=220:/);
     assert.match(f, /drawbox=x=0:y=1420:w=1080:h=500:/);
     assert.match(f, /drawbox=x=180:y=220:w=720:h=1200:color=lime/);
+    const outline = safeZoneFilter({ shade: false });
+    assert.doesNotMatch(outline, /t=fill/);
+    assert.match(outline, /drawbox=x=180:y=220:w=720:h=1200:color=lime/);
   });
 
   it("stacks n frames, padding all but the last", () => {
@@ -115,6 +131,16 @@ describe("real ffmpeg round trip", () => {
     const png = await ffprobe(strip);
     assert.equal(png.height, 320);
     assert.equal(png.width, 3 * 180 + 2 * 12);
+
+    assert.deepEqual(info.freezes, []);
+    assert.deepEqual(info.black, []);
+    const crop = await ffprobe(await cropFrame(mp4, 1, { x: 180, y: 220, w: 720, h: 1200 }, join(dir, "crop.png")));
+    assert.deepEqual([crop.width, crop.height], [720, 1200]);
+    const sheet = await contactSheet(mp4, join(dir, "sheet.png"), { duration: info.duration, fps: 2, columns: 2, width: 100 });
+    assert.equal(sheet.frames, 4);
+    assert.ok((await ffprobe(sheet.out)).width > 200);
+    const whole = await audioLevel(mp4);
+    assert.ok(/** @type {number} */ (whole.mean) > -40);
 
     const gif = await previewGif(mp4, join(dir, "p.gif"), { maxBytes: 400_000 });
     assert.ok(gif.bytes <= 400_000 || gif.width === 144, `gif ${gif.bytes}B at ${gif.width}px`);

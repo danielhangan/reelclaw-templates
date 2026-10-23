@@ -93,7 +93,7 @@ const manifestSchema = z.object({
 });
 
 /** Inputs every `make` run accepts on top of the template's own; templates must not reuse them. */
-export const RESERVED_FLAGS = Object.freeze(["name", "props", "render", "draft", "quality", "workers", "project", "help", "json", "open"]);
+export const RESERVED_FLAGS = Object.freeze(["name", "props", "render", "draft", "quality", "workers", "project", "help", "json", "open", "qa"]);
 
 /**
  * Declare a template. Validates the manifest eagerly so a broken template fails

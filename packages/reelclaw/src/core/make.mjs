@@ -18,6 +18,7 @@ import { lintReel, renderReel, runHyperframes } from "./render.mjs";
 
 /** @typedef {import('./log.mjs').Logger} Logger */
 /** @typedef {import('./render.mjs').Quality} Quality */
+/** @typedef {import('./render-log.mjs').RenderWarning} RenderWarning */
 /** @typedef {import('./types.mjs').MediaRef} MediaRef */
 /** @typedef {import('./types.mjs').MediaKind} MediaKind */
 /** @typedef {import('./template.mjs').Template<any, any>} AnyTemplate */
@@ -45,6 +46,8 @@ import { lintReel, renderReel, runHyperframes } from "./render.mjs";
  * @property {number} duration   seconds
  * @property {string[]} warnings
  * @property {string} [output]   absolute path of the MP4 when rendered
+ * @property {string} [renderLog] absolute path of renders/<name>.render.log when rendered
+ * @property {RenderWarning[]} [renderWarnings]  silent render failures found in that log (empty = none)
  */
 
 /**
@@ -119,6 +122,8 @@ export async function makeReel(o) {
     const r = await renderReel({ root, name, quality: o.quality, workers: o.workers, log });
     log.success(`${displayPath(cwd, r.output)}  (${r.duration}s)`);
     out.output = r.output;
+    out.renderLog = r.logFile;
+    out.renderWarnings = r.warnings;
   }
   return out;
 }

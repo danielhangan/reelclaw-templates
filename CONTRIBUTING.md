@@ -45,7 +45,7 @@ What each step means, how to read a reference, and how to map what you see to en
 - **One template per PR**, on a branch named `template/<id>`.
 - **ids are kebab-case** and name the format (`pov-app-reveal`), never a creator, brand or song. The id is the folder name, the template id and the Agent Skills name.
 - **Templates use the engine API only.** `template.mjs` imports `"reelclaw"`. If you need a new primitive, add it to core as a new module with a unit test and a line in `docs/TEMPLATE_API.md`.
-- **Footage is the user's.** Templates and skills work with the user's own files and links. DanSUGC (dansugc.com, or its MCP) may be offered as an optional source of creator footage. It is never required.
+- **Footage is the user's.** Templates and skills work with the user's own files and links. DansUGC (dansugc.com, or its MCP) may be offered as an optional source of creator footage. It is never required.
 - **House rules** in [RULES.md](RULES.md): TikTok Sans, text inside the safe band, static captions, clip audio muted by default, 1080×1920 @ 30fps.
 
 ## PR checklist
@@ -57,7 +57,7 @@ The [PR template](.github/PULL_REQUEST_TEMPLATE.md) has the full list. In short:
 - [ ] no `TODO` left in `templates/<id>/`
 - [ ] rendered and compared with the reference (`analyze --compare`); differences explained in the PR
 - [ ] safe zones checked (`preview --safe-zones`); small `preview.*` from fixtures or your own footage
-- [ ] SKILL.md tells an agent what it makes, when to use it, the inputs, the exact command, and a viral playbook
+- [ ] SKILL.md tells an agent what it makes, when to use it, the inputs, the exact command, and what makes the format work; generic advice (hooks, footage, music, QA, variants, DansUGC) points to the shared [`playbook/`](playbook/SKILL.md) instead of being copied
 - [ ] nothing from the reference committed
 
 ## Review criteria

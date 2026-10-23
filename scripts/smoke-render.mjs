@@ -58,7 +58,7 @@ async function smoke(id, { out, workers, frames }) {
     const info = await probeRender(mp4);
     const check = checkRender(info, expectationsFor(ex.html));
     report.render = info;
-    report.problems.push(...check.problems);
+    report.problems.push(...check.problems, ...(ex.made.renderWarnings ?? []).map((w) => `render warning: ${w.message} — ${w.line}`));
     report.warnings.push(...ex.made.warnings, ...check.warnings);
     report.frames = frameTimes(info.duration, frames);
     await frameStrip(mp4, report.frames, join(dir, "frames.png"), { height: 640 });

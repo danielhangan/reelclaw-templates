@@ -7,8 +7,9 @@
 # synthetic test media (npm run fixtures)
 fixtures/
 
-# copied from shared/fonts at pack time (prepack)
+# copied from shared/fonts and playbook/ at pack time (prepack)
 packages/reelclaw/fonts/
+packages/reelclaw/playbook/
 
 # reference videos pulled by `reelclaw analyze` (never commit them: copyright)
 analysis/

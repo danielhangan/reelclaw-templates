@@ -13,6 +13,8 @@ description: Make a silent "…but no yapping" split-screen tutorial reel (TikTo
 
 Length = intro (3–6s, from the intro clip) + the demo recording. No voiceover: the silence is the format. 1080×1920 @ 30fps.
 
+**Planning, hooks, footage, music, QA and variants** work the same for every template and live in the shared `reelclaw-playbook` skill (installed with every template; skill-only: `npx skills add danielhangan/reelclaw-templates --skill reelclaw-playbook`). Load it first when planning. This file covers what is specific to no-yapping.
+
 ## 0. Set up (once per folder)
 
 If `templates/no-yapping/template.mjs` does not exist in the working directory, install the template and engine:
@@ -41,9 +43,7 @@ Step timing, per step:
 - `"paste ur script :: 4"`: sequential, 4s.
 - `"hit generate :: 12-15"`: shown from second 12 to 15 of the reel (an absolute window). Use it to sync a caption to a moment in the demo; the next steps continue from 15.
 
-Use the user's own files or links first: local paths, direct URLs, and TikTok/IG/YouTube links all work. If they have no intro or typing footage:
-- A 3s phone selfie (intro) and a phone propped behind the laptop (typing) are enough.
-- Optional: if the DanSUGC MCP is connected (tools such as `search_videos`), offer to search real-creator clips ("mouth tape", "typing on laptop", "shh"). Show the results and their prices in credits, and buy only after the user says yes. Or point them to https://dansugc.com. DanSUGC is never required, so don't block on it.
+**Footage.** The user's own files or links first; never pull someone else's post as footage. The intro needs its gag in the first second; the typing shot needs hands, keyboard and screen in frame; the demo should start at the first real action. No intro or typing footage? A 3s phone selfie (intro) and a phone propped behind the laptop (typing) are enough. Real-creator clips from DansUGC ("mouth tape", "typing on laptop", "shh") are optional: only if its MCP tools are connected or the user asks, follow `reelclaw-playbook` → `references/dansugc.md` (prices in credits, buy only after a yes). Never block on it.
 
 Every flag: `npx reelclaw make no-yapping --help`.
 
@@ -61,28 +61,23 @@ npx reelclaw make no-yapping \
   --draft
 ```
 
-This writes `reels/no-yapping-N.html` (the editable composition), `reels/no-yapping-N.json` (the inputs used) and `renders/no-yapping-N.mp4`. Read the warnings it prints, such as dropped steps or a reel longer than 45s. Each step's time window is in the HTML (`id="step-N" … data-start data-duration`).
+This writes `reels/no-yapping-N.html` (the editable composition), `reels/no-yapping-N.json` (the inputs used) and `renders/no-yapping-N.mp4`, then runs `npx reelclaw qa`. Read the warnings `make` prints, such as dropped steps or a reel longer than 45s. Each step's time window is in the HTML (`id="step-N" … data-start data-duration`).
 
-Before you show the user, look at one frame from the intro and one from the split:
-
-```bash
-ffmpeg -v error -ss 1 -i renders/no-yapping-1.mp4 -frames:v 1 /tmp/intro.png
-ffmpeg -v error -ss 8 -i renders/no-yapping-1.mp4 -frames:v 1 /tmp/split.png
-```
-
-Check these:
+Before you show the user, open every frame `qa` lists and go through the playbook's QA checklist (max 3 passes). For this format, check:
 - **Hook clear of the face?** If not, try `--hook-position center|bottom`.
 - **Hands and keyboard visible in the top half?** Try `--typing-focus top|bottom`, or `--typing-trim`.
 - **The important part of the demo in frame?** Try `--demo-focus left|right|top|bottom`. To show the whole recording, use `--demo-fit blur` (over a blurred copy) or `--demo-fit contain` (on white).
 - **Dead time at the start of the demo?** Use `--demo-trim`. If the reel runs too long, cap it with `--demo-secs`.
+- **The last step (the payoff) on screen for 2s or more?** Give earlier steps explicit `:: secs`.
 
 ## 3. Iterate cheaply, then finalize
 
 - **New hook or steps, same clips.** Media is cached, so this takes seconds: `npx reelclaw make no-yapping --props reels/no-yapping-1.json --hook "new hook" --name hook-b --draft`. Repeated `--step` flags replace the list; in a props file it is `"step": ["…", "…"]`.
+- **Many hooks at once:** `npx reelclaw batch no-yapping hooks.json --props reels/no-yapping-1.json --draft` (rows: `[{ "name": "hook-c", "hook": "…" }]`).
 - **Final quality:** `npx reelclaw render <name>` (without `--draft`).
 - **Hand edits:** edit `reels/<name>.html` (a HyperFrames composition; ids are `intro`, `typing`, `demo`, `hook`, `step-N`). Then run `npx reelclaw check <name>` and `npx reelclaw render <name>`. Running `make` again with the same `--name` overwrites hand edits.
 
-## 4. Viral playbook
+## 4. What makes this format work
 
 This format farms **saves and shares**: viewers keep it as a tutorial.
 
@@ -92,5 +87,5 @@ This format farms **saves and shares**: viewers keep it as a tutorial.
 - **The last step is the payoff.** It stays on screen to the end, so make it the flex ("easyyy 10 bands"), not an instruction.
 - **Speed is the retention mechanic.** Keep the reel under ~30–40s and let the tutorial feel almost too fast. That drives rewatches ("wait, what did they click?") and saves. Use `--demo-trim`/`--demo-secs` to cut dead time, and sync key steps to the demo with `:: start-end` windows.
 - **Don't name the tool in the hook** when curiosity can carry it. Let the steps and the demo reveal it, and let the comments ask.
-- **Variants:** iterate on hooks and steps, not footage. Propose 5–10 hooks in this voice, let the user pick, then make one reel per hook with `--name`.
-- **Sound:** silent by default. Post with a trending sound attached in the TikTok/IG app, which feeds the algorithm. Use `--music` only for ads. `--typing-volume 0.5` (keyboard ASMR) is the one native sound that fits the format.
+- **Variants:** iterate on hooks and steps, not footage. Propose 5–10 hooks in this voice, let the user pick, then batch them.
+- **Sound:** silent by default; post with a trending sound attached in-app. Use `--music` only for ads (playbook `references/music.md`). `--typing-volume 0.5` (keyboard ASMR) is the one native sound that fits the format.

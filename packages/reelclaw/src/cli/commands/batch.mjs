@@ -130,6 +130,10 @@ Example (same footage, five hooks, draft renders)
             onLine: (l) => stream.write(`${color.dim(`[${r.name}]`)} ${l}\n`),
           });
           r.output = out.output;
+          if (out.warnings.length) {
+            r.ok = false;
+            r.error = `render warnings (${out.warnings.map((w) => w.code).join(", ")}) — see ${displayPath(ctx.cwd, out.logFile)}`;
+          }
         } catch (err) {
           r.ok = false;
           r.error = errorText(err);

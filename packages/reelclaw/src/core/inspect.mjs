@@ -4,8 +4,9 @@
  * (size, fps, duration, audio), and extract review images — a frame strip, a
  * safe-zone overlay (RULES.md §4) and a small preview GIF/MP4.
  *
- * Used by `reelclaw preview`, the CI smoke render (scripts/smoke-render.mjs)
- * and the integration tests. Pure helpers are exported for unit tests.
+ * Used by `reelclaw preview`, `reelclaw qa` (qa.mjs), the CI smoke render
+ * (scripts/smoke-render.mjs) and the integration tests. Pure helpers are
+ * exported for unit tests.
  */
 import { rename, rm, stat } from "node:fs/promises";
 import { ReelclawError } from "./errors.mjs";
@@ -25,7 +26,11 @@ import { declaredDuration } from "./render.mjs";
  * @property {number | null} meanVolume  dB of the first audio stream (null: no audio)
  * @property {number | null} maxVolume   dB
  * @property {number} blackSeconds  seconds of (near-)black frames
+ * @property {Segment[]} [black]    the black stretches (blackdetect)
+ * @property {Segment[]} [freezes]  stretches of ≥ FREEZE_SECONDS with no visible change (freezedetect)
  */
+
+/** @typedef {{ start: number, end: number, duration: number }} Segment */
 
 /**
  * @typedef {object} RenderExpectation
@@ -43,6 +48,8 @@ import { declaredDuration } from "./render.mjs";
 export const DURATION_TOLERANCE = 0.15;
 /** Mean volume below this is treated as silence. */
 export const SILENCE_DB = -60;
+/** A picture that does not change for this long is reported as frozen. */
+export const FREEZE_SECONDS = 2;
 
 /**
  * What a composition promises about its render.
@@ -89,7 +96,7 @@ export function checkRender(info, expect = {}) {
 }
 
 /**
- * Probe a rendered MP4: streams, loudness and black frames.
+ * Probe a rendered MP4: streams, loudness, black and frozen frames.
  * @param {string} file
  * @returns {Promise<RenderInfo>}
  */
@@ -103,24 +110,42 @@ export async function probeRender(file) {
   const streams = raw.streams ?? [];
   const v = streams.find((s) => s.codec_type === "video") ?? {};
   const hasAudio = streams.some((s) => s.codec_type === "audio");
-  // one decode pass: volumedetect on the audio, blackdetect on a 10fps video sample
-  const args = ["-hide_banner", "-nostats", "-i", file, "-filter_complex", "[0:v]fps=10,blackdetect=d=0.1:pix_th=0.06[vo]", "-map", "[vo]"];
+  // one decode pass: volumedetect on the audio, blackdetect + freezedetect on a 10fps video sample
+  const video = `[0:v]fps=10,blackdetect=d=0.1:pix_th=0.06,freezedetect=n=-70dB:d=${FREEZE_SECONDS}[vo]`;
+  const args = ["-hide_banner", "-nostats", "-i", file, "-filter_complex", video, "-map", "[vo]"];
   if (hasAudio) args.push("-map", "0:a:0", "-af", "volumedetect");
   args.push("-f", "null", "-");
   const a = await run("ffmpeg", args);
   const vol = parseVolume(a.stderr);
+  const duration = Math.round(Number(raw.format?.duration ?? v.duration ?? 0) * 1000) / 1000;
   return {
     width: Number(v.width ?? 0),
     height: Number(v.height ?? 0),
     fps: frameRate(v.avg_frame_rate),
-    duration: Math.round(Number(raw.format?.duration ?? v.duration ?? 0) * 1000) / 1000,
+    duration,
     videoCodec: String(v.codec_name ?? ""),
     pixFmt: String(v.pix_fmt ?? ""),
     hasAudio,
     meanVolume: hasAudio ? vol.mean : null,
     maxVolume: hasAudio ? vol.max : null,
     blackSeconds: parseBlack(a.stderr),
+    black: parseSegments(a.stderr, "black", duration),
+    freezes: parseSegments(a.stderr, "freeze", duration),
   };
+}
+
+/**
+ * Mean/max level (dB) of a window of a file's audio — e.g. the last 0.5s, to
+ * check that a music fade-out ran. null values when there is no sound.
+ * @param {string} file
+ * @param {{ from?: number, duration?: number }} [o] seconds
+ */
+export async function audioLevel(file, { from = 0, duration } = {}) {
+  requireTool("ffmpeg", "measure audio levels");
+  const args = ["-hide_banner", "-nostats", "-ss", String(Math.max(0, from)), "-i", file];
+  if (duration !== undefined) args.push("-t", String(duration));
+  const r = await run("ffmpeg", [...args, "-map", "0:a:0?", "-af", "volumedetect", "-vn", "-f", "null", "-"]);
+  return parseVolume(r.stderr);
 }
 
 /**
@@ -140,6 +165,39 @@ export function parseBlack(stderr) {
   let total = 0;
   for (const m of stderr.matchAll(/black_duration:\s*([\d.]+)/g)) total += Number(m[1]);
   return Math.round(total * 100) / 100;
+}
+
+/**
+ * blackdetect / freezedetect stderr → segments, in time order. A freeze still
+ * running at the end of the file has no freeze_end; it is closed at `duration`. Pure.
+ * @param {string} stderr
+ * @param {'black'|'freeze'} kind
+ * @param {number} [duration] file length, closes an open freeze
+ * @returns {Segment[]}
+ */
+export function parseSegments(stderr, kind, duration) {
+  const r2 = (/** @type {number} */ n) => Math.round(n * 100) / 100;
+  /** @type {Segment[]} */
+  const out = [];
+  if (kind === "black") {
+    for (const m of stderr.matchAll(/black_start:\s*([\d.]+)\s+black_end:\s*([\d.]+)/g)) {
+      const [start, end] = [Number(m[1]), Number(m[2])];
+      out.push({ start: r2(start), end: r2(end), duration: r2(end - start) });
+    }
+    return out;
+  }
+  /** @type {number | null} */
+  let open = null;
+  for (const m of stderr.matchAll(/freeze_(start|end):\s*([\d.]+)/g)) {
+    const t = Number(m[2]);
+    if (m[1] === "start") open = t;
+    else if (open !== null) {
+      out.push({ start: r2(open), end: r2(t), duration: r2(t - open) });
+      open = null;
+    }
+  }
+  if (open !== null && duration !== undefined && duration > open) out.push({ start: r2(open), end: r2(duration), duration: r2(duration - open) });
+  return out;
 }
 
 /** @param {string | undefined} rate "30/1" */
@@ -164,33 +222,36 @@ export function frameTimes(duration, count) {
 /**
  * ffmpeg filter that shades the platform UI zones and outlines the text band
  * (RULES.md §4) on a 1080x1920 frame. Pure.
+ * @param {{ shade?: boolean }} [o] `shade: false` draws only the band outline
+ *   (QA frames: judge the picture, see the band)
  * @returns {string}
  */
-export function safeZoneFilter() {
+export function safeZoneFilter({ shade = true } = {}) {
   const { top, bottom, left, right } = SAFE_ZONE;
   const { width: W, height: H } = CANVAS;
-  const shade = "color=black@0.55:t=fill";
+  const fill = "color=black@0.55:t=fill";
   const b = SAFE_BAND;
-  return [
-    `scale=${W}:${H}`,
-    `drawbox=x=0:y=0:w=${W}:h=${top}:${shade}`,
-    `drawbox=x=0:y=${H - bottom}:w=${W}:h=${bottom}:${shade}`,
-    `drawbox=x=0:y=${top}:w=${left}:h=${b.h}:${shade}`,
-    `drawbox=x=${W - right}:y=${top}:w=${right}:h=${b.h}:${shade}`,
-    `drawbox=x=${b.x}:y=${b.y}:w=${b.w}:h=${b.h}:color=lime@0.9:t=6`,
-  ].join(",");
+  const zones = shade
+    ? [
+        `drawbox=x=0:y=0:w=${W}:h=${top}:${fill}`,
+        `drawbox=x=0:y=${H - bottom}:w=${W}:h=${bottom}:${fill}`,
+        `drawbox=x=0:y=${top}:w=${left}:h=${b.h}:${fill}`,
+        `drawbox=x=${W - right}:y=${top}:w=${right}:h=${b.h}:${fill}`,
+      ]
+    : [];
+  return [`scale=${W}:${H}`, ...zones, `drawbox=x=${b.x}:y=${b.y}:w=${b.w}:h=${b.h}:color=lime@0.9:t=6`].join(",");
 }
 
 /**
  * filter_complex for a horizontal strip of `n` single-frame inputs. Pure.
  * @param {number} n
- * @param {{ height: number, safeZones?: boolean, gap?: number }} o
+ * @param {{ height: number, safeZones?: boolean, shade?: boolean, gap?: number }} o
  */
-export function stripFilter(n, { height, safeZones = false, gap = 12 }) {
+export function stripFilter(n, { height, safeZones = false, shade = true, gap = 12 }) {
   const width = Math.round((height * CANVAS.width) / CANVAS.height / 2) * 2;
   const parts = [];
   for (let i = 0; i < n; i++) {
-    const overlay = safeZones ? `${safeZoneFilter()},` : "";
+    const overlay = safeZones ? `${safeZoneFilter({ shade })},` : "";
     const pad = i < n - 1 ? `,pad=${width + gap}:${height}:0:0:color=0x111111` : "";
     parts.push(`[${i}:v]${overlay}scale=${width}:${height}:flags=lanczos,setsar=1${pad}[f${i}]`);
   }
@@ -204,19 +265,59 @@ export function stripFilter(n, { height, safeZones = false, gap = 12 }) {
  * @param {string} video
  * @param {number[]} times seconds
  * @param {string} out .png path
- * @param {{ height?: number, safeZones?: boolean }} [o] height of each frame (default 640)
+ * @param {{ height?: number, safeZones?: boolean, shade?: boolean }} [o] height of each frame (default 640);
+ *   `safeZones` overlays the RULES.md §4 zones (`shade: false`: the band outline only)
  */
-export async function frameStrip(video, times, out, { height = 640, safeZones = false } = {}) {
+export async function frameStrip(video, times, out, { height = 640, safeZones = false, shade = true } = {}) {
   if (!times.length) throw new ReelclawError("frameStrip needs at least one time");
   requireTool("ffmpeg", "extract preview frames");
   const inputs = times.flatMap((t) => ["-ss", String(t), "-i", video]);
   const r = await run("ffmpeg", [
     "-y", "-v", "error", ...inputs,
-    "-filter_complex", stripFilter(times.length, { height, safeZones }),
+    "-filter_complex", stripFilter(times.length, { height, safeZones, shade }),
     "-map", "[out]", "-frames:v", "1", "-update", "1", out,
   ]);
   if (r.code !== 0) throw new ReelclawError(`could not extract frames from ${video}`, { hint: r.stderr.trim().split("\n").slice(-2).join(" ") });
   return out;
+}
+
+/**
+ * Write a full-resolution crop of one frame (e.g. a caption's region, to check
+ * the font really is TikTok Sans).
+ * @param {string} video
+ * @param {number} time seconds
+ * @param {import('./geometry.mjs').Box} box canvas px; clamped to the frame
+ * @param {string} out .png path
+ */
+export async function cropFrame(video, time, box, out) {
+  requireTool("ffmpeg", "extract frames");
+  const x = Math.max(0, Math.round(box.x));
+  const y = Math.max(0, Math.round(box.y));
+  const w = Math.min(CANVAS.width - x, Math.round(box.w));
+  const h = Math.min(CANVAS.height - y, Math.round(box.h));
+  const r = await run("ffmpeg", ["-y", "-v", "error", "-ss", String(time), "-i", video, "-frames:v", "1", "-vf", `scale=${CANVAS.width}:${CANVAS.height},crop=${w}:${h}:${x}:${y}`, "-update", "1", out]);
+  if (r.code !== 0) throw new ReelclawError(`could not crop a frame of ${video} at ${time}s`, { hint: r.stderr.trim().split("\n").slice(-2).join(" ") });
+  return out;
+}
+
+/**
+ * Write a contact sheet: frames every 1/`fps` seconds, left to right, top to
+ * bottom, each with the safe band outlined.
+ * @param {string} video
+ * @param {string} out .png path
+ * @param {{ duration: number, fps?: number, columns?: number, width?: number }} o
+ *   `duration` of the video; `width` of each tile (default 216)
+ * @returns {Promise<{ out: string, fps: number, frames: number }>}
+ */
+export async function contactSheet(video, out, { duration, fps = 2, columns = 8, width = 216 }) {
+  requireTool("ffmpeg", "make contact sheets");
+  const frames = Math.max(1, Math.round(duration * fps));
+  const rows = Math.ceil(frames / columns);
+  const cols = Math.min(columns, frames);
+  const filter = `fps=${fps},${safeZoneFilter({ shade: false })},scale=${width}:-2:flags=lanczos,tile=${cols}x${rows}:padding=4:margin=4:color=white`;
+  const r = await run("ffmpeg", ["-y", "-v", "error", "-i", video, "-vf", filter, "-frames:v", "1", "-update", "1", out]);
+  if (r.code !== 0) throw new ReelclawError(`could not make a contact sheet of ${video}`, { hint: r.stderr.trim().split("\n").slice(-2).join(" ") });
+  return { out, fps, frames };
 }
 
 /**

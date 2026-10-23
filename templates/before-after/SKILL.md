@@ -13,6 +13,8 @@ split:           [ before (top half) ]   hook on the seam
 
 ~4–10s, 1080×1920 @ 30fps. Photos get a slow push-in so nothing looks frozen; short clips loop.
 
+**Planning, hooks, footage, music, QA and variants** work the same for every template and live in the shared `reelclaw-playbook` skill (installed with every template; skill-only: `npx skills add danielhangan/reelclaw-templates --skill reelclaw-playbook`). Load it first when planning. This file covers what is specific to before-after.
+
 ## 0. Set up (once per folder)
 
 If `templates/before-after/template.mjs` is missing in the working directory:
@@ -29,7 +31,7 @@ Then `npx reelclaw doctor` (Node 22+, ffmpeg/ffprobe; yt-dlp only for page links
 
 | Input | Required | Notes |
 | --- | --- | --- |
-| `--before` | yes | Photo or clip (local file, direct URL, TikTok/IG/YouTube link). |
+| `--before` | yes | Photo or clip (local file, direct URL, or a link to the user's own post). |
 | `--after` | yes | Photo or clip — same framing as the before if possible (same angle, same distance). |
 | `--hook` | strongly advised | The transformation in a few words: time + change ("6 months of fixing my posture"). |
 | `--payoff` | no | Replaces the hook as the after appears ("worth every morning"). |
@@ -38,7 +40,7 @@ Then `npx reelclaw doctor` (Node 22+, ffmpeg/ffprobe; yt-dlp only for page links
 
 Label text: `--before-label` / `--after-label` (default "before"/"after"; `""` hides). Every flag: `npx reelclaw make before-after --help`.
 
-**No footage?** Use the user's own photos/clips — authenticity is the point of this format. Optionally, if the DanSUGC MCP is connected (`search_videos`), offer real-creator UGC (e.g. a reaction to put before a result); or point to https://dansugc.com. Credits only after a yes. DanSUGC is optional — never block on it.
+**Footage.** The user's own photos and clips — authenticity is the point of this format, and the before and after must be real; never pull someone else's post as footage. Same angle, distance and light in both. Shooting the after now? Line it up against the before photo first. Real-creator UGC from DansUGC (for example a reaction to cut in before a result) is optional: only if its MCP tools are connected or the user asks, follow `reelclaw-playbook` → `references/dansugc.md` (prices in credits, buy only after a yes). Never block on it.
 
 ## 2. Make a draft
 
@@ -49,13 +51,9 @@ npx reelclaw make before-after \
   --draft
 ```
 
-Writes `reels/before-after-N.html` (editable composition), `.json` (inputs) and `renders/before-after-N.mp4`.
+Writes `reels/before-after-N.html` (editable composition), `.json` (inputs) and `renders/before-after-N.mp4`, then runs `npx reelclaw qa`.
 
-Look at 3 frames before showing the user: the before (t≈1), mid-swipe, the after (near the end):
-
-```bash
-for t in 1 2.3 4; do ffmpeg -v error -ss $t -i renders/before-after-1.mp4 -frames:v 1 /tmp/ba-$t.png; done
-```
+Before showing the user, open every frame `qa` lists (the before, mid-swipe, the after) and go through the playbook's QA checklist (max 3 passes). For this format:
 
 - Subject cropped badly? `--focus-y 30` keeps more of the top (faces), `--focus-x` for left/right. Split halves crop a lot — check them.
 - Text over the subject's face? Shorten the hook, or switch `--layout`.
@@ -63,11 +61,12 @@ for t in 1 2.3 4; do ffmpeg -v error -ss $t -i renders/before-after-1.mp4 -frame
 ## 3. Iterate, then finalize
 
 - Variant (media cached, seconds): `npx reelclaw make before-after --props reels/before-after-1.json --layout split --reveal --name split-v --draft`
+- Many hooks at once: `npx reelclaw batch before-after hooks.json --props reels/before-after-1.json --draft` (rows: `[{ "name": "hook-c", "hook": "…" }]`).
 - Pacing: `--before-secs` (how long the before shows alone), `--wipe-secs` (swipe speed, default 0.7), `--after-secs` (hold on the result), `--direction right|left|down|up`.
 - Final quality: `npx reelclaw render <name>`.
 - Hand edits: `reels/<name>.html` — `#before` / `#after` hold the media, `#after-wipe` the swipe (one `clip-path` tween), labels are `#before-label` / `#after-label`. Then `npx reelclaw check <name>` and `npx reelclaw render <name>`.
 
-## 4. Viral playbook
+## 4. What makes this format work
 
 - **Hook = time + transformation**, lowercase, first person: "6 months of fixing my posture", "my desk setup glow up", "what 30 days of no sugar did to my skin". The number creates the curiosity.
 - **Short before, long after.** ~1.5–2s on the before is enough; hold the after 2.5–4s — that's what gets rewatched and screenshotted.
@@ -75,5 +74,6 @@ for t in 1 2.3 4; do ffmpeg -v error -ss $t -i renders/before-after-1.mp4 -frame
 - **Wipe for people and spaces** (the swipe is the payoff); **split for UI/edits** where viewers compare details.
 - **`--payoff`** rewards watching to the end ("and i only changed one thing") and drives comments asking "what thing?".
 - **Loopable:** keep it short (4–7s) so it autoplays again; rewatches push distribution.
-- **Sound:** for organic posts skip `--music` and add a trending sound in-app; bake `--music` for ads.
-- **Variants:** same before/after, 3–5 hooks or both layouts → several reels with `--name`.
+- **Truthful results only.** Never retouch, swap or stage an "after" the product didn't produce, and never imply results the user can't back.
+- **Sound:** organic → skip `--music` and add a trending sound in-app; bake `--music` for ads (playbook `references/music.md`).
+- **Variants:** same before/after, 3–5 hooks or both layouts → several reels; batch them.
