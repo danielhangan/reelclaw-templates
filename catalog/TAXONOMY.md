@@ -6,7 +6,7 @@ How reelclaw classifies viral short-form formats (TikTok, Instagram Reels, YouTu
 - **`catalog/PRIMITIVES_GAP.md`** lists the engine features to build next, ranked by how many formats each one unlocks.
 - **`RULES.md`** holds the platform rules (safe zones, typography, audio). They apply to every category.
 
-Research basis (October 2026): DanSUGC's tracked viral concepts (`reelclaw_suggest_formats`), [Motion's 2026 ad-format library](https://motionapp.com/library/formats/) (hit rates across 113 formats), [Lightreel's consumer-app TikTok report (Oct 2026)](https://www.lightreel.ai/blogs/consumer-apps-on-tiktok) and 2026 format guides ([eliro](https://eliro.pro/blog/10-video-formats-best-tiktok), [contentgrip](https://www.contentgrip.com/best-performing-tiktok-content-types/)). Treat the vendor percentages as directional, not as benchmarks.
+Research basis (October 2026): DansUGC's tracked viral concepts (`reelclaw_suggest_formats`), [Motion's 2026 ad-format library](https://motionapp.com/library/formats/) (hit rates across 113 formats), [Lightreel's consumer-app TikTok report (Oct 2026)](https://www.lightreel.ai/blogs/consumer-apps-on-tiktok) and 2026 format guides ([eliro](https://eliro.pro/blog/10-video-formats-best-tiktok), [contentgrip](https://www.contentgrip.com/best-performing-tiktok-content-types/)). Treat the vendor percentages as directional, not as benchmarks.
 
 ## Rules every format shares
 
@@ -46,7 +46,7 @@ The sections below give each category's structure, pacing, captions and the prim
 - **Captions:** one hook caption (`tiktok-outline`) for exactly the reaction window, plus an optional payoff caption over the proof. Hooks are first person and specific: "i was about to cancel and this app…".
 - **Audio:** music only. Reaction audio stays muted unless the creator speaks the hook.
 - **Primitives:** video, caption, music, split / pip. **(gap)** sequence for multi-beat reactions, counter for stat reveals, comment_reply.
-- **Footage:** your own clip or a creator's. DanSUGC reaction clips are optional (`search_videos` or dansugc.com).
+- **Footage:** your own clip or a creator's. DansUGC reaction clips are optional (`search_videos` or dansugc.com).
 
 ### greenscreen
 - **Structure:** the background is the subject (screenshot, demo, post, chart) and the creator is cut out in the lower third. A cut-out that moves to a corner turns into a PiP.
